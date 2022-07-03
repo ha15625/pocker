@@ -2651,13 +2651,13 @@ exports.CheckSpin = function (socket, data) {
                 let now = new Date();
                 let diffTime = now.getTime() - result.spin_date.getTime(); // milliseconds
 
-                if (diffTime >= 14400000) {
+                if (diffTime >= 1800000) {
                     let message = {
                         result: 'success'
                     }
                     socket.emit('REQ_SPIN_RESULT', message);
                 } else {
-                    let allowTime = result.spin_date.getTime() + 14400000;
+                    let allowTime = result.spin_date.getTime() + 1800000;
                     let gap = allowTime - now.getTime();
                     socket.emit('REQ_SPIN_RESULT', msToTime(gap));
                 }

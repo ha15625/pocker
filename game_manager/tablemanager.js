@@ -185,19 +185,20 @@ TableManager.prototype.actionBot = function (player) {
     }
     let reverseCard = card.split('').reverse().join('');
 
-    // if (pocketCards.filter(x => x == card).length > 0) {
-    //     goodcards = true;
-    // }
-
-    // else if (pocketCards.filter(x => x == reverseCard).length > 0) {
-    //     goodcards = true;
-    // }
-    if(this.table.game.board.length > 3) {
-        let winPlayers = this.table.checkWinners();
-        if(winPlayers.includes(player.getIndex())) {
-            goodcards = true;
-        }
+    if (pocketCards.filter(x => x == card).length > 0) {
+        goodcards = true;
     }
+
+    else if (pocketCards.filter(x => x == reverseCard).length > 0) {
+        goodcards = true;
+    }
+    // if(this.table.game.board.length > 3) {
+    //     goodcards = false;
+    //     let winPlayers = this.table.checkWinners();
+    //     if(winPlayers.includes(player.getIndex())) {
+    //         goodcards = true;
+    //     }
+    // }
     setTimeout(() => {
         let info = {
             action: '',
@@ -234,95 +235,99 @@ TableManager.prototype.actionBot = function (player) {
             canCall = true;
         else
             canCheck = true;
-
-        if (canCheck) info.action = 'check';
+        if(this.table.game.board.length <= 3 || this.table.game.board.length > 3 && goodcards == true) {
+            if (canCheck && goodcards) info.action = 'check';
+            else {
+                if(this.bigBlinds.indexOf(this.bigBlind) == -1)
+                {
+                    if ((goodcards == true || player.win == true) && this.table.game.board.length <=3 || (this.table.game.board.length > 3 && goodcards == true)) {
+                        let num1 = Math.floor(Math.random() * 2) + 1;
+                        if (num1 == 1) {
+                            if (canCall) {
+                                info.action = 'call';
+                                info.bet = call;
+                            }
+                            else console.log(">>> ERROR1".err);
+                        }
+                        else {
+                            let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
+                            if (canRaise) {
+                                info.legal_bet = this.legalBet;
+                                info.bet = randomNumber * minRaise;
+                                let maxBet = max_Bet;
+                                let currentBet = current_Bet;
+                                if (info.bet < player.chips) {
+                                    if ((maxBet - currentBet) == info.bet) {
+                                        info.action = 'call';
+                                    } else {
+                                        info.action = 'raise';
+                                    }
+                                    info.legal_bet = info.bet - call;
+                                } else {
+                                    info.bet = player.chips;
+                                    info.action = 'allin';
+                                }
+                            }
+                            else {
+                                if (canCall) {
+                                    info.action = 'call';
+                                    info.bet = call;
+                                }
+                                else console.log(">>> ERROR2".err);
+                            }
+                        }
+                    }
+                    else {
+                        info.action = 'fold';
+                    }
+                }
+                else
+                {
+                    if (goodcards == true) {
+                        let num1 = Math.floor(Math.random() * 2) + 1;
+                        if (num1 == 1) {
+                            if (canCall) {
+                                info.action = 'call';
+                                info.bet = call;
+                            }
+                            else console.log(">>> ERROR1".err);
+                        }
+                        else {
+                            let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
+                            if (canRaise) {
+                                info.legal_bet = this.legalBet;
+                                info.bet = randomNumber * minRaise;
+                                let maxBet = max_Bet;
+                                let currentBet = current_Bet;
+                                if (info.bet < player.chips) {
+                                    if ((maxBet - currentBet) == info.bet) {
+                                        info.action = 'call';
+                                    } else {
+                                        info.action = 'raise';
+                                    }
+                                    info.legal_bet = info.bet - call;
+                                } else {
+                                    info.bet = player.chips;
+                                    info.action = 'allin';
+                                }
+                            }
+                            else {
+                                if (canCall) {
+                                    info.action = 'call';
+                                    info.bet = call;
+                                }
+                                else console.log(">>> ERROR2".err);
+                            }
+                        }
+                    }
+                    else {
+                        info.action = 'fold';
+                    }
+                }
+            }
+        }
         else {
-            if(this.bigBlinds.indexOf(this.bigBlind) == -1)
-            {
-                if (goodcards == true || player.win == true) {
-                    let num1 = Math.floor(Math.random() * 2) + 1;
-                    if (num1 == 1) {
-                        if (canCall) {
-                            info.action = 'call';
-                            info.bet = call;
-                        }
-                        else console.log(">>> ERROR1".err);
-                    }
-                    else {
-                        let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
-                        if (canRaise) {
-                            info.legal_bet = this.legalBet;
-                            info.bet = randomNumber * minRaise;
-                            let maxBet = max_Bet;
-                            let currentBet = current_Bet;
-                            if (info.bet < player.chips) {
-                                if ((maxBet - currentBet) == info.bet) {
-                                    info.action = 'call';
-                                } else {
-                                    info.action = 'raise';
-                                }
-                                info.legal_bet = info.bet - call;
-                            } else {
-                                info.bet = player.chips;
-                                info.action = 'allin';
-                            }
-                        }
-                        else {
-                            if (canCall) {
-                                info.action = 'call';
-                                info.bet = call;
-                            }
-                            else console.log(">>> ERROR2".err);
-                        }
-                    }
-                }
-                else {
-                    info.action = 'fold';
-                }
-            }
-            else
-            {
-                if (goodcards == true) {
-                    let num1 = Math.floor(Math.random() * 2) + 1;
-                    if (num1 == 1) {
-                        if (canCall) {
-                            info.action = 'call';
-                            info.bet = call;
-                        }
-                        else console.log(">>> ERROR1".err);
-                    }
-                    else {
-                        let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
-                        if (canRaise) {
-                            info.legal_bet = this.legalBet;
-                            info.bet = randomNumber * minRaise;
-                            let maxBet = max_Bet;
-                            let currentBet = current_Bet;
-                            if (info.bet < player.chips) {
-                                if ((maxBet - currentBet) == info.bet) {
-                                    info.action = 'call';
-                                } else {
-                                    info.action = 'raise';
-                                }
-                                info.legal_bet = info.bet - call;
-                            } else {
-                                info.bet = player.chips;
-                                info.action = 'allin';
-                            }
-                        }
-                        else {
-                            if (canCall) {
-                                info.action = 'call';
-                                info.bet = call;
-                            }
-                            else console.log(">>> ERROR2".err);
-                        }
-                    }
-                }
-                else {
-                    info.action = 'fold';
-                }
-            }
+            info.action = 'fold';
         }
         let message = player.playerName;
         this.removetimeout();
@@ -576,6 +581,7 @@ TableManager.prototype.onGameOver = async function () {
 
     this.played++;
     this.totalPot = 0;
+    await this.waitforSec(5000);
     await this.addPlayers();
     let roomSockets = [];
     let roomID = this.id;
@@ -605,6 +611,7 @@ TableManager.prototype.onGameOver = async function () {
             else if (removeCount > 0)
                 await this.removeBots(removeCount);
         }
+        
         await this.getStatus();
         await this.tableReposition();
         if (this.table.getIngamePlayersLength() > 1) {
@@ -615,6 +622,15 @@ TableManager.prototype.onGameOver = async function () {
         }
     }
 };
+
+TableManager.prototype.waitforSec = function (time) {
+    return new Promise(resolve => {
+        setTimeout(() => {
+            resolve();
+        }, time);
+    });
+}
+
 TableManager.prototype.onlyBotsLive = function ()
 {
     let roomSockets = [];
@@ -1225,6 +1241,8 @@ TableManager.prototype.getBotID = function () {
     this.botIDs.push(_id);
     return _id;
 };
+
+
 
 TableManager.prototype.getStatus = function () {
     return new Promise(resolve => {
