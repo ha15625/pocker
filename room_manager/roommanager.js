@@ -50,14 +50,14 @@ let removeItem = function (arr, value) {
     return arr;
 };
 exports.JoinRoom = function (data, socket) {
-    
+
     if (data.roomid == null) {
-        
+
         let table = tables.find(t =>
-            t.table.getIngamePlayersLength() < t.table.maxPlayers && 
+            t.table.getIngamePlayersLength() < t.table.maxPlayers &&
             t.table.maxPlayers === fixNumber(data.seatlimit) &&
-            t.gameMode === data.mode &&              
-            t.minBuyin === fixNumber(data.min_buyin)            
+            t.gameMode === data.mode &&
+            t.minBuyin === fixNumber(data.min_buyin)
         );
         if (table) {
             table.enterTable(socket, data.username, data.userid);
@@ -66,7 +66,7 @@ exports.JoinRoom = function (data, socket) {
             createTable(data.username, data.userid, data.seatlimit, data.bigblind, data.min_buyin, data.max_buyin, data.mode, socket);
         }
     } else {
-        let table = tables.find(t => t.id == data.roomid); 
+        let table = tables.find(t => t.id == data.roomid);
         table && table.enterTable(socket, data.username, data.userid);
     }
 }
@@ -79,7 +79,7 @@ function createTable(username, userid, maxPlayers, bb, min_buyin, max_buyin, gam
     // {
     //     possibleBots = false;
     // }
-  
+
     let tableIDs = new Array();
     for (let i = 0, length = tables.length; i < length; i++) {
         tableIDs.push(tables[i].id);
@@ -95,7 +95,7 @@ function createTable(username, userid, maxPlayers, bb, min_buyin, max_buyin, gam
         gameMode: gameMode,
         smallBlind: smallblind,
         bigBlind: bigblind,
-        minPlayers : gameMode == 'cash'? 2 : 5, 
+        minPlayers: gameMode == 'cash' ? 2 : 5,
         maxPlayers: fixNumber(maxPlayers),
         minBuyin: fixNumber(min_buyin),
         maxBuyin: fixNumber(max_buyin),
@@ -109,7 +109,7 @@ function createTable(username, userid, maxPlayers, bb, min_buyin, max_buyin, gam
         table.enterTable(socket, username, userid);
         tables.push(table);
     }, 1000)
-    
+
 }
 let getPhotos = function () {
     setInterval(() => {
@@ -135,29 +135,26 @@ let getPhotoLinks = function () {
         }
     });
 }
-exports.addChipsTouserInTable = function(tableid, userid, points)
-{
-    let table = tables.find(t => t.id == tableid); 
+exports.addChipsTouserInTable = function (tableid, userid, points) {
+    let table = tables.find(t => t.id == tableid);
     table && table.AddChipsUser(userid, points);
 }
-exports.minusChipsTouserInTable = function(tableid, userid, points)
-{
-    let table = tables.find(t => t.id == tableid); 
+exports.minusChipsTouserInTable = function (tableid, userid, points) {
+    let table = tables.find(t => t.id == tableid);
     table && table.MinusChipsUser(userid, points);
 }
 exports.getBotUrl = function (table) {
     let newIndex = -1;
     for (let i = 0; i < realNames.length; i++) {
         const botName = realNames[i];
-        if(!usedBotNames.includes(botName))
-        {
+        if (!usedBotNames.includes(botName)) {
             newIndex = i;
             break;
         }
     }
-    if(newIndex == -1) { usedBotNames = []; newIndex = 0; }
+    if (newIndex == -1) { usedBotNames = []; newIndex = 0; }
     usedBotNames.push(realNames[newIndex]);
-    return {url : realPhotos[newIndex], name: realNames[newIndex]};
+    return { url: realPhotos[newIndex], name: realNames[newIndex] };
 };
 exports.getBotName = function (table) {
     let allBotNames = [];
@@ -166,8 +163,7 @@ exports.getBotName = function (table) {
         t.botNames = [];
         for (let j = 0; j < t.table.players.length; j++) {
             const element = t.table.players[j];
-            if(element != null)
-            {
+            if (element != null) {
                 t.botNames.push(element.playerName)
             }
         }
@@ -184,13 +180,13 @@ exports.getBotName = function (table) {
         if (realNames.length - 1 == i) {
             let random = Math.floor(Math.random() * realNames.length);
             _username = realNames[random];
-           // _username = realNames[0];
+            // _username = realNames[0];
         }
     }
     table.botNames.push(_username);
     return _username;
 };
-function shuffle(array) { array.sort(() => Math.random() - 0.5); } 
+function shuffle(array) { array.sort(() => Math.random() - 0.5); }
 
 function createID_table(idArray) {
     let found = false;
@@ -224,6 +220,7 @@ exports.StandUp = function (info, socket) {
 }
 exports.Leave = function (info, socket) {
     let table = tables.find(t => t.id == info.room_id);
+    console.log("table count:", tables.length);
     table && table.standUp_forever(info, socket);
 }
 exports.Buyin = function (info, socket) {
@@ -236,10 +233,19 @@ exports.Action = function (info) {
 }
 exports.OnDisconnect = function (socket) {
     console.log("-Disconnect", socket.room, socket.username, socket.userid, socket.id);
+    let query = { username: socket.username, userid: socket.userid };
+    this.collection_UserData.findOne(query, (err, result) => {
+        if (err) throw "in_points:", err;
+        else if (result) {
+            this.collection_UserData.updateOne(query, { $set: { connect: "" } }, function (err) {
+                if (err) throw err;
+            });
+        }
+    });
+
     let username = socket.username;
     let userid = socket.userid;
     let collection = database.collection('User_Data');
-    let query;
     if (userid == undefined)
         query = {
             connect: socket.id
@@ -699,7 +705,7 @@ exports.Request_Buddies_List = function (socket, data) {
                             }
                         });
                     } else {
-                        
+
                         let emitdata = {
                             result: "success",
                             userid: userid,
@@ -732,7 +738,7 @@ exports.Request_Recents_List = function (socket, data) {
                     i++;
                     if (i < counter) {
                         let id = Friends[i];
-                        
+
                         let query1 = {
                             userid: id
                         };
@@ -785,7 +791,7 @@ exports.Request_Recents_List = function (socket, data) {
                                             friend_photoType: result1.photo_type,
                                             friend_connected_room: connectedRoom,
                                             friend_online: check_online,
-                                            alreadyFriend : (buddies.filter(buddy => buddy.id == id).length > 0) ? true : false
+                                            alreadyFriend: (buddies.filter(buddy => buddy.id == id).length > 0) ? true : false
                                         };
                                         myfriends.push(f);
                                     }, 100);
@@ -1053,7 +1059,7 @@ function roundNum(n) {
     let remains = 0;
     if (units % 3 == 0) remains = ((units / 3) - 1) * 3;
     else remains = (units - (units % 3));
-    let a = Math.trunc(n / (10 ** remains)) * (10 ** remains); 
+    let a = Math.trunc(n / (10 ** remains)) * (10 ** remains);
     return a;
 }
 
@@ -1181,5 +1187,5 @@ var realPhotos = [
 ];
 
 var realNames = [
-    "James","Mary","Patricia","Aliza","Robert","John","Michael","William","David","Linda","Richard","Joseph","Huang","Thomas","Charles","Christopher","Daniel","Elizabeth","Matthew","Barbara","Susan","Anthony","Mark","Donald","Jessica","Sarah","Steven","Paul","Andrew","JoshuaEdward","Kenneth","Kevin","Brian","George","Karen","Nancy","Edward","Donna","Michelle","Dorothy","Ronald","Timothy","Rebecca","Jason","Jeffrey","Amanda","Timothy","Ryan","Jacob","Gary","Nicholas","Eric","Jonathan","Sharon","Laura","Cynthia","Stephen","Larry","Justin","Helen","Scott","Brandon","Benjamin","Samuel","Gregory","Anna","Frank","Pamela","Alexander","Raymond","Patrick","Jack","Maria","Heather","Diane","Virginia","Dennis","Jerry","Aaron","Julie","Jose","Adam","Henry","Nathan","Kelly","Douglas","Zachary","Peter","Kyle","Walter","Ethan","Jeremy","Harold","Megan","Christian","Gloria","Terry","Ann","Austin","Austin","Arthur","Lawrence","Jesse","Dylan","Doris","Willie","Gabriel","Logan","Alan","Ralph","Randy","Sophia","Diana","Brittany","Natalie","Louis","Isabella","Elijah","Bobby","Philip"
+    "James", "Mary", "Patricia", "Aliza", "Robert", "John", "Michael", "William", "David", "Linda", "Richard", "Joseph", "Huang", "Thomas", "Charles", "Christopher", "Daniel", "Elizabeth", "Matthew", "Barbara", "Susan", "Anthony", "Mark", "Donald", "Jessica", "Sarah", "Steven", "Paul", "Andrew", "JoshuaEdward", "Kenneth", "Kevin", "Brian", "George", "Karen", "Nancy", "Edward", "Donna", "Michelle", "Dorothy", "Ronald", "Timothy", "Rebecca", "Jason", "Jeffrey", "Amanda", "Timothy", "Ryan", "Jacob", "Gary", "Nicholas", "Eric", "Jonathan", "Sharon", "Laura", "Cynthia", "Stephen", "Larry", "Justin", "Helen", "Scott", "Brandon", "Benjamin", "Samuel", "Gregory", "Anna", "Frank", "Pamela", "Alexander", "Raymond", "Patrick", "Jack", "Maria", "Heather", "Diane", "Virginia", "Dennis", "Jerry", "Aaron", "Julie", "Jose", "Adam", "Henry", "Nathan", "Kelly", "Douglas", "Zachary", "Peter", "Kyle", "Walter", "Ethan", "Jeremy", "Harold", "Megan", "Christian", "Gloria", "Terry", "Ann", "Austin", "Austin", "Arthur", "Lawrence", "Jesse", "Dylan", "Doris", "Willie", "Gabriel", "Logan", "Alan", "Ralph", "Randy", "Sophia", "Diana", "Brittany", "Natalie", "Louis", "Isabella", "Elijah", "Bobby", "Philip"
 ];

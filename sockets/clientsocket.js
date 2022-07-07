@@ -152,6 +152,8 @@ exports.initsocket = function (socket, io) {
     });
     // disconnect
     socket.on('disconnect', function () {
+        console.log(socket);
+        
         roommanager.OnDisconnect(socket);
     });
     // create bot
