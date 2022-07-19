@@ -366,7 +366,7 @@ TableManager.prototype.actionBot = function (player) {
         }
         let message = player.playerName;
         this.removetimeout();
-        player.updateTimebank(5);
+        player.updateTimebank(3);
         switch (info.action) {
             case 'call':
                 if (info.bet == player.chips) {
@@ -1408,7 +1408,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
         booking: false,
         gift: "",
         foldedCount: 0,
-        timebank: 5000,
+        timebank: 3,
         leaveenterflag: 0,
         getCorrectSeatnumber: 1,
         buyinflag: 1,
