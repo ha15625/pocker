@@ -234,10 +234,11 @@ exports.Action = function (info) {
 exports.OnDisconnect = function (socket) {
     console.log("-Disconnect", socket.room, socket.username, socket.userid, socket.id);
     let query = { username: socket.username, userid: socket.userid };
-    this.collection_UserData.findOne(query, (err, result) => {
+    let collection_UserData = database.collection('User_Data');
+    collection_UserData.findOne(query, (err, result) => {
         if (err) throw "in_points:", err;
         else if (result) {
-            this.collection_UserData.updateOne(query, { $set: { connect: "" } }, function (err) {
+            collection_UserData.updateOne(query, { $set: { connect: "" } }, function (err) {
                 if (err) throw err;
             });
         }
@@ -1021,6 +1022,7 @@ exports.GetVerify = function (socket) {
             console.log("error21", err);
         }
         else {
+            console.log("Deleted");
             socket.emit("GET_VERIFY_RESULT", { result: "success" });
         }
     });

@@ -12,6 +12,7 @@ var database = null;
 exports.initdatabase = function () {
     db.connect(function (err) {
         if (err) {
+            console.log(err);
             console.log('Unable to connect to Mongo.');
             process.exit(1);
         }
@@ -152,7 +153,7 @@ exports.initsocket = function (socket, io) {
     });
     // disconnect
     socket.on('disconnect', function () {
-        console.log(socket);
+        
         
         roommanager.OnDisconnect(socket);
     });

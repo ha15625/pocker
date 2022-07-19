@@ -27,6 +27,8 @@ var server = require('http').createServer(app);
 // var io = require('socket.io')(server, {'pingInterval': 1000, 'pingTimeout': 25000,'rememberTransport': false,
 //     'reconnection': true, 'forceNew': [true], 'upgrade': false, 'transport': ['websocket'], 
 //     'secure': true});
+//console.log("Express server listening on port %d", app.address().port)
+
 var io = require('socket.io')(server, {'pingInterval': 1000, 'pingTimeout': 25000,'rememberTransport': false,
    'reconnect': false,
    'secure': true});

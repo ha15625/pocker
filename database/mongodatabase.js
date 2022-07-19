@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var URL = 'mongodb://localhost:27017/MJDatabase';
+var URL = 'mongodb://127.0.0.1:27017/MJDatabase';
 
 var state = {
     db: null,

@@ -147,7 +147,7 @@ TableManager.prototype.onTurn = function (player) {
             position: player.getIndex(),
             chips: player.chips,
             timeBank: player.timebank,
-            thoughtTime: 12,
+            thoughtTime: 6,
             currentBet: player.GetBet(),
             maxBet: this.table.getMaxBet(),
             legalBet: this.legalBet,
@@ -164,13 +164,13 @@ TableManager.prototype.onTurn = function (player) {
     if (player.mode == 'bot') {
         this.actionBot(player)
     }
-    const thoughtTime = 12000 + 1000;
+    const thoughtTime = 6000 + 1000;
     let timebank = player.timebank * 1000;
     let timeout = thoughtTime + timebank;
 
     this.currentTimeout = setTimeout(() => {
         player.foldCount++;
-        if(player.GetBet() >= this.table.getMaxBet()) {
+        if (player.GetBet() >= this.table.getMaxBet()) {
             this.check(player);
         } else {
             this.fold(player);
@@ -185,9 +185,12 @@ TableManager.prototype.onTurn = function (player) {
 TableManager.prototype.actionBot = function (player) {
     let goodcards = false;
     let card = '';
+    let pSuit = '';
     for (let ind = 0; ind < player.cards.length; ind++) {
         card += player.cards[ind].charAt(0);
+        pSuit += player.cards[ind].charAt(1);
     }
+
     let reverseCard = card.split('').reverse().join('');
 
     if (pocketCards.filter(x => x == card).length > 0) {
@@ -197,6 +200,17 @@ TableManager.prototype.actionBot = function (player) {
     else if (pocketCards.filter(x => x == reverseCard).length > 0) {
         goodcards = true;
     }
+    else {
+
+        for (let ind = 0; ind < this.table.board.length; ind++) {
+            pSuit += this.table.board[ind].charAt(1);
+        }
+
+        if ((pSuit.match(new RegExp("S", "g")) || []).length == 5 || (pSuit.match(new RegExp("C", "g")) || []).length == 5 || (pSuit.match(new RegExp("D", "g")) || []).length == 5 || (pSuit.match(new RegExp("H", "g")) || []).length == 5) {
+            goodcards = true;
+        }
+    }
+
     // if(this.table.game.board.length > 3) {
     //     goodcards = false;
     //     let winPlayers = this.table.checkWinners();
@@ -241,12 +255,13 @@ TableManager.prototype.actionBot = function (player) {
         else
             canCheck = true;
         if (this.table.game.board.length <= 3 || this.table.game.board.length > 3 && goodcards == true) {
+
             if (canCheck && goodcards) info.action = 'check';
             else {
                 if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
                     if ((goodcards == true || player.win == true) && this.table.game.board.length <= 3 || (this.table.game.board.length > 3 && goodcards == true)) {
-                        let num1 = Math.floor(Math.random() * 2) + 1;
-                        if (num1 == 1) {
+                        let num1 = Math.floor(Math.random() * 10) + 1;
+                        if (num1 > 4) {
                             if (canCall) {
                                 info.action = 'call';
                                 info.bet = call;
@@ -268,7 +283,24 @@ TableManager.prototype.actionBot = function (player) {
                                     }
                                     info.legal_bet = info.bet - call;
                                 } else {
-                                    info.bet = player.chips;
+                                    let buff = 0;
+                                    let index = 0;
+                                    for (let i = 0; i < this.table.players.length; i++) {
+                                        if (buff <= this.table.players[i].chips) {
+                                            buff = this.table.players[i].chips;
+                                            index = i;
+                                        }
+                                    }
+                                    if (buff < player.chips) {
+                                        if (this.table.game.bets.length > 0) {
+                                            info.bet = buff + this.table.game.bets[index] - player.GetBet();
+                                        } else {
+                                            info.bet = buff - player.GetBet();
+                                        }
+                                    } else {
+                                        info.bet = player.chips;
+                                    }
+                                    
                                     info.action = 'allin';
                                 }
                             }
@@ -334,7 +366,7 @@ TableManager.prototype.actionBot = function (player) {
         }
         let message = player.playerName;
         this.removetimeout();
-        player.updateTimebank(10);
+        player.updateTimebank(5);
         switch (info.action) {
             case 'call':
                 if (info.bet == player.chips) {
@@ -589,7 +621,7 @@ TableManager.prototype.onGameOver = async function () {
     this.played++;
     this.totalPot = 0;
 
-    await this.addPlayers();
+    //await this.addPlayers();
     let roomSockets = [];
     let roomID = this.id;
     if (this.io.nsps['/'].adapter.rooms['r' + roomID] != undefined) {
@@ -602,7 +634,7 @@ TableManager.prototype.onGameOver = async function () {
             });
         }
     }
-    console.log("roomSocketLength", roomSockets.length);
+
     if (roomSockets.length == 0) {
         this.removeBots(this.table.getIngamePlayersLength());
         this.status = 0;
@@ -610,6 +642,9 @@ TableManager.prototype.onGameOver = async function () {
         roommanager.removeTable(this.instance);
     }
     else {
+
+        await this.waitforSec(5000);
+        await this.addPlayers();
         if (this.botCount > 0) {
             let bookingPlayers = this.players.filter(p => p.booking == true);
             let createCount = this.botCount - this.table.getIngamePlayersLength() - bookingPlayers.length;
@@ -619,8 +654,7 @@ TableManager.prototype.onGameOver = async function () {
             else if (removeCount > 0)
                 await this.removeBots(removeCount);
         }
-        await this.waitforSec(5000);
-        console.log("GameOver:Status");
+
         await this.getStatus();
         await this.tableReposition();
         if (this.table.getIngamePlayersLength() > 1) {
@@ -682,7 +716,9 @@ TableManager.prototype.onBankrupt = function (player) {
         player.isEmptySeat = false;
     }
     else {
-        this.standUp_force(player, 'Bankrupt');
+        console.log("bankrupt");
+        this.check_points(player, this.minBuyin);
+
     }
 };
 TableManager.prototype.checkIndex = function (player, position) {
@@ -1072,6 +1108,11 @@ TableManager.prototype.addPlayers = function () {
     });
 };
 TableManager.prototype.tableReposition = function () {
+    for (let i = 0; i < this.table.players.length; i++) {
+        if(this.table.players[i] != undefined && typeof(this.table.players[i].folded) != undefined && this.table.players[i].folded != undefined) {
+            this.table.players[i].folded = false;
+        }
+    }
     return new Promise(resolve => {
         let time = 30 * this.table.getIngamePlayersLength();
         let Reposition_time = time + 1500;
@@ -1310,8 +1351,8 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             }
             this.in_points(info.username, info.userid, player.chips);
             this.table.RemovePlayer(info.userid);
-             this.getStatus();
-            console.log("StandUp:Status");
+            this.getStatus();
+            //console.log("StandUp:Status");
         }
         else {
             console.log('wrong standup > nothing user on the table'.err);
@@ -1344,11 +1385,8 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             socket.leave('r' + this.id);
         }, 1000);
     }
-    console.log("StandUp:Status1");
-    if (socket)
-        this.getStatus();
-    else
-        this.getStatus();
+    //console.log("StandUp:Status1");
+    this.getStatus();
 };
 
 TableManager.prototype.addPlayer = function (info, socket) {
@@ -1370,7 +1408,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
         booking: false,
         gift: "",
         foldedCount: 0,
-        timebank: 20000,
+        timebank: 5000,
         leaveenterflag: 0,
         getCorrectSeatnumber: 1,
         buyinflag: 1,
@@ -1395,11 +1433,13 @@ TableManager.prototype.addPlayer = function (info, socket) {
         this.io.sockets.in('r' + this.id).emit('REQ_TAKE_SEAT_RESULT', emitData);
 };
 TableManager.prototype.buyIn = function (info, socket) {
+
     let player = this.players.find((player) => (player.userid == info.userid && player.username == info.username));
     if (player) {
         player.balance += fixNumber(info.buyin_money);
         this.out_points(info.username, info.userid, info.buyin_money);
         player.booking = true;
+        console.log(info);
         this.io.sockets.in('r' + this.id).emit('ADD_BALANCE', info);
         // this.checkTable();
         //console.log('player.userid ?', player.userid)
@@ -1447,10 +1487,7 @@ TableManager.prototype.removeItem = function (arr, value) {
     return arr;
 };
 TableManager.prototype.in_points = function (username, userid, in_points) {
-    console.log("moneyAdd:");
-    console.log(username);
-    console.log(userid);
-    console.log(in_points);
+
     //let collection = this.database.collection('User_Data');
     let query = { username: username, userid: userid };
     this.collection_UserData.findOne(query, (err, result) => {
@@ -1487,6 +1524,48 @@ TableManager.prototype.out_points = function (username, userid, out_points) {
         }
     });
 };
+
+TableManager.prototype.check_points = function (player, out_points) {
+    let roomid = this.id;
+    let roomTable = this;
+    console.log("bankrupt3");
+    //console.log(player);
+    let query = { username: player.playerName, userid: player.playerID };
+    console.log(query);
+    this.collection_UserData.findOne(query, (err, result) => {
+        console.log(result);
+        if (err) {
+            console.log(err);
+            roomTable.standUp_force(player, 'Bankrupt');
+        }
+        else if (result) {
+            console.log("bankrupt1");
+            let mypoints = result.points;
+            mypoints = mypoints.toString().replace(/\,/g, '');
+            out_points = out_points.toString().replace(/\,/g, '');
+            if (fixNumber(mypoints) >= fixNumber(out_points)) {
+                mypoints = fixNumber(mypoints) - fixNumber(out_points);
+                if (fixNumber(mypoints) < 0) mypoints = 0;
+                roomTable.collection_UserData.updateOne(query, { $set: { points: fixNumber(mypoints) } }, function (err) {
+                    if (err) {
+                        console.log(err);
+                        roomTable.standUp_force(player, 'Bankrupt');
+                    } else {
+                        player.chips = out_points;
+                        player.isSeated = true;
+                        player.isEmptySeat = false;
+                        console.log("roomId:" + roomid);
+                        roomTable.io.sockets.in('r' + roomid).emit('ADD_BALANCE', { room_id: roomid, username: player.playerName, userid: player.playerID, buyin_money: out_points });
+                    }
+                });
+            }
+            else {
+                console.log("bankrupt2");
+                roomTable.standUp_force(player, 'Bankrupt');
+            }
+        }
+    });
+}
 
 function fixNumber(str) {
     let newStr = str.toString().replace(/\,/g, '');
