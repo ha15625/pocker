@@ -125,6 +125,10 @@ exports.initsocket = function (socket, io) {
     socket.on('PLAYER_BUYIN', function (data) {
         roommanager.Buyin(data, socket);
     });
+    //WAITING_PLAYERS
+    socket.on('WAITING_PLAYERS', function(data) {
+        roommanager.WaitingPlayers(data, socket);
+    });
     // Spin
     socket.on('REQ_SPIN', function (data) {
         gamemanager.CheckSpin(socket, data);

@@ -13,20 +13,24 @@ var pocketCards = ['AA', 'KK', 'QQ', 'JJ', 'AK', 'KA', 'TT', 'AQ', 'QA', '99', '
 var count = 0;
 
 exports.createBots = function (data) {
-    let randomnum1 = '' + Math.floor(100 + Math.random() * 900);
-    let randomnum2 = '' + Math.floor(1000 + Math.random() * 9000);
-    let randomnum = randomnum1 + randomnum2;
-    let name = 'Guest' + randomnum;
-    count++;
-    let option = {
-        seatlimit: data.seatlimit,
-        bigblind: data.bigblind,
-        username: name,
-        balance: data.buyin,
-        avatar: Math.floor(Math.random() * 12) + 1,
-        mode: data.mode
+    try {
+        let randomnum1 = '' + Math.floor(100 + Math.random() * 900);
+        let randomnum2 = '' + Math.floor(1000 + Math.random() * 9000);
+        let randomnum = randomnum1 + randomnum2;
+        let name = 'Guest' + randomnum;
+        count++;
+        let option = {
+            seatlimit: data.seatlimit,
+            bigblind: data.bigblind,
+            username: name,
+            balance: data.buyin,
+            avatar: Math.floor(Math.random() * 12) + 1,
+            mode: data.mode
+        }
+        roommanager.JoinRoom_Bot(option);
+    } catch (error) {
+        console.log(error);
     }
-    roommanager.JoinRoom_Bot(option);
 }
 exports.getCount = function () {
     count++;
@@ -57,57 +61,61 @@ exports.getBot = function (username) {
     }
 }
 exports.roundstart = function (index) {
-    let roomlist = gamemanager.getroomlist();
-    roomlist[index].table.on("turn", function (player) {
-        for (let i = 0; i < bots.length; i++) {
-            const element = bots[i];
-            if (element.playerName == player.playerName) {
-                if (element.roomid == roomlist[index].roomid) {
-                    element.turn(index, roomlist[index].bigBlind, roomlist[index].legalbet, player);
-                    //console.log('turn>>', roomlist[index].roomid);
-                    break;
+    try {
+        let roomlist = gamemanager.getroomlist();
+        roomlist[index].table.on("turn", function (player) {
+            for (let i = 0; i < bots.length; i++) {
+                const element = bots[i];
+                if (element.playerName == player.playerName) {
+                    if (element.roomid == roomlist[index].roomid) {
+                        element.turn(index, roomlist[index].bigBlind, roomlist[index].legalbet, player);
+                        //console.log('turn>>', roomlist[index].roomid);
+                        break;
+                    }
                 }
             }
-        }
-    });
+        });
 
-    roomlist[index].table.on("smallBlind", function (player) {
-        //console.log('smallBlind>>', roomlist[index].roomid);
-        let players = roomlist[index].table.players;
-        let ranked_players = [];
-        let ranks = [];
-        for (let i = 0; i < players.length; i++) {
-            const element = players[i];
-            //console.log(element.playerName, element._GetHand().message,  element._GetHand().rank);
-            ranks.push(element._GetHand().rank);
-            ranked_players.push({ name: element.playerName, rank: element._GetHand().rank });
-        }
-        let maxHandRank = Math.max.apply(null, ranks);
-        let maxRank_players = ranked_players.filter(x => x.rank == maxHandRank);
-
-        for (let j = 0; j < bots.length; j++) {
-            const _bot = bots[j];
-            if (_bot.roomid == roomlist[index].roomid) {
-                _bot.getGameResult(maxRank_players);
+        roomlist[index].table.on("smallBlind", function (player) {
+            //console.log('smallBlind>>', roomlist[index].roomid);
+            let players = roomlist[index].table.players;
+            let ranked_players = [];
+            let ranks = [];
+            for (let i = 0; i < players.length; i++) {
+                const element = players[i];
+                //console.log(element.playerName, element._GetHand().message,  element._GetHand().rank);
+                ranks.push(element._GetHand().rank);
+                ranked_players.push({ name: element.playerName, rank: element._GetHand().rank });
             }
-        }
-    });
-    roomlist[index].table.on("dealCards", function (boardCardCount, currnt_bets) {
-        //console.log('dealCards>>', roomlist[index].roomid);
-        let mainpots = gamemanager.roundMainPots(currnt_bets);
-        roomlist[index].mainPots = gamemanager.getMainPots(roomlist[index].mainPots, mainpots);
-        // let roundName = roomlist[index].table.game.roundName;
-        // if (roomlist[index].table != undefined) {
-        //     if (roundName !== 'Showdown') {
-        //         for (let i = 0; i < bots.length; i++) {
-        //             const _bot = bots[i];
-        //             if (_bot.roomid == roomlist[index].roomid) {
-        //                 _bot.tableRound(roundName);
-        //             }
-        //         }
-        //     }
-        // }
-    });
+            let maxHandRank = Math.max.apply(null, ranks);
+            let maxRank_players = ranked_players.filter(x => x.rank == maxHandRank);
+
+            for (let j = 0; j < bots.length; j++) {
+                const _bot = bots[j];
+                if (_bot.roomid == roomlist[index].roomid) {
+                    _bot.getGameResult(maxRank_players);
+                }
+            }
+        });
+        roomlist[index].table.on("dealCards", function (boardCardCount, currnt_bets) {
+            //console.log('dealCards>>', roomlist[index].roomid);
+            let mainpots = gamemanager.roundMainPots(currnt_bets);
+            roomlist[index].mainPots = gamemanager.getMainPots(roomlist[index].mainPots, mainpots);
+            // let roundName = roomlist[index].table.game.roundName;
+            // if (roomlist[index].table != undefined) {
+            //     if (roundName !== 'Showdown') {
+            //         for (let i = 0; i < bots.length; i++) {
+            //             const _bot = bots[i];
+            //             if (_bot.roomid == roomlist[index].roomid) {
+            //                 _bot.tableRound(roundName);
+            //             }
+            //         }
+            //     }
+            // }
+        });
+    } catch (error) {
+        console.log(error);
+    }
 }
 exports.movebots = function (from, to) {
     for (let i = 0; i < bots.length; i++) {
