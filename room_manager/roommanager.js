@@ -580,7 +580,12 @@ exports.Accept_Friend = function (socket, data) {
                             count++;
                         }
                     }
-                    if (count > 1) { console.log("SO BAD"); return; }
+                    if (count > 1) {
+                        console.log("SO BAD"); let jsonData = {
+                            userid: userid
+                        };
+                        exports.Request_Buddies_List(socket, jsonData);
+                    }
 
                     setTimeout(() => {
                         collection.updateOne(query1, {

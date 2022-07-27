@@ -156,7 +156,7 @@ TableManager.prototype.onTurn = function (player) {
                 name: player.playerName,
                 position: player.getIndex(),
                 chips: player.chips,
-                timeBank: player.timebank,
+                timeBank: 3,//player.timebank,
                 thoughtTime: 6,
                 currentBet: player.GetBet(),
                 maxBet: this.table.getMaxBet(),
@@ -173,9 +173,10 @@ TableManager.prototype.onTurn = function (player) {
         this.turn = true;
         if (player.mode == 'bot') {
             this.actionBot(player)
+            return;
         }
-        const thoughtTime = 6000 + 1000;
-        let timebank = player.timebank * 1000;
+        const thoughtTime = 6000;
+        let timebank = 3 * 1000;
         let timeout = thoughtTime + timebank;
 
         this.currentTimeout = setTimeout(() => {
@@ -676,7 +677,7 @@ TableManager.prototype.onGameOver = async function () {
         }
         else {
 
-            await this.waitforSec(5000);
+            await this.waitforSec(2000);
             await this.addPlayers();
             if (this.botCount > 0) {
                 let bookingPlayers = this.players.filter(p => p.booking == true);
@@ -778,7 +779,7 @@ TableManager.prototype.action = function (info) {
         if (player.table.currentPlayer != info.position && this.checkIndex(player, info.position)) return;
         let message = player.playerName;
         this.removetimeout();
-        player.updateTimebank(parseInt(info.timebank));
+        //player.updateTimebank(parseInt(info.timebank));
         switch (info.action) {
             case 'call':
                 if (info.bet == player.chips) {
@@ -1459,7 +1460,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             this.in_points(player.username, player.userid, player.balance);
             this.removeItem(this.players, player);
             if (!socket) {
-                this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
+                this.waitingPlayers.push({ username: player.username, userid: player.userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
             }
         }
         else {
