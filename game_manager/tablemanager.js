@@ -692,7 +692,7 @@ TableManager.prototype.onGameOver = async function () {
             await this.getStatus();
             await this.tableReposition();
             if (this.table.getIngamePlayersLength() > 1) {
-                let time = 2000;
+                let time = 0;
                 setTimeout(() => {
                     this.table.initNewRound();
                 }, time);
