@@ -304,7 +304,7 @@ TableManager.prototype.actionBot = function (player) {
                                             let buff = 0;
                                             let index = 0;
                                             for (let i = 0; i < this.table.players.length; i++) {
-                                                if (buff <= this.table.players[i].chips) {
+                                                if (this.table.players[i].chips && buff <= this.table.players[i].chips) {
                                                     buff = this.table.players[i].chips;
                                                     index = i;
                                                 }
@@ -1265,7 +1265,16 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
         socket.userid = userid;
 
         socket.join('r' + this.id);
-        this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
+        let wCount = 0;
+        for (let i = 0; i < this.waitingPlayers.length; i++) {
+            if (this.waitingPlayers[i].userid == userid) {
+                wCount++;
+                break;
+            }
+        }
+        if (wCount == 0)
+            this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
+        //this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
 
         let emData = {
             result: "success",
@@ -1463,14 +1472,23 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
 };
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
     try {
+        let wCount = 0;
+        for (let i = 0; i < this.waitingPlayers.length; i++) {
+            if (this.waitingPlayers[i].userid == info.userid) {
+                wCount++;
+                break;
+            }
+        }
+        if (wCount == 0)
+            this.waitingPlayers.push({ username: info.username, userid: info.userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
         let position = -1;
         let player = this.players.find((p) => (p.userid == info.userid && p.username == info.username));
         if (player) {
             this.in_points(player.username, player.userid, player.balance);
             this.removeItem(this.players, player);
-            if (!socket) {
-                this.waitingPlayers.push({ username: player.username, userid: player.userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
-            }
+            // if (!socket) {
+
+            // }
         }
         else {
             player = this.table.players.find((p) => (p && p.playerID == info.userid && p.playerName == info.username));
@@ -1556,11 +1574,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
             moveroom: 0
         };
         this.players.push(player);
-        for (let i = 0; i < this.waitingPlayers.length; i++) {
-            if (this.waitingPlayers[i].userid == userid) {
-                this.waitingPlayers.slice(i, 1);
-            }
-        }
+
         let emitData = {
             result: "success",
             username: username,
@@ -1598,6 +1612,11 @@ TableManager.prototype.buyIn = function (info, socket) {
             player.booking = true;
             console.log(info);
             this.io.sockets.in('r' + this.id).emit('ADD_BALANCE', info);
+            for (let i = 0; i < this.waitingPlayers.length; i++) {
+                if (this.waitingPlayers[i].userid == info.userid) {
+                    this.waitingPlayers.splice(i, 1);
+                }
+            }
             // this.checkTable();
             //console.log('player.userid ?', player.userid)
             if (this.status == 0) {
@@ -1699,6 +1718,7 @@ TableManager.prototype.getWaitingData = function () {
     try {
         return new Promise(resolve => {
             let wCount = 0, wLength = this.waitingPlayers.length;
+            if (wLength == 0) resolve();
             for (let i = 0; i < this.waitingPlayers.length; i++) {
                 let waitingPlayer = this.waitingPlayers[i];
                 let query = { username: waitingPlayer.username, userid: waitingPlayer.userid };
