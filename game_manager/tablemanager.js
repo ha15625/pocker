@@ -48,7 +48,7 @@ function TableManager(param) {
     this.timer = setTimeout(() => {
         //config.Tour_SB_W.array
     }, 300000);;
-
+    this.hardCount = 0;
     this.table = Poker.newTable({
         minBlind: param.smallBlind,
         maxBlind: param.bigBlind,
@@ -225,14 +225,16 @@ TableManager.prototype.actionBot = function (player) {
                 goodcards = true;
             }
         }
-
-        // if(this.table.game.board.length > 3) {
-        //     goodcards = false;
-        //     let winPlayers = this.table.checkWinners();
-        //     if(winPlayers.includes(player.getIndex())) {
-        //         goodcards = true;
-        //     }
-        // }
+        if (this.hardCount > 0) {
+            if (this.table.game.board.length > 3) {
+                goodcards = false;
+                let winPlayers = this.table.checkWinners();
+                if (winPlayers.includes(player.getIndex())) {
+                    goodcards = true;
+                }
+            }
+            this.hardCount--;
+        }
         setTimeout(() => {
             try {
                 let info = {
@@ -694,6 +696,13 @@ TableManager.prototype.onGameOver = async function () {
             if (this.table.getIngamePlayersLength() > 1) {
                 let time = 0;
                 setTimeout(() => {
+                    this.hardCount = 0;
+                    if (this.smallBlind >= 10000000000) {
+                        if (Math.floor(Math.random() * 20) > 10)
+                            this.hardCount = Math.floor(Math.random() * this.botCount);
+                        else
+                            this.hardCount = 0;
+                    }
                     this.table.initNewRound();
                 }, time);
             }
