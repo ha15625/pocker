@@ -58,6 +58,7 @@ function TableManager(param) {
     this.players = [];
     this.instance = null;
     this.waitingPlayers = [];
+    this.isRaise = false;
 }
 TableManager.prototype.initialize = function (tablemanager) {
     //console.log(this.table);
@@ -271,11 +272,14 @@ TableManager.prototype.actionBot = function (player) {
                 else
                     canCheck = true;
                 if (canCheck) info.action = 'check';
-                else if (goodcards == true && !canCheck) {
-
-
+                else if (canCall && this.table.game.board.length <= 3 && (this.isRaise && goodcards || !this.isRaise)) {
+                   info.action = 'call';
+                   info.bet = call;
+                }
+                else if (goodcards == true) {
+                    if (canCheck) info.action = 'check';
                     if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
-                        if ((goodcards == true || player.win == true)) {
+                        if ((goodcards == true && player.win == true)) {
                             let num1 = Math.floor(Math.random() * 10) + 1;
                             if (num1 > 4) {
                                 if (canCall) {
@@ -296,6 +300,7 @@ TableManager.prototype.actionBot = function (player) {
                                             info.action = 'call';
                                         } else {
                                             info.action = 'raise';
+                                            this.isRaise = true;
                                         }
                                         info.legal_bet = info.bet - call;
                                     } else {
@@ -356,6 +361,7 @@ TableManager.prototype.actionBot = function (player) {
                                             info.action = 'call';
                                         } else {
                                             info.action = 'raise';
+                                            this.isRaise = true;
                                         }
                                         info.legal_bet = info.bet - call;
                                     } else {
@@ -403,6 +409,7 @@ TableManager.prototype.actionBot = function (player) {
                         player.bet(fixNumber(info.bet));
                         this.legalBet = fixNumber(info.legal_bet);
                         message += " raised with $" + ChangeUnit(fixNumber(info.bet));
+                        this.isRaise = true;
                         break;
                     case 'allin':
                         message += " bets(allin) with $" + ChangeUnit(player.chips);
@@ -703,6 +710,7 @@ TableManager.prototype.onGameOver = async function () {
                         else
                             this.hardCount = 0;
                     }
+                    this.isRaise = false;
                     this.table.initNewRound();
                 }, time);
             }
@@ -808,6 +816,7 @@ TableManager.prototype.action = function (info) {
                 player.bet(fixNumber(info.bet));
                 this.legalBet = fixNumber(info.legal_bet);
                 message += " raised with $" + ChangeUnit(fixNumber(info.bet));
+                this.isRaise = true;
                 break;
             case 'allin':
                 message += " bets(allin) with $" + ChangeUnit(player.chips);
