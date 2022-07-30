@@ -226,12 +226,10 @@ TableManager.prototype.actionBot = function (player) {
             }
         }
         if (this.hardCount > 0) {
-            if (this.table.game.board.length > 3) {
-                goodcards = false;
-                let winPlayers = this.table.checkWinners();
-                if (winPlayers.includes(player.getIndex())) {
-                    goodcards = true;
-                }
+            goodcards = false;
+            let winPlayers = this.table.checkWinners();
+            if (winPlayers.includes(player.getIndex())) {
+                goodcards = true;
             }
             this.hardCount--;
         }
@@ -272,12 +270,12 @@ TableManager.prototype.actionBot = function (player) {
                     canCall = true;
                 else
                     canCheck = true;
-                if (this.table.game.board.length <= 3 || this.table.game.board.length > 3 && goodcards == true) {
+                if (goodcards == true) {
 
                     if (canCheck && goodcards) info.action = 'check';
                     else {
                         if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
-                            if ((goodcards == true || player.win == true) && this.table.game.board.length <= 3 || (this.table.game.board.length > 3 && goodcards == true)) {
+                            if ((goodcards == true || player.win == true)) {
                                 let num1 = Math.floor(Math.random() * 10) + 1;
                                 if (num1 > 4) {
                                     if (canCall) {
@@ -304,7 +302,8 @@ TableManager.prototype.actionBot = function (player) {
                                             let buff = 0;
                                             let index = 0;
                                             for (let i = 0; i < this.table.players.length; i++) {
-                                                if (this.table.players[i].chips && buff <= this.table.players[i].chips) {
+                                                console.log(this.table.players[i]);
+                                                if (this.table.players[i] != undefined && this.table.players[i].chips != undefined && buff <= this.table.players[i].chips) {
                                                     buff = this.table.players[i].chips;
                                                     index = i;
                                                 }
@@ -698,8 +697,9 @@ TableManager.prototype.onGameOver = async function () {
                 setTimeout(() => {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
-                        if (Math.floor(Math.random() * 20) > 10)
-                            this.hardCount = Math.floor(Math.random() * this.botCount);
+                        let randomC = Math.floor(Math.random() * 20);
+                        if (randomC > 1)
+                            this.hardCount = Math.floor(Math.random() * 3);
                         else
                             this.hardCount = 0;
                     }
@@ -1274,6 +1274,7 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
         }
         if (wCount == 0)
             this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
+
         //this.waitingPlayers.push({ username: username, userid: userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
 
         let emData = {
@@ -1468,19 +1469,21 @@ TableManager.prototype.standUp_forever = function (info, socket) {
     this.standUp(info, socket);
 }
 TableManager.prototype.standUp_force = function (player, bankrupt) {
-    this.standUp({ userid: player.playerID, username: player.playerName }, null, bankrupt);
+    this.standUp({ userid: player.playerID, username: player.playerName, mode: player.mode }, null, bankrupt);
 };
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
     try {
-        let wCount = 0;
-        for (let i = 0; i < this.waitingPlayers.length; i++) {
-            if (this.waitingPlayers[i].userid == info.userid) {
-                wCount++;
-                break;
+        if (info.mode != "bot") {
+            let wCount = 0;
+            for (let i = 0; i < this.waitingPlayers.length; i++) {
+                if (this.waitingPlayers[i].userid == info.userid) {
+                    wCount++;
+                    break;
+                }
             }
+            if (wCount == 0)
+                this.waitingPlayers.push({ username: info.username, userid: info.userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
         }
-        if (wCount == 0)
-            this.waitingPlayers.push({ username: info.username, userid: info.userid, avatarUrl: "", chips: 0, photo_index: 0, photo_type: 0 });
         let position = -1;
         let player = this.players.find((p) => (p.userid == info.userid && p.username == info.username));
         if (player) {
