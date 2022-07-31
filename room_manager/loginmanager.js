@@ -251,6 +251,14 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 
     var collection = database.collection('User_Data');
     var query = { userid: userInfo.userid };
+    let buyData = {
+        id: userInfo.userid,
+        money: userInfo.points,
+        time: new Date()
+    }
+    console.log('buyChips');
+    console.log(buyData);
+    database.collection('Buy_Data').insertOne(buyData);
     if (userInfo.type == "1") // slot
     {
         let bets = fixNumber(userInfo.points1);
@@ -547,7 +555,7 @@ exports.admin_panel_login = function (socket, data) {
 exports.send_chips = function (socket, data) {
     out_points(socket, data.sender_id, data.chips);
     in_points(data.receiver_id, data.chips);
-    Insert_Trans_History(data.sender, data.receiver, data.chips);
+    Insert_Trans_History(data.sender_id, data.receiver_id, data.chips);
 }
 exports.admin_send_chips = function (socket, data) {
 

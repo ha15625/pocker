@@ -232,7 +232,7 @@ TableManager.prototype.actionBot = function (player) {
             if (winPlayers.includes(player.getIndex())) {
                 goodcards = true;
             }
-            this.hardCount--;
+            //this.hardCount--;
         }
         setTimeout(() => {
             try {
@@ -279,7 +279,7 @@ TableManager.prototype.actionBot = function (player) {
                 else if (goodcards == true) {
                     if (canCheck) info.action = 'check';
                     if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
-                        if ((goodcards == true && player.win == true)) {
+                        if ((goodcards == true || player.win == true)) {
                             let num1 = Math.floor(Math.random() * 10) + 1;
                             if (num1 > 4) {
                                 if (canCall) {
@@ -1657,7 +1657,7 @@ TableManager.prototype.buyIn = function (info, socket) {
             if (player) {
                 player.chips += fixNumber(info.buyin_money);
                 out_points(info.username, info.userid, info.buyin_money);
-                this.io.sockets.in('r' + this.id).emit('BUYIN_BALANCE', info);
+                this.io.sockets.in('r' + this.id).emit('BUYIN_BALANCE', info);    
             }
             else {
                 console.log('wrong buyin > nothing user on the table'.err);
