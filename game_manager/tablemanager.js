@@ -272,7 +272,7 @@ TableManager.prototype.actionBot = function (player) {
                 else
                     canCheck = true;
                 if (canCheck) info.action = 'check';
-                else if (canCall && this.table.game.board.length <= 3 && (this.isRaise && goodcards || !this.isRaise)) {
+                else if (canCall && this.table.game.board.length <= 3 && (this.isRaise && goodcards || !this.isRaise) && call <= this.bigBlind) {
                    info.action = 'call';
                    info.bet = call;
                 }
@@ -704,8 +704,9 @@ TableManager.prototype.onGameOver = async function () {
                 setTimeout(() => {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
-                        let randomC = Math.floor(Math.random() * 20);
-                        if (randomC > 1)
+                        this.hardCount = 6;
+                        let randomC = Math.floor(Math.random() * 4);
+                        if (randomC != 0)
                             this.hardCount = 6;
                         else
                             this.hardCount = 0;
@@ -749,6 +750,7 @@ TableManager.prototype.onlyBotsLive = function () {
             return false;
     } catch (error) {
         console.log(error);
+        return true;
     }
 };
 TableManager.prototype.onUpdatePlayer = function (player) {
@@ -1515,7 +1517,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                 }
                 this.in_points(info.username, info.userid, player.chips);
                 this.table.RemovePlayer(info.userid);
-                this.getStatus();
+                //this.getStatus();
                 //console.log("StandUp:Status");
             }
             else {

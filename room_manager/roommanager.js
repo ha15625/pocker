@@ -683,6 +683,8 @@ exports.Request_Cancel_Friend = function (socket, data) {
                 if (result != null) {
                     let Friends = [];
                     Friends = result.friends;
+                    let nFriends = [...new Set(Friends)];
+                    Friends = nFriends;
                     for (let i = 0; i < Friends.length; i++) {
                         if (Friends[i].id == userid) {
                             Friends.splice(i, 1);
@@ -691,7 +693,8 @@ exports.Request_Cancel_Friend = function (socket, data) {
                     }
                     collection.updateOne(query2, {
                         $set: {
-                            friends: Friends
+                            friends: Friends,
+                            buddies: Friends.length
                         }
                     }, function (err) {
                         if (err) throw err;

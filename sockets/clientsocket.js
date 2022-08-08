@@ -157,14 +157,17 @@ exports.initsocket = function (socket, io) {
     });
     // disconnect
     socket.on('disconnect', function () {
-        
-        
         roommanager.OnDisconnect(socket);
     });
     // create bot
     socket.on('CREATE_BOT', function (data) {
         botmanager.createBots(data);
     });
+    // update user slot value
+    socket.on('REQ_UPDATE_SLOT_VALUE', function (data) {
+        loginmanager.UpdateUserSlotValue(socket, data);
+    });
+    
     // update user' balance
     socket.on('REQ_UPDATE_USERINFO_BALANCE', function (data) {
         loginmanager.UpdateUserInfo_Balance(socket, data);

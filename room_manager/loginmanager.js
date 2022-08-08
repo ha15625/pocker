@@ -123,7 +123,7 @@ exports.SignUp = function (socket, data) {
                     facebook_id: data.facebook_id,
                     points: 2000000000,
                     level: 1,
-                    archivement: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+                    archivement: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                     hands_played: 0,
                     hands_won: 0,
                     biggest_pot_won: 0,
@@ -134,7 +134,7 @@ exports.SignUp = function (socket, data) {
                     likes: 0,
                     buddies: 0,
                     friends: [],
-                    recents : [],
+                    recents: [],
                     referral_code: referralCode,
                     referral_count: 0,
                     referral_users: [],
@@ -247,18 +247,33 @@ exports.GetUserInfo = function (socket, userInfo) {
         }
     });
 }
+exports.UpdateUserSlotValue = function (socket, userInfo) {
+    const collection = database.collection("Slot_Data");
+    const query = { userid: userInfo.userid };
+    collection.findOne(query, function (err, result) {
+        if (err) console.log("error17", err);
+        else {
+            if (result == null) {
+                const slotData = {
+                    id: userInfo.userid,
+                    saveCoins: userInfo.saveCoins,
+                    saveFbCoins: userInfo.saveFbCoins,
+                    saveLevel: userInfo.saveLevel,
+                    saveLevelProgress: userInfo.saveLevelProgress
+                }
+                collection.insertOne(slotData);
+            }
+            else {
+                collection.updateOne(query, { $set: { saveCoins: userInfo.saveCoins, saveFbCoins: userInfo.saveFbCoins, saveLevel: userInfo.saveLevel, saveLevelProgress: userInfo.saveLevelProgress } }, function (err) {
+                    if (err) console.log("error18", err);
+                });
+            }
+        }
+    });
+}
 exports.UpdateUserInfo_Balance = function (socket, userInfo) {
-
     var collection = database.collection('User_Data');
     var query = { userid: userInfo.userid };
-    let buyData = {
-        id: userInfo.userid,
-        money: userInfo.points,
-        time: new Date()
-    }
-    console.log('buyChips');
-    console.log(buyData);
-    database.collection('Buy_Data').insertOne(buyData);
     if (userInfo.type == "1") // slot
     {
         let bets = fixNumber(userInfo.points1);
@@ -287,6 +302,17 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
         collection.findOne(query, function (err, result) {
             if (err) console.log("error17", err);
             else {
+                let buyData = {
+                    id: userInfo.userid,
+                    money: userInfo.points,
+                    addOn: userInfo.points - result.points,
+                    time: new Date(),
+                    type: userInfo.type
+                }
+                database.collection('Buy_Data').insertOne(buyData);
+                console.log('buyChips');
+                console.log(buyData);
+
                 let points = fixNumber(userInfo.points);
                 collection.updateOne(query, { $set: { points: points } }, function (err) {
                     if (err) throw err;
@@ -316,6 +342,30 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
         let points = userInfo.points;
         let tableId = userInfo.tableId;
         roommanager.minusChipsTouserInTable(tableId, userid, points);
+    }
+    else if (userInfo.type == "6") {
+        collection.findOne(query, function (err, result) {
+            if (err) console.log("error17", err);
+            else {
+                let buyData = {
+                    id: userInfo.userid,
+                    money: userInfo.points,
+                    addOn: userInfo.points - result.points,
+                    time: new Date(),
+                    type: userInfo.type
+                }
+                database.collection('Slot_Data').insertOne(buyData);
+                console.log('slot');
+                console.log(buyData);
+
+                let points = fixNumber(userInfo.points);
+                collection.updateOne(query, { $set: { points: points } }, function (err) {
+                    if (err) throw err;
+                    // else
+                    //     socket.emit('REQ_UPDATE_USERINFO_BALANCE_RESULT', { result: points });
+                });
+            }
+        });
     }
 }
 exports.Get_User_Photo = function (info, socket) {
@@ -685,7 +735,7 @@ function Insert_Trans_History(sender, receiver, chips) {
     collection.insertOne(insertData);
 }
 
-function fixNumber (str) {
+function fixNumber(str) {
     let newStr = str.toString().replace(/\,/g, '');
     let _fixnumber = Number(newStr);
     return _fixnumber;
@@ -695,7 +745,7 @@ exports.Update_Archivement = function (socket, userInfo) {
 
     var collection = database.collection('User_Data');
     var query = { userid: userInfo.userid };
-    
+
     let archMoney = fixNumber(userInfo.archivement_money);
     let archIndex = fixNumber(userInfo.archivement_index);
     collection.findOne(query, function (err, result) {
@@ -708,7 +758,7 @@ exports.Update_Archivement = function (socket, userInfo) {
                 else
                     socket.emit('UPDATE_USER_ARCHIVEMENT', { result: points, arch: result.archivement });
             });
-           
+
         }
     });
 }
