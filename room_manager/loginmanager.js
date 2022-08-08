@@ -25,11 +25,11 @@ exports.setsocketio = function (socketio) {
     io = socketio;
 };
 exports.CheckVersionCode = function (socket) {
-    let emitdata = { result: '5.9' };
+    let emitdata = { result: '6.1' };
     socket.emit('CHECK_VERSION_CODE_RESULT', emitdata);
 }
 exports.LogIn = function (socket, userInfo) {
-    if (userInfo.version == null || userInfo.version != '5.9') {
+    if (userInfo.version == null || userInfo.version != '6.1') {
         let emitdata = { result: 'failed' };
         socket.emit('GET_LOGIN_RESULT', emitdata);
     }
@@ -89,7 +89,7 @@ function makeRandom(min, max) {
     return RandVal;
 }
 exports.SignUp = function (socket, data) {
-    if (data.version == null || data.version != '5.9') {
+    if (data.version == null || data.version != '6.1') {
         socket.emit('GET_REGISTER_RESULT', { result: 'failed' });
     }
     else {
