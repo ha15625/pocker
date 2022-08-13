@@ -169,7 +169,7 @@ exports.initsocket = function (socket, io) {
     });
     
     // update user' balance
-    socket.on('REQ_UPDATE_USERINFO_BALANCE', function (data) {
+    socket.on('REQ_UPDATE_USERINFO_APP_BALANCE', function (data) {
         loginmanager.UpdateUserInfo_Balance(socket, data);
     });
     socket.on('REQUEST_ALL_PLAYER_RANKINGINFO', function (data) {

@@ -200,6 +200,7 @@ TableManager.prototype.onTurn = function (player) {
 TableManager.prototype.actionBot = function (player) {
     try {
         let goodcards = false;
+        let botgoodcards = false;
         let card = '';
         let pSuit = '';
         for (let ind = 0; ind < player.cards.length; ind++) {
@@ -229,6 +230,15 @@ TableManager.prototype.actionBot = function (player) {
         if (this.hardCount > 0) {
             goodcards = false;
             let winPlayers = this.table.checkWinners();
+
+            let playerWinCount = 0;
+            for (let i = 0; i < this.table.players.length; i++) {
+                console.log(this.table.players[i]);
+                if (this.table.players[i] != undefined && this.table.players[i].mode != 'bot') {
+                    if (winPlayers.includes(this.table.players[i].getIndex())) playerWinCount++;
+                }
+            }
+            if (playerWinCount == 0) botgoodcards = true;
             if (winPlayers.includes(player.getIndex())) {
                 goodcards = true;
             }
@@ -272,11 +282,19 @@ TableManager.prototype.actionBot = function (player) {
                 else
                     canCheck = true;
                 if (canCheck) info.action = 'check';
-                else if (canCall && this.table.game.board.length <= 3 && (this.isRaise && goodcards || !this.isRaise) && call <= this.bigBlind) {
-                   info.action = 'call';
-                   info.bet = call;
+                else if (canCall && (this.isRaise && (botgoodcards || goodcards) || !this.isRaise)) {
+                    if (!this.isRaise && canCall) {
+                        info.action = 'call';
+                        info.bet = call;
+                    } else if (this.isRaise) {
+                        let random = goodcards ? 10 : Math.floor(Math.random() * 10);
+                        if (random > 5) {
+                            info.action = 'call';
+                            info.bet = call;
+                        }
+                    }
                 }
-                else if (goodcards == true) {
+                if (goodcards == true) {
                     if (canCheck) info.action = 'check';
                     if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
                         if ((goodcards == true || player.win == true)) {
@@ -384,7 +402,7 @@ TableManager.prototype.actionBot = function (player) {
                     }
 
                 }
-                else {
+                else if (!botgoodcards) {
                     info.action = 'fold';
                 }
                 let message = player.playerName;
@@ -1659,7 +1677,7 @@ TableManager.prototype.buyIn = function (info, socket) {
             if (player) {
                 player.chips += fixNumber(info.buyin_money);
                 out_points(info.username, info.userid, info.buyin_money);
-                this.io.sockets.in('r' + this.id).emit('BUYIN_BALANCE', info);    
+                this.io.sockets.in('r' + this.id).emit('BUYIN_BALANCE', info);
             }
             else {
                 console.log('wrong buyin > nothing user on the table'.err);
