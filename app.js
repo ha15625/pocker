@@ -34,12 +34,12 @@ var https_options = {
     fs.readFileSync('./ca_bundle.crt')
   ]
 };
-var server = require('https').createServer(https_options, function (req, res) {
+var server = require('https').createServer(https_options, app, function (req, res) {
 
-//   res.writeHead(200);
+  res.writeHead(200);
 
-//   res.end("Welcome to Node.js HTTPS Servern");
-// });
+  res.end("Welcome to Node.js HTTPS Servern");
+});
 // var io = require('socket.io')(server, {'pingInterval': 1000, 'pingTimeout': 25000,'rememberTransport': false,
 //     'reconnection': true, 'forceNew': [true], 'upgrade': false, 'transport': ['websocket'], 
 //     'secure': true});
