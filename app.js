@@ -40,6 +40,7 @@ var server = require('https').createServer(https_options, app, function (req, re
 
   res.end("Welcome to Node.js HTTPS Servern");
 });
+
 // var io = require('socket.io')(server, {'pingInterval': 1000, 'pingTimeout': 25000,'rememberTransport': false,
 //     'reconnection': true, 'forceNew': [true], 'upgrade': false, 'transport': ['websocket'], 
 //     'secure': true});

@@ -46,6 +46,14 @@ exports.LogIn = function (socket, userInfo) {
                 }
                 else {
                     if (result.connect != "") {
+                        let clients = io.sockets.clients();
+                        for (let i = 0; i < clients.length; i++) {
+                            if (clients[i].id == socket.id && (clients[i].username == undefined || clients[i].username == null)) {
+                                socket.username = result.userid;
+                                socket.emit('GET_LOGIN_RESULT', { result: 'success', data: result });
+                                break;
+                            }
+                        }
                         let emitdata = { result: 'failed' };
                         socket.emit('GET_LOGIN_RESULT', emitdata);
                     }

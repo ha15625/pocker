@@ -1389,9 +1389,9 @@ TableManager.prototype.createBots = function (createCount) {
                         playerName: username,
                         playerID: userid,
                         chips: parseInt(this.minBuyin),
-                        avatar: Math.floor(Math.random() * 12) + 1,
+                        avatar: Math.floor(Math.random() * 119) + 1,
                         photoUrl: userphoto,
-                        photoType: 1,
+                        photoType: 0,
                         mode: 'bot'
                     });
                 } else {
