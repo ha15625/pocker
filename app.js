@@ -23,23 +23,23 @@ var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
 var app = express();
-// var server = require('http').createServer(app);
-var https_options = {
-  key: fs.readFileSync("./myserver.key"),
+var server = require('http').createServer(app);
+// var https_options = {
+//   key: fs.readFileSync("./myserver.key"),
 
-  cert: fs.readFileSync("./pokernights_online.crt"),
+//   cert: fs.readFileSync("./pokernights_online.crt"),
 
-  ca: [
-    //fs.readFileSync('path/to/CA_root.crt'),
-    fs.readFileSync('./ca_bundle.crt')
-  ]
-};
-var server = require('https').createServer(https_options, app, function (req, res) {
+//   ca: [
+//     //fs.readFileSync('path/to/CA_root.crt'),
+//     fs.readFileSync('./ca_bundle.crt')
+//   ]
+// };
+// var server = require('https').createServer(https_options, app, function (req, res) {
 
-  res.writeHead(200);
+//   res.writeHead(200);
 
-  res.end("Welcome to Node.js HTTPS Servern");
-});
+//   res.end("Welcome to Node.js HTTPS Servern");
+// });
 
 // var io = require('socket.io')(server, {'pingInterval': 1000, 'pingTimeout': 25000,'rememberTransport': false,
 //     'reconnection': true, 'forceNew': [true], 'upgrade': false, 'transport': ['websocket'], 

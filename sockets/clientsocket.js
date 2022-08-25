@@ -201,6 +201,9 @@ exports.initsocket = function (socket, io) {
     socket.on('REQ_BUDDIES', function (data) {
         roommanager.Request_Buddies_List(socket, data);
     });
+    socket.on('REQ_BUDDIES1', function (data) {
+        roommanager.Request_Buddies_List1(socket, data);
+    });
     socket.on('REQ_RECENTS', function (data) {
         roommanager.Request_Recents_List(socket, data);
     });
@@ -248,6 +251,12 @@ exports.initsocket = function (socket, io) {
     });
     socket.on('ADMIN_LOGIN', function (data) {
         loginmanager.admin_panel_login(socket, data);
+    });
+    socket.on('ADMIN_REMOVE_CHAT', function (data) {
+        loginmanager.admin_remove_chat(socket, data);
+    });
+    socket.on('ADMIN_REMOVE_ALL_CHAT', function (data) {
+        loginmanager.admin_remove_all_chat(socket, data);
     });
     socket.on('SEND_CHIPS', function (data) {
         loginmanager.send_chips(socket, data);

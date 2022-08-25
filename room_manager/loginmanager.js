@@ -1,4 +1,5 @@
 const publicIp = require('public-ip');
+var mongodb = require('mongodb');
 
 var database = null;
 var roommanager = require('../room_manager/roommanager');
@@ -19,17 +20,18 @@ exports.initdatabase = function (db) {
         //console.log(await publicIp.v6());
         //=> 'fe80::200:f8ff:fe21:67cf'
     })();
+    var collection = database.collection('User_Data');
 };
 
 exports.setsocketio = function (socketio) {
     io = socketio;
 };
 exports.CheckVersionCode = function (socket) {
-    let emitdata = { result: '6.3' };
+    let emitdata = { result: '6.6' };
     socket.emit('CHECK_VERSION_CODE_RESULT', emitdata);
 }
 exports.LogIn = function (socket, userInfo) {
-    if (userInfo.version == null || userInfo.version != '6.3') {
+    if (userInfo.version == null || userInfo.version != '6.6') {
         let emitdata = { result: 'failed' };
         socket.emit('GET_LOGIN_RESULT', emitdata);
     }
@@ -97,7 +99,7 @@ function makeRandom(min, max) {
     return RandVal;
 }
 exports.SignUp = function (socket, data) {
-    if (data.version == null || data.version != '6.3') {
+    if (data.version == null || data.version != '6.6') {
         socket.emit('GET_REGISTER_RESULT', { result: 'failed' });
     }
     else {
@@ -572,6 +574,76 @@ exports.panel_login = function (socket, data) {
 
     }
 }
+exports.admin_remove_chat = function (socket, data) {
+    let collection = database.collection('Public_Chat_Data');
+    let query = {
+        _id: new mongodb.ObjectId(data.id)
+    };
+    collection.deleteOne(query, function (err, removed) {
+        if (err) {
+            console.log("removeerr", err);
+        }
+        else {
+            let chats = [];
+            collection.find().toArray(function (err, docs) {
+                if (!err) {
+                    if (docs.length > 0) {
+                        let counter = 0;
+                        for (let i = docs.length - 1; i >= 0; i--) {
+                            counter++;
+                            const element = docs[i];
+                            chats.push(element);
+                            if (counter == 100)
+                                break;
+                        }
+                    }
+                }
+            });
+            setTimeout(() => {
+                let emitdata = {
+                    result: "success",
+                    chat_data: chats
+                }
+                socket.emit('RES_PUBLIC_CHAT_RESULT', emitdata);
+            }, 100);
+        }
+    });
+};
+exports.admin_remove_all_chat = function (socket, data) {
+    let collection = database.collection('Public_Chat_Data');
+    let query = {
+        _id: data.id
+    };
+    collection.deleteMany(function (err, removed) {
+        if (err) {
+            console.log("removeallerr", err);
+        }
+        else {
+            let chats = [];
+            collection.find().toArray(function (err, docs) {
+                if (!err) {
+                    if (docs.length > 0) {
+                        let counter = 0;
+                        for (let i = docs.length - 1; i >= 0; i--) {
+                            counter++;
+                            const element = docs[i];
+                            chats.push(element);
+                            if (counter == 100)
+                                break;
+                        }
+                    }
+                }
+            });
+            setTimeout(() => {
+                let emitdata = {
+                    result: "success",
+                    chat_data: chats
+                }
+                socket.emit('RES_PUBLIC_CHAT_RESULT', emitdata);
+            }, 100);
+        }
+    });
+};
 exports.admin_panel_login = function (socket, data) {
     let collection = database.collection('User_Data');
     let totalUsers = 0;

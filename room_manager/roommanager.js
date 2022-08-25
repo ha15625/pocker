@@ -636,6 +636,10 @@ exports.Accept_Friend = function (socket, data) {
 
             }
         });
+        let jsonData = {
+            userid: userid
+        };
+        exports.Request_Buddies_List(socket, jsonData)
     } catch (error) {
         console.log(error);
     }
@@ -800,6 +804,105 @@ exports.Request_Buddies_List = function (socket, data) {
                                 friends: myfriends
                             }
                             socket.emit('REQ_BUDDIES_RESULT', emitdata);
+                            clearInterval(interval);
+                        }
+                    }, 200);
+                }
+            }
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+exports.Request_Buddies_List1 = function (socket, data) {
+    try {
+        let collection = database.collection('User_Data');
+        let userid = data.userid;
+        let query = {
+            userid: userid
+        };
+        let myfriends = [];
+        collection.findOne(query, function (err, result) {
+            if (err) console.log("error28", err);
+            else {
+                if (result != null) {
+                    let Friends = result.friends;
+                    let nFriends = [...new Set(Friends)];
+                    Friends = nFriends;
+                    let counter = Friends.length;
+                    let i = -1;
+                    let interval = setInterval(() => {
+                        i++;
+                        if (i < counter) {
+                            let id = Friends[i].id;
+                            let accepted = Friends[i].accepted;
+                            let query1 = {
+                                userid: id
+                            };
+                            collection.findOne(query1, function (err, result1) {
+                                if (err) {
+                                    console.log("error29", err);
+                                    //counter--;
+                                } else {
+                                    //counter--;
+                                    if (result1 != null) {
+                                        let check_online = false;
+                                        if (result1.connect == "")
+                                            check_online = false;
+                                        else
+                                            check_online = true;
+                                        let connectedRoom = {};
+                                        if (result1.connected_room == "") {
+                                            connectedRoom = {
+                                                roomid: -1,
+                                                sb: 0,
+                                                bb: 0,
+                                                minBuyin: 0,
+                                                maxBuyin: 0,
+                                                maxSeats: 0
+                                            }
+                                        } else {
+                                            let table = tables.find(t => t.id == result1.connected_room);
+                                            if (table) {
+                                                let sb = table.smallBlind;
+                                                let bb = table.bigBlind;
+                                                let min_buyin = table.minBuyin;
+                                                let max_buyin = table.maxBuyin;
+                                                let max_seats = table.maxPlayers;
+                                                connectedRoom = {
+                                                    roomid: result1.connected_room,
+                                                    sb: sb,
+                                                    bb: bb,
+                                                    minBuyin: min_buyin,
+                                                    maxBuyin: max_buyin,
+                                                    maxSeats: max_seats
+                                                }
+                                            }
+                                        }
+                                        setTimeout(() => {
+                                            let f = {
+                                                friend_id: id,
+                                                friend_name: result1.username,
+                                                friend_photoIndex: result1.photo_index,
+                                                friend_photo: result1.photo,
+                                                friend_photoType: result1.photo_type,
+                                                friend_connected_room: connectedRoom,
+                                                friend_online: check_online,
+                                                accepted: accepted
+                                            };
+                                            myfriends.push(f);
+                                        }, 100);
+                                    }
+                                }
+                            });
+                        } else {
+
+                            let emitdata = {
+                                result: "success",
+                                userid: userid,
+                                friends: myfriends
+                            }
+                            socket.emit('REQ_BUDDIES_RESULT1', emitdata);
                             clearInterval(interval);
                         }
                     }, 200);
@@ -1203,126 +1306,126 @@ function roundNum(n) {
 }
 
 var realPhotos = [
-    'https://pokernights.online:10015/userphotos/1.png',
-    'https://pokernights.online:10015/userphotos/2.png',
-    'https://pokernights.online:10015/userphotos/3.png',
-    'https://pokernights.online:10015/userphotos/4.png',
-    'https://pokernights.online:10015/userphotos/5.png',
-    'https://pokernights.online:10015/userphotos/6.png',
-    'https://pokernights.online:10015/userphotos/7.png',
-    'https://pokernights.online:10015/userphotos/8.png',
-    'https://pokernights.online:10015/userphotos/9.png',
-    'https://pokernights.online:10015/userphotos/10.png',
-    'https://pokernights.online:10015/userphotos/11.png',
-    'https://pokernights.online:10015/userphotos/12.png',
-    'https://pokernights.online:10015/userphotos/13.png',
-    'https://pokernights.online:10015/userphotos/14.png',
-    'https://pokernights.online:10015/userphotos/15.png',
-    'https://pokernights.online:10015/userphotos/16.png',
-    'https://pokernights.online:10015/userphotos/17.png',
-    'https://pokernights.online:10015/userphotos/18.png',
-    'https://pokernights.online:10015/userphotos/19.png',
-    'https://pokernights.online:10015/userphotos/20.png',
-    'https://pokernights.online:10015/userphotos/21.png',
-    'https://pokernights.online:10015/userphotos/22.png',
-    'https://pokernights.online:10015/userphotos/23.png',
-    'https://pokernights.online:10015/userphotos/24.png',
-    'https://pokernights.online:10015/userphotos/25.png',
-    'https://pokernights.online:10015/userphotos/26.png',
-    'https://pokernights.online:10015/userphotos/27.png',
-    'https://pokernights.online:10015/userphotos/28.png',
-    'https://pokernights.online:10015/userphotos/29.png',
-    'https://pokernights.online:10015/userphotos/30.png',
-    'https://pokernights.online:10015/userphotos/31.png',
-    'https://pokernights.online:10015/userphotos/32.png',
-    'https://pokernights.online:10015/userphotos/33.png',
-    'https://pokernights.online:10015/userphotos/34.png',
-    'https://pokernights.online:10015/userphotos/35.png',
-    'https://pokernights.online:10015/userphotos/36.png',
-    'https://pokernights.online:10015/userphotos/37.png',
-    'https://pokernights.online:10015/userphotos/38.png',
-    'https://pokernights.online:10015/userphotos/39.png',
-    'https://pokernights.online:10015/userphotos/40.png',
-    'https://pokernights.online:10015/userphotos/41.png',
-    'https://pokernights.online:10015/userphotos/42.png',
-    'https://pokernights.online:10015/userphotos/43.png',
-    'https://pokernights.online:10015/userphotos/44.png',
-    'https://pokernights.online:10015/userphotos/45.png',
-    'https://pokernights.online:10015/userphotos/46.png',
-    'https://pokernights.online:10015/userphotos/47.png',
-    'https://pokernights.online:10015/userphotos/48.png',
-    'https://pokernights.online:10015/userphotos/49.png',
-    'https://pokernights.online:10015/userphotos/50.png',
-    'https://pokernights.online:10015/userphotos/51.png',
-    'https://pokernights.online:10015/userphotos/52.png',
-    'https://pokernights.online:10015/userphotos/53.png',
-    'https://pokernights.online:10015/userphotos/54.png',
-    'https://pokernights.online:10015/userphotos/55.png',
-    'https://pokernights.online:10015/userphotos/56.png',
-    'https://pokernights.online:10015/userphotos/57.png',
-    'https://pokernights.online:10015/userphotos/58.png',
-    'https://pokernights.online:10015/userphotos/59.png',
-    'https://pokernights.online:10015/userphotos/60.png',
-    'https://pokernights.online:10015/userphotos/61.png',
-    'https://pokernights.online:10015/userphotos/62.png',
-    'https://pokernights.online:10015/userphotos/63.png',
-    'https://pokernights.online:10015/userphotos/64.png',
-    'https://pokernights.online:10015/userphotos/65.png',
-    'https://pokernights.online:10015/userphotos/66.png',
-    'https://pokernights.online:10015/userphotos/67.png',
-    'https://pokernights.online:10015/userphotos/68.png',
-    'https://pokernights.online:10015/userphotos/69.png',
-    'https://pokernights.online:10015/userphotos/70.png',
-    'https://pokernights.online:10015/userphotos/71.png',
-    'https://pokernights.online:10015/userphotos/72.png',
-    'https://pokernights.online:10015/userphotos/73.png',
-    'https://pokernights.online:10015/userphotos/74.png',
-    'https://pokernights.online:10015/userphotos/75.png',
-    'https://pokernights.online:10015/userphotos/76.png',
-    'https://pokernights.online:10015/userphotos/77.png',
-    'https://pokernights.online:10015/userphotos/78.png',
-    'https://pokernights.online:10015/userphotos/79.png',
-    'https://pokernights.online:10015/userphotos/80.png',
-    'https://pokernights.online:10015/userphotos/81.png',
-    'https://pokernights.online:10015/userphotos/82.png',
-    'https://pokernights.online:10015/userphotos/83.png',
-    'https://pokernights.online:10015/userphotos/84.png',
-    'https://pokernights.online:10015/userphotos/85.png',
-    'https://pokernights.online:10015/userphotos/86.png',
-    'https://pokernights.online:10015/userphotos/87.png',
-    'https://pokernights.online:10015/userphotos/88.png',
-    'https://pokernights.online:10015/userphotos/89.png',
-    'https://pokernights.online:10015/userphotos/90.png',
-    'https://pokernights.online:10015/userphotos/91.png',
-    'https://pokernights.online:10015/userphotos/92.png',
-    'https://pokernights.online:10015/userphotos/93.png',
-    'https://pokernights.online:10015/userphotos/94.png',
-    'https://pokernights.online:10015/userphotos/95.png',
-    'https://pokernights.online:10015/userphotos/96.png',
-    'https://pokernights.online:10015/userphotos/97.png',
-    'https://pokernights.online:10015/userphotos/98.png',
-    'https://pokernights.online:10015/userphotos/99.png',
-    'https://pokernights.online:10015/userphotos/100.png',
-    'https://pokernights.online:10015/userphotos/101.png',
-    'https://pokernights.online:10015/userphotos/102.png',
-    'https://pokernights.online:10015/userphotos/103.png',
-    'https://pokernights.online:10015/userphotos/104.png',
-    'https://pokernights.online:10015/userphotos/105.png',
-    'https://pokernights.online:10015/userphotos/106.png',
-    'https://pokernights.online:10015/userphotos/107.png',
-    'https://pokernights.online:10015/userphotos/108.png',
-    'https://pokernights.online:10015/userphotos/109.png',
-    'https://pokernights.online:10015/userphotos/110.png',
-    'https://pokernights.online:10015/userphotos/111.png',
-    'https://pokernights.online:10015/userphotos/112.png',
-    'https://pokernights.online:10015/userphotos/113.png',
-    'https://pokernights.online:10015/userphotos/114.png',
-    'https://pokernights.online:10015/userphotos/115.png',
-    'https://pokernights.online:10015/userphotos/116.png',
-    'https://pokernights.online:10015/userphotos/117.png',
-    'https://pokernights.online:10015/userphotos/118.png',
-    'https://pokernights.online:10015/userphotos/119.png',
-    'https://pokernights.online:10015/userphotos/120.png'
+    '/userphotos/1.png',
+    '/userphotos/2.png',
+    '/userphotos/3.png',
+    '/userphotos/4.png',
+    '/userphotos/5.png',
+    '/userphotos/6.png',
+    '/userphotos/7.png',
+    '/userphotos/8.png',
+    '/userphotos/9.png',
+    '/userphotos/10.png',
+    '/userphotos/11.png',
+    '/userphotos/12.png',
+    '/userphotos/13.png',
+    '/userphotos/14.png',
+    '/userphotos/15.png',
+    '/userphotos/16.png',
+    '/userphotos/17.png',
+    '/userphotos/18.png',
+    '/userphotos/19.png',
+    '/userphotos/20.png',
+    '/userphotos/21.png',
+    '/userphotos/22.png',
+    '/userphotos/23.png',
+    '/userphotos/24.png',
+    '/userphotos/25.png',
+    '/userphotos/26.png',
+    '/userphotos/27.png',
+    '/userphotos/28.png',
+    '/userphotos/29.png',
+    '/userphotos/30.png',
+    '/userphotos/31.png',
+    '/userphotos/32.png',
+    '/userphotos/33.png',
+    '/userphotos/34.png',
+    '/userphotos/35.png',
+    '/userphotos/36.png',
+    '/userphotos/37.png',
+    '/userphotos/38.png',
+    '/userphotos/39.png',
+    '/userphotos/40.png',
+    '/userphotos/41.png',
+    '/userphotos/42.png',
+    '/userphotos/43.png',
+    '/userphotos/44.png',
+    '/userphotos/45.png',
+    '/userphotos/46.png',
+    '/userphotos/47.png',
+    '/userphotos/48.png',
+    '/userphotos/49.png',
+    '/userphotos/50.png',
+    '/userphotos/51.png',
+    '/userphotos/52.png',
+    '/userphotos/53.png',
+    '/userphotos/54.png',
+    '/userphotos/55.png',
+    '/userphotos/56.png',
+    '/userphotos/57.png',
+    '/userphotos/58.png',
+    '/userphotos/59.png',
+    '/userphotos/60.png',
+    '/userphotos/61.png',
+    '/userphotos/62.png',
+    '/userphotos/63.png',
+    '/userphotos/64.png',
+    '/userphotos/65.png',
+    '/userphotos/66.png',
+    '/userphotos/67.png',
+    '/userphotos/68.png',
+    '/userphotos/69.png',
+    '/userphotos/70.png',
+    '/userphotos/71.png',
+    '/userphotos/72.png',
+    '/userphotos/73.png',
+    '/userphotos/74.png',
+    '/userphotos/75.png',
+    '/userphotos/76.png',
+    '/userphotos/77.png',
+    '/userphotos/78.png',
+    '/userphotos/79.png',
+    '/userphotos/80.png',
+    '/userphotos/81.png',
+    '/userphotos/82.png',
+    '/userphotos/83.png',
+    '/userphotos/84.png',
+    '/userphotos/85.png',
+    '/userphotos/86.png',
+    '/userphotos/87.png',
+    '/userphotos/88.png',
+    '/userphotos/89.png',
+    '/userphotos/90.png',
+    '/userphotos/91.png',
+    '/userphotos/92.png',
+    '/userphotos/93.png',
+    '/userphotos/94.png',
+    '/userphotos/95.png',
+    '/userphotos/96.png',
+    '/userphotos/97.png',
+    '/userphotos/98.png',
+    '/userphotos/99.png',
+    '/userphotos/100.png',
+    '/userphotos/101.png',
+    '/userphotos/102.png',
+    '/userphotos/103.png',
+    '/userphotos/104.png',
+    '/userphotos/105.png',
+    '/userphotos/106.png',
+    '/userphotos/107.png',
+    '/userphotos/108.png',
+    '/userphotos/109.png',
+    '/userphotos/110.png',
+    '/userphotos/111.png',
+    '/userphotos/112.png',
+    '/userphotos/113.png',
+    '/userphotos/114.png',
+    '/userphotos/115.png',
+    '/userphotos/116.png',
+    '/userphotos/117.png',
+    '/userphotos/118.png',
+    '/userphotos/119.png',
+    '/userphotos/120.png'
 ];
 
 var realNames = [
