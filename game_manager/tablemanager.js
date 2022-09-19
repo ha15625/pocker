@@ -233,7 +233,7 @@ TableManager.prototype.actionBot = function (player) {
 
             let playerWinCount = 0;
             for (let i = 0; i < this.table.players.length; i++) {
-                console.log(this.table.players[i]);
+                //console.log(this.table.players[i]);
                 if (this.table.players[i] != undefined && this.table.players[i].mode != 'bot') {
                     if (winPlayers.includes(this.table.players[i].getIndex())) playerWinCount++;
                 }
@@ -494,6 +494,8 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
                         hands1.push(_hand);
                     }
                 }
+                console.log("hands1");
+                console.log(hands1);
                 let handStrengths1 = Ranker.orderHands(hands1, board1);
                 emitdata = {
                     roomid: this.id,
@@ -521,6 +523,7 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
                         hands2.push(_hand);
                     }
                 }
+
                 let handStrengths2 = Ranker.orderHands(hands2, board2);
                 emitdata = {
                     roomid: this.id,
@@ -568,12 +571,27 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
                     if (boardCardCount == 5) {
                         this.showWinDelay = 1500;
                     }
+                    this.legalBet = 0;
+                    let board3 = this.table.game.board;
+                    let hands3 = [];
+                    for (let i = 0; i < this.table.players.length; i++) {
+                        const element = this.table.players[i];
+                        if (element && element.cards.length == 2) {
+                            let _hand = {
+                                id: i,
+                                cards: element.cards
+                            };
+                            hands3.push(_hand);
+                        }
+                    }
+                    let handStrengths3 = Ranker.orderHands(hands3, board3);
                     emitdata = {
                         roomid: this.id,
                         roundname: 'Showdown',
                         card: this.table.game.board,
                         pot: '' + this.table.getRoundPot(),
-                        mainpots: this.mainPots
+                        mainpots: this.mainPots,
+                        handStrengths: handStrengths3
                     };
                     this.io.in('r' + this.id).emit('TABLE_ROUND', emitdata);
                 }
@@ -582,6 +600,7 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
         if (emitdata != null) {
             if (emitdata.roundname != "Showdown") {
                 setTimeout(() => {
+
                     if (!this.table.onlyoneplayerremaining()) {
                         this.io.in('r' + this.id).emit('TABLE_ROUND', emitdata);
                     }
