@@ -49,8 +49,8 @@ exports.LogIn = function (socket, userInfo) {
                 else {
                     if (result.connect != "") {
                         let clients = io.sockets.clients();
-                        for (let i = 0; i < clients.length; i++) {
-                            if (clients[i].id == socket.id && (clients[i].username == undefined || clients[i].username == null)) {
+                        for (let i = 0; i < clients.sockets.length; i++) {
+                            if (clients.sockets[i].id == socket.id && (clients[i].sockets.username == undefined || clients[i].sockets.username == null)) {
                                 socket.username = result.userid;
                                 socket.emit('GET_LOGIN_RESULT', { result: 'success', data: result });
                                 break;
@@ -426,6 +426,7 @@ exports.Rankinginfo = function (data, socket) {
             }
         }
     });
+
     setTimeout(function () {
         userInfo = userInfo.substring(0, userInfo.length - 1);
         userInfo = '{'
@@ -648,6 +649,7 @@ exports.admin_panel_login = function (socket, data) {
     let collection = database.collection('User_Data');
     let totalUsers = 0;
     let onlineUsers = 0;
+    let clients = io.sockets.clients();
     collection.find().toArray(function (err, docs) {
         if (!err) {
             totalUsers = docs.length;
@@ -655,8 +657,27 @@ exports.admin_panel_login = function (socket, data) {
                 let count = 0;
                 for (let i = 0; i < docs.length; i++) {
                     const element = docs[i];
-                    if (element.connect != "")
-                        count++;
+                    if (element.connect != "") {
+                        let findCount = 0;
+                        console.log(clients.sockets.length);
+                        for(let key in clients.sockets) {
+                            if (element.connect == key) {
+                                findCount++;
+                                break;
+                            }
+                        }
+                        
+                        if (findCount == 0) {
+                            collection.updateOne({userid: element.userid}, {
+                                $set: {
+                                    connect: ""
+                                }
+                            });
+                        }
+                        else {
+                            count++;
+                        }
+                    }
                 }
                 onlineUsers = count;
             }

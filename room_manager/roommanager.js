@@ -933,7 +933,7 @@ exports.Request_Recents_List = function (socket, data) {
                         i++;
                         if (i < counter) {
                             let id = Friends[i];
-
+                            let requested = false;
                             let query1 = {
                                 userid: id
                             };
@@ -977,6 +977,12 @@ exports.Request_Recents_List = function (socket, data) {
                                                 }
                                             }
                                         }
+                                        for (let j = 0; j < result1.friends.length; j++) {
+                                            if(result1.friends[j].id == userid) {
+                                                requested = true;
+                                                break;
+                                            }
+                                        }
                                         setTimeout(() => {
                                             let f = {
                                                 friend_id: id,
@@ -986,7 +992,8 @@ exports.Request_Recents_List = function (socket, data) {
                                                 friend_photoType: result1.photo_type,
                                                 friend_connected_room: connectedRoom,
                                                 friend_online: check_online,
-                                                alreadyFriend: (buddies.filter(buddy => buddy.id == id).length > 0) ? true : false
+                                                alreadyFriend: (buddies.filter(buddy => buddy.id == id).length > 0) ? true : false,
+                                                requested: requested
                                             };
                                             myfriends.push(f);
                                         }, 100);
