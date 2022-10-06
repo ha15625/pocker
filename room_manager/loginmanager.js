@@ -282,6 +282,8 @@ exports.UpdateUserSlotValue = function (socket, userInfo) {
     });
 }
 exports.UpdateUserInfo_Balance = function (socket, userInfo) {
+    console.log('chipupdate');
+    console.log(userInfo);
     var collection = database.collection('User_Data');
     var query = { userid: userInfo.userid };
     if (userInfo.type == "1") // slot
@@ -424,16 +426,14 @@ exports.Rankinginfo = function (data, socket) {
                     '"level":"' + docs[i].level + '",' +
                     '"points":"' + docs[i].points + '"},';
             }
+            userInfo = userInfo.substring(0, userInfo.length - 1);
+            userInfo = '{'
+                + '"users"  : [' + userInfo;
+            userInfo = userInfo + ']}';
+            
+            socket.emit('REQUEST_ALL_PLAYER_RANKINGINFO_RESULT', JSON.parse(userInfo));
         }
     });
-
-    setTimeout(function () {
-        userInfo = userInfo.substring(0, userInfo.length - 1);
-        userInfo = '{'
-            + '"users"  : [' + userInfo;
-        userInfo = userInfo + ']}';
-        socket.emit('REQUEST_ALL_PLAYER_RANKINGINFO_RESULT', JSON.parse(userInfo));
-    }, 500);
 }
 exports.updateProfile = function (socket, userInfo) {
     var collection = database.collection('User_Data');
@@ -660,15 +660,15 @@ exports.admin_panel_login = function (socket, data) {
                     if (element.connect != "") {
                         let findCount = 0;
                         console.log(clients.sockets.length);
-                        for(let key in clients.sockets) {
+                        for (let key in clients.sockets) {
                             if (element.connect == key) {
                                 findCount++;
                                 break;
                             }
                         }
-                        
+
                         if (findCount == 0) {
-                            collection.updateOne({userid: element.userid}, {
+                            collection.updateOne({ userid: element.userid }, {
                                 $set: {
                                     connect: ""
                                 }

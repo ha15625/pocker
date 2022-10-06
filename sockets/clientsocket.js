@@ -33,8 +33,6 @@ exports.initsocket = function (socket, io) {
     loginmanager.setsocketio(io);
     roommanager.setsocketio(io);
     gamemanager.setsocketio(io);
-    // Check Version Code    
-    //socket.on('message',(error)=>{console.log(error)} )
     socket.on('CHECK_VERSION_CODE', function () {
         loginmanager.CheckVersionCode(socket);
     });

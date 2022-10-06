@@ -1802,7 +1802,6 @@ TableManager.prototype.check_points = function (player, out_points) {
         let query = { username: player.playerName, userid: player.playerID };
         console.log(query);
         this.collection_UserData.findOne(query, (err, result) => {
-            console.log(result);
             if (err) {
                 console.log(err);
                 roomTable.standUp_force(player, 'Bankrupt');
