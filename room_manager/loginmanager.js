@@ -27,11 +27,11 @@ exports.setsocketio = function (socketio) {
     io = socketio;
 };
 exports.CheckVersionCode = function (socket) {
-    let emitdata = { result: '6.7' };
+    let emitdata = { result: '6.8' };
     socket.emit('CHECK_VERSION_CODE_RESULT', emitdata);
 }
 exports.LogIn = function (socket, userInfo) {
-    if (userInfo.version == null || userInfo.version != '6.7') {
+    if (userInfo.version == null || userInfo.version != '6.8') {
         let emitdata = { result: 'failed' };
         socket.emit('GET_LOGIN_RESULT', emitdata);
     }
@@ -99,7 +99,7 @@ function makeRandom(min, max) {
     return RandVal;
 }
 exports.SignUp = function (socket, data) {
-    if (data.version == null || data.version != '6.7') {
+    if (data.version == null || data.version != '6.8') {
         socket.emit('GET_REGISTER_RESULT', { result: 'failed' });
     }
     else {
@@ -149,6 +149,7 @@ exports.SignUp = function (socket, data) {
                     referral_count: 0,
                     referral_users: [],
                     created_date: new Date(),
+                    mail_date: new Date(),
                     spin_date: new Date(),
                     dailyReward_date: new Date(),
                     messages: [],
@@ -786,6 +787,95 @@ exports.getRports = function (socket) {
 }
 exports.send_Notice = function (socket, data) {
     io.sockets.emit('SEND_NOTICE_RESULT', data);
+}
+exports.send_Mail = function (socket, data) {
+    if(data.userid == "") {
+    var collection = database.collection('User_Data');
+        collection.find().toArray(function (err, result) {
+            if(err) console.log(err);
+            else{
+                for(let i=0;i<result.length;i++){
+                    let insertData = {
+                        userid: result[i].userid,
+                        mail: data.mail,
+                        created_date: new Date()                    
+                    }
+                    var collection1 = database.collection('Mail_Data');
+                    collection1.insertOne(insertData, function(err){
+                        if(err) console.log(err);
+                    })
+                }
+            }
+        });
+    } else {
+        let insertData = {
+            userid: data.userid,
+            mail: data.mail,
+            created_date: new Date()                    
+        }
+        var collection1 = database.collection('Mail_Data');
+        collection1.insertOne(insertData, function(err){
+            if(err) console.log(err);
+        })
+    }
+}
+exports.update_MailDate = function(socket, data) {
+    var collection = database.collection('User_Data');
+    let query = {
+        userid: data.userid
+    };
+    collection.updateOne(query, { $set: { mail_date: new Date() }}, function(err) {
+        if(err) console.log(err);
+    });
+};
+exports.remove_AllMail = function(socket, data) {
+    var collection = database.collection('Mail_Data');
+    let query = {
+        userid: data.userid
+    };
+    collection.deleteMany(query, function(err){
+        if(err) console.log(err);
+    });
+};
+exports.remove_Mail = function(socket, data) {
+    var collection = database.collection('Mail_Data');
+    let query = {
+        userid: data.userid,
+        _id: new mongodb.ObjectId(data.id)
+    };
+    collection.deleteOne(query, function(err) {
+        if(err) console.log(err);
+    });
+};
+exports.req_Mail = function (socket, data) {
+    var collection = database.collection('Mail_Data');
+    var user_collection = database.collection("User_Data");
+    let query = {
+        userid: data.userid
+    };
+    collection.find(query).toArray(function (err, result) {
+        if(err) console.log(err);
+        else {
+            let count = 0;
+            user_collection.findOne(query, function(err, result1) {
+                if(err) console.log(err);
+                else if(result1) {
+                    if(!result1.mail_date) {
+                        count = result.length;
+                    } else {
+                        let mail_date = new Date(result1.mail_date);
+                        for(let i=0;i<result.length;i++){
+                            let created_date = new Date(result[i].created_date);
+                            if(mail_date < created_date) {
+                                count ++;
+                            }
+                        }
+                    }
+                    socket.emit("RES_MAIL", {data: result, count: count});
+                }
+            });
+        }
+    })
 }
 function in_points(userid, in_points) {
     var collection = database.collection('User_Data');

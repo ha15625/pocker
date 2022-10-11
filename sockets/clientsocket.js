@@ -277,4 +277,19 @@ exports.initsocket = function (socket, io) {
     socket.on('SEND_NOTICE', function (data) {
         loginmanager.send_Notice(socket, data);
     });
+    socket.on('SEND_Mail', function (data) {
+        loginmanager.send_Mail(socket, data);
+    });
+    socket.on('REQ_MAIL', function (data) {
+        loginmanager.req_Mail(socket, data);
+    });
+    socket.on('REMOVE_MAIL', function(data) {
+        loginmanager.remove_Mail(socket, data);
+    });
+    socket.on('REMOVE_ALLMAIL', function(data) {
+        loginmanager.remove_AllMail(socket, data);
+    });
+    socket.on('UPDATE_MAILDATE', function(data) {
+        loginmanager.update_MailDate(socket, data);
+    });
 }

@@ -287,10 +287,15 @@ TableManager.prototype.actionBot = function (player) {
                         info.action = 'call';
                         info.bet = call;
                     } else if (this.isRaise) {
-                        let random = goodcards ? 10 : Math.floor(Math.random() * 10);
-                        if (random > 5) {
+                        if(goodcards) {
                             info.action = 'call';
                             info.bet = call;
+                        } else if(botgoodcards) {
+                            let random = goodcards ? 10 : Math.floor(Math.random() * 10);
+                            if (random > 5) {
+                                info.action = 'call';
+                                info.bet = call;
+                            }
                         }
                     }
                 }
@@ -353,57 +358,52 @@ TableManager.prototype.actionBot = function (player) {
                                 }
                             }
                         }
-                        else {
-                            info.action = 'fold';
-                        }
+                        
                     }
-                    else {
-                        if (goodcards == true) {
-                            let num1 = Math.floor(Math.random() * 2) + 1;
-                            if (num1 == 1) {
-                                if (canCall) {
-                                    info.action = 'call';
-                                    info.bet = call;
-                                }
-                                else console.log(">>> ERROR1".err);
-                            }
-                            else {
-                                let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
-                                if (canRaise) {
-                                    info.legal_bet = this.legalBet;
-                                    info.bet = randomNumber * minRaise;
-                                    let maxBet = max_Bet;
-                                    let currentBet = current_Bet;
-                                    if (info.bet < player.chips) {
-                                        if ((maxBet - currentBet) == info.bet) {
-                                            info.action = 'call';
-                                        } else {
-                                            info.action = 'raise';
-                                            this.isRaise = true;
-                                        }
-                                        info.legal_bet = info.bet - call;
-                                    } else {
-                                        info.bet = player.chips;
-                                        info.action = 'allin';
-                                    }
-                                }
-                                else {
-                                    if (canCall) {
-                                        info.action = 'call';
-                                        info.bet = call;
-                                    }
-                                    else console.log(">>> ERROR2".err);
-                                }
-                            }
-                        }
-                        else {
-                            info.action = 'fold';
-                        }
-                    }
+                    // else {
+                    //     if (goodcards == true) {
+                    //         let num1 = Math.floor(Math.random() * 2) + 1;
+                    //         if (num1 == 1) {
+                    //             if (canCall) {
+                    //                 info.action = 'call';
+                    //                 info.bet = call;
+                    //             }
+                    //             else console.log(">>> ERROR1".err);
+                    //         }
+                    //         else {
+                    //             let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
+                    //             if (canRaise) {
+                    //                 info.legal_bet = this.legalBet;
+                    //                 info.bet = randomNumber * minRaise;
+                    //                 let maxBet = max_Bet;
+                    //                 let currentBet = current_Bet;
+                    //                 if (info.bet < player.chips) {
+                    //                     if ((maxBet - currentBet) == info.bet) {
+                    //                         info.action = 'call';
+                    //                     } else {
+                    //                         info.action = 'raise';
+                    //                         this.isRaise = true;
+                    //                     }
+                    //                     info.legal_bet = info.bet - call;
+                    //                 } else {
+                    //                     info.bet = player.chips;
+                    //                     info.action = 'allin';
+                    //                 }
+                    //             }
+                    //             else {
+                    //                 if (canCall) {
+                    //                     info.action = 'call';
+                    //                     info.bet = call;
+                    //                 }
+                    //                 else console.log(">>> ERROR2".err);
+                    //             }
+                    //         }
+                    //     }
+                    //     else {
+                    //         info.action = 'fold';
+                    //     }
+                    // }
 
-                }
-                else if (!botgoodcards) {
-                    info.action = 'fold';
                 }
                 let message = player.playerName;
                 this.removetimeout();
@@ -742,7 +742,7 @@ TableManager.prototype.onGameOver = async function () {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
                         this.hardCount = 6;
-                        let randomC = Math.floor(Math.random() * 4);
+                        let randomC = Math.floor(Math.random() * 3);
                         if (randomC != 0)
                             this.hardCount = 6;
                         else

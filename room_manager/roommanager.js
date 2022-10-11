@@ -1068,7 +1068,7 @@ exports.CheckUserMessage = function (socket, data) {
                     if (result.messages != undefined) {
                         let msg = result.messages;
                         msg.splice(data.index, 1);
-                        socket.emit('REQ_MESSAGES_RESULT', { messages: msg });
+                        //socket.emit('REQ_MESSAGES_RESULT', { messages: msg });
                         collection.updateOne(query, {
                             $set: {
                                 messages: msg
@@ -1093,7 +1093,7 @@ exports.GetUserMessages = function (socket, data) {
             else {
                 if (result != null) {
                     if (result.messages != undefined) {
-                        socket.emit('REQ_MESSAGES_RESULT', { messages: result.messages });
+                      // socket.emit('REQ_MESSAGES_RESULT', { messages: result.messages });
                     }
                 }
             }
