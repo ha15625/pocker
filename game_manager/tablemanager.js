@@ -1356,7 +1356,7 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
 };
 TableManager.prototype.checkBotStatus = function () {
     try {
-        if (this.botCount > 0) {
+        if (this.botCount > 0 && this.minBuyin <= 400000000000) {
             if (this.status == 0) {
                 this.createBots(this.botCount);
             }
@@ -1509,9 +1509,7 @@ TableManager.prototype.getStatus = function (isStandUp = 0) {
 
 TableManager.prototype.sitDown = function (info, socket) {
     this.addPlayer(info, socket);
-    // setTimeout(() => {
-    //     this.getStatus(2);
-    // }, 100);
+
 };
 TableManager.prototype.standUp_forever = function (info, socket) {
     this.standUp(info, socket);
@@ -1554,8 +1552,6 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                 }
                 this.in_points(info.username, info.userid, player.chips);
                 this.table.RemovePlayer(info.userid);
-                //this.getStatus();
-                //console.log("StandUp:Status");
             }
             else {
                 console.log('wrong standup > nothing user on the table'.err);
@@ -1638,6 +1634,9 @@ TableManager.prototype.addPlayer = function (info, socket) {
 
         if (socket != null)
             this.io.sockets.in('r' + this.id).emit('REQ_TAKE_SEAT_RESULT', emitData);
+        if(this.minBuyin > 400000000000 && this.players.length == 2) {
+            this.table.startGame();
+        }
     } catch (error) {
         console.log(error);
     }
