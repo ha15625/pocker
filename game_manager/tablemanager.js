@@ -1535,6 +1535,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         if (player) {
             this.in_points(player.username, player.userid, player.balance);
             this.removeItem(this.players, player);
+            for (let i = 0; i < this.waitingPlayers.length; i++) {
+                if (this.waitingPlayers[i].userid == info.userid) {
+                    this.waitingPlayers.splice(i, 1);
+                }
+            }
             // if (!socket) {
 
             // }
@@ -1552,6 +1557,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                 }
                 this.in_points(info.username, info.userid, player.chips);
                 this.table.RemovePlayer(info.userid);
+                for (let i = 0; i < this.waitingPlayers.length; i++) {
+                    if (this.waitingPlayers[i].userid == info.userid) {
+                        this.waitingPlayers.splice(i, 1);
+                    }
+                }
             }
             else {
                 console.log('wrong standup > nothing user on the table'.err);
@@ -1586,6 +1596,26 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         }
         //console.log("StandUp:Status1");
         this.getStatus();
+        
+        let roomSockets = [];
+        let roomID = this.id;
+        if (this.io.nsps['/'].adapter.rooms['r' + roomID] != undefined) {
+            for (let socketID in this.io.nsps['/'].adapter.rooms['r' + roomID].sockets) {
+                let nickname = this.io.nsps['/'].connected[socketID].username;
+                let clientSocket = this.io.sockets.connected[socketID];
+                roomSockets.push({
+                    nickname: nickname,
+                    clientSocket: clientSocket
+                });
+            }
+        }
+
+        if (roomSockets.length == 0) {
+            this.removeBots(this.table.getIngamePlayersLength());
+            this.status = 0;
+            this.table.started = false;
+            roommanager.removeTable(this.instance);
+        }
     } catch (error) {
         console.log(error);
     }
