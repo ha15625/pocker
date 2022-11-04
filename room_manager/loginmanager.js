@@ -500,7 +500,7 @@ exports.Rankinginfo = function (data, socket) {
         userInfo = userInfo.substring(0, userInfo.length - 1);
         userInfo = "{" + '"users"  : [' + userInfo;
         userInfo = userInfo + "]}";
-        console.log(JSON.parse(userInfo));
+        // console.log(JSON.parse(userInfo));
         socket.emit(
           "REQUEST_ALL_PLAYER_RANKINGINFO_RESULT",
           JSON.parse(userInfo)
