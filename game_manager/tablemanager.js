@@ -1,6 +1,6 @@
 'use strict'
-var Poker = require("poker-engine");
-var Ranker = require('handranker');
+var Poker = require("../module/poker-engine");
+var Ranker = require('../module/handranker');
 var colors = require('colors');
 var roommanager = require('../room_manager/roommanager');
 
