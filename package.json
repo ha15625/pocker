@@ -24,6 +24,7 @@
     "path": "^0.12.7",
     "public-ip": "^4.0.3",
     "shortid": "^2.2.15",
-    "socket.io": "^2.4.1"
+    "socket.io": "^2.4.1",
+    "underscore": "^1.13.6"
   }
 }
