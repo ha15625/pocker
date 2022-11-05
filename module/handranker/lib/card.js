@@ -120,7 +120,7 @@ var Card = (function () {
     if (!_.contains(RANKS, this.rank)) throw "invalid rank";
     if (!_.contains(SUITS, this.suit)) {
         console.log("invalid suit", this.suit);
-      throw "invalid suit";
+      //throw "invalid suit";
     }
   };
 
