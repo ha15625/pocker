@@ -5,7 +5,7 @@ var Game = require('./game.js').Game;
 var utils = require('./utils.js');
 var EventEmitter = require('events').EventEmitter;
 var colors = require('colors');
-var Ranker = require('handranker');
+var Ranker = require('/module/handranker');
 colors.setTheme({
     info: 'bgGreen',
     help: 'cyan',
