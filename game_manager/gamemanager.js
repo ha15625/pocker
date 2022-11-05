@@ -2,8 +2,8 @@ var roomlist = [];
 var tourlist = [];
 var database = null;
 var io;
-var poker = require("poker-engine");
-var Ranker = require("handranker");
+var poker = require("../module/poker-engine");
+var Ranker = require("../module/handranker");
 var showWinDelay = 1000;
 var BotManager = require("./botmanager.js");
 const percentIncrease = (partnumber, totalnumber) =>
