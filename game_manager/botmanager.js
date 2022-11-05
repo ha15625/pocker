@@ -2,7 +2,7 @@
 var roommanager = require('../room_manager/roommanager');
 var gamemanager = require('./gamemanager');
 var Bot = require('./bot.js').Bot;
-var Ranker = require('handranker');
+var Ranker = require('../module/handranker');
 var names = [];
 var bots = [];
 // var pocketCards = ['AA','AK','AQ','AJ','AT','A9','A8','A7','A6','A5','A4','A3','KA','KK','KQ','KJ','KT','K9','K8','QA'
