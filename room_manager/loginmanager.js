@@ -202,36 +202,21 @@ exports.SignUp = function (socket, data) {
 };
 exports.Valid_Name = function (socket, data) {
   var collection = database.collection("User_Data");
-  collection.find().toArray(function (err, docs) {
-    if (err) {
-      throw err;
-    } else {
-      if (docs.length > 0) {
-        const checkUser = new Promise((resolve, reject) => {
-          // let rooms_wifi = docs.filter(object => object.username == data.name);
-          let rooms_wifi;
-          rooms_wifi = docs.filter(
-            (object) =>
-              object.username == data.name &&
-              object.facebook_id == data.facebook_id
-          );
-          resolve(rooms_wifi);
-        });
-        checkUser.then((users) => {
-          if (users.length > 0) {
-            var mydata = "{" + '"result" : "failed"' + "}";
-            socket.emit("REQ_VALID_NAME_RESULT", JSON.parse(mydata));
-          } else {
-            var mydata = "{" + '"result" : "success"' + "}";
-            socket.emit("REQ_VALID_NAME_RESULT", JSON.parse(mydata));
-          }
-        });
+  collection
+    .find({ username: data.name, facebook_id: data.facebook_id })
+    .toArray(function (err, docs) {
+      if (err) {
+        throw err;
       } else {
-        var mydata = "{" + '"result" : "success"' + "}";
-        socket.emit("REQ_VALID_NAME_RESULT", JSON.parse(mydata));
+        if (docs.length > 0) {
+          var mydata = "{" + '"result" : "failed"' + "}";
+          socket.emit("REQ_VALID_NAME_RESULT", JSON.parse(mydata));
+        } else {
+          var mydata = "{" + '"result" : "success"' + "}";
+          socket.emit("REQ_VALID_NAME_RESULT", JSON.parse(mydata));
+        }
       }
-    }
-  });
+    });
 };
 exports.INIT_CONNECT = function (socket, data) {
   var collection = database.collection("User_Data");
@@ -1046,6 +1031,20 @@ function fixNumber(str) {
   let _fixnumber = Number(newStr);
   return _fixnumber;
 }
+
+exports.MutePlayer = function (socket, data) {
+  var collection = database.collection("Mute_History");
+  let insertData = {
+    UserID: data.UserID,
+    OtherID: data.OtherID,
+  };
+  collection.insertOne(insertData);
+};
+
+exports.UnMutePlayer = function (socket, data) {
+  var collection = database.collection("Mute_History");
+  collection.deleteOne({ UserID: data.UserID, OtherID: data.OtherID });
+};
 
 exports.Update_Archivement = function (socket, userInfo) {
   var collection = database.collection("User_Data");

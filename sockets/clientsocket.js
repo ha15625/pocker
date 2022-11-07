@@ -173,6 +173,13 @@ exports.initsocket = function (socket, io) {
     socket.on('REQUEST_ALL_PLAYER_RANKINGINFO', function (data) {
         loginmanager.Rankinginfo(data, socket);
     });
+    //Mute, UnMute User
+    socket.on('PLAYER_MUTE', function(data) {
+        loginmanager.MutePlayer(socket, data);
+    });
+    socket.on('PLAYER_UNMUTE', function(data) {
+        loginmanager.UnMutePlayer(socket, data);
+    });
     // tournament list
     socket.on('REQ_TOUR_LIST', function (data) {
         gamemanager.getTournaments(socket, data);

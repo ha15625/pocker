@@ -796,7 +796,6 @@ TableManager.prototype.onGameOver = async function () {
           }
         } else if (removeCount > 0) await this.removeBots(removeCount);
       }
-
       await this.getStatus();
       await this.tableReposition();
       if (this.table.getIngamePlayersLength() > 1) {
@@ -810,8 +809,45 @@ TableManager.prototype.onGameOver = async function () {
             else this.hardCount = 0;
           }
           this.isRaise = false;
+
           this.table.initNewRound();
         }, time);
+      } else {
+        this.table.started = false;
+        this.status = 0;
+        this.table.game = undefined;
+        for (let i = 0; i < this.table.players.length; i++) {
+          if (this.table.players[i] && !this.table.players[i].isEmptySeat) {
+            let player = {
+              username: this.table.players[i].playerName,
+              userid: this.table.players[i].playerID,
+              balance: 0,
+              avatar: this.table.players[i].avatar,
+              photoUrl: this.table.players[i].photoUrl,
+              photoType: this.table.players[i].photoType,
+              seatnumber: i,
+              booking: false,
+              gift: "",
+              foldedCount: 0,
+              timebank: 3,
+              leaveenterflag: 0,
+              getCorrectSeatnumber: 1,
+              buyinflag: 1,
+              waitforbb: 1,
+              showcards: 0,
+              mode: "normal",
+              moveroom: 0,
+            };
+            // for (let j = 0; j < this.players.length; j++) {
+            //   if (this.players[j].userid == player.userid) {
+            //     //  this.table.players.splice(i, 1);
+            //     return;
+            //   }
+            // }
+            //  this.table.players.splice(i, 1);
+            this.players.push(player);
+          }
+        }
       }
     }
   } catch (error) {
@@ -1738,9 +1774,10 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         socket.leave("r" + this.id);
       }, 1000);
     }
+    
     //console.log("StandUp:Status1");
     this.getStatus();
-
+    socket.leave("r" + this.id);
     let roomSockets = [];
     let roomID = this.id;
     if (this.io.nsps["/"].adapter.rooms["r" + roomID] != undefined) {
@@ -1795,6 +1832,11 @@ TableManager.prototype.addPlayer = function (info, socket) {
       mode: "normal",
       moveroom: 0,
     };
+    for (let i = 0; i < this.players.length; i++) {
+      if (this.players[i].userid == player.userid) {
+        return;
+      }
+    }
     this.players.push(player);
 
     let emitData = {

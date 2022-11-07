@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var URL = 'mongodb+srv://nightpoker:gGRTkjrP534RhoRr@cluster0.igc5p.mongodb.net/MJDatabase';
-
+// var URL = 'mongodb://localhost:27017/MJDatabase';
 var state = {
     db: null,
 };
