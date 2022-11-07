@@ -1046,6 +1046,15 @@ exports.UnMutePlayer = function (socket, data) {
   collection.deleteOne({ UserID: data.UserID, OtherID: data.OtherID });
 };
 
+exports.MuteList = function (socket, data) {
+  var collection = database.collection("Mute_History");
+  collection.find({ UserID: data.UserID }).toArray(function (err, result) {
+    if (result.length != 0) {
+      socket.emit("PLAYER_MUTELIST", { result: result });
+    }
+  });
+};
+
 exports.Update_Archivement = function (socket, userInfo) {
   var collection = database.collection("User_Data");
   var query = { userid: userInfo.userid };
