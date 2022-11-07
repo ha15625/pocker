@@ -551,6 +551,7 @@ Table.prototype.getSimulationNextPlayerIndex = function (current_Index) {
 
 Table.prototype.initNewRound = function () {
     //console.log("--------------------initNewRound");
+    if(this.players.length == 1) return;
     this.gameoverd = false;
     for (let i = 0; i < this.players.length; i++) {
         let player = this.players[i];

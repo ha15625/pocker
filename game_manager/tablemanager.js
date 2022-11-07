@@ -2016,14 +2016,12 @@ TableManager.prototype.check_points = function (player, out_points) {
                 player.isSeated = true;
                 player.isEmptySeat = false;
                 console.log("roomId:" + roomid);
-                roomTable.io.sockets
-                  .in("r" + roomid)
-                  .emit("ADD_BALANCE", {
-                    room_id: roomid,
-                    username: player.playerName,
-                    userid: player.playerID,
-                    buyin_money: out_points,
-                  });
+                roomTable.io.sockets.in("r" + roomid).emit("ADD_BALANCE", {
+                  room_id: roomid,
+                  username: player.playerName,
+                  userid: player.playerID,
+                  buyin_money: out_points,
+                });
               }
             }
           );
