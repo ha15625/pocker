@@ -1048,11 +1048,13 @@ exports.UnMutePlayer = function (socket, data) {
 
 exports.MuteList = function (socket, data) {
   var collection = database.collection("Mute_History");
-  collection.find({ UserID: data.UserID }).toArray(function (err, result) {
-    if (result.length != 0) {
-      socket.emit("PLAYER_MUTELIST", { result: result });
-    }
-  });
+  collection
+    .find({ $or: [{ UserID: data.UserID }, { OtherID: data.UserID }] })
+    .toArray(function (err, result) {
+      if (result.length != 0) {
+        socket.emit("PLAYER_MUTELIST", { result: result });
+      }
+    });
 };
 
 exports.Update_Archivement = function (socket, userInfo) {
