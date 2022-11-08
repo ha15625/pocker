@@ -2836,15 +2836,13 @@ exports.GetPublicChats = function (socket, data) {
           if (counter == 100) break;
         }
       }
+      let emitdata = {
+        result: "success",
+        chat_data: chats,
+      };
+      socket.emit("RES_PUBLIC_CHAT_RESULT", emitdata);
     }
   });
-  setTimeout(() => {
-    let emitdata = {
-      result: "success",
-      chat_data: chats,
-    };
-    socket.emit("RES_PUBLIC_CHAT_RESULT", emitdata);
-  }, 100);
 };
 exports.CheckSpin = function (socket, data) {
   let collection = database.collection("User_Data");
