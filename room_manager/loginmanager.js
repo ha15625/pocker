@@ -49,11 +49,11 @@ exports.LogIn = function (socket, userInfo) {
         } else {
           if (result.connect != "") {
             let clients = io.sockets.clients();
-            for (let i = 0; i < clients.sockets.length; i++) {
+            for (let key in clients.sockets) {
               if (
-                clients.sockets[i].id == socket.id &&
-                (clients[i].sockets.username == undefined ||
-                  clients[i].sockets.username == null)
+                clients.sockets[key].id == socket.id &&
+                (clients.sockets[key].username == undefined ||
+                  clients.sockets[key].username == null)
               ) {
                 socket.username = result.userid;
                 socket.emit("GET_LOGIN_RESULT", {
