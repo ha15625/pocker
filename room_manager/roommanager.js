@@ -67,7 +67,7 @@ let removeItem = function (arr, value) {
 exports.JoinRoom = function (data, socket) {
   try {
     if (data.roomid == null) {
-      if (data.newtable == 'True') {
+      if (data.newtable == "True") {
         let table = tables.find(
           (t) =>
             t.table.getIngamePlayersLength() < t.table.maxPlayers &&
@@ -864,67 +864,67 @@ exports.Request_Buddies_List = function (socket, data) {
           let interval = setInterval(() => {
             i++;
             if (i < counter) {
-              let id = Friends[i].id;
-              let accepted = Friends[i].accepted;
-              let query1 = {
-                userid: id,
-              };
-              collection.findOne(query1, function (err, result1) {
-                if (err) {
-                  console.log("error29", err);
-                  //counter--;
-                } else {
-                  //counter--;
-                  if (result1 != null) {
-                    let check_online = false;
-                    if (result1.connect == "") check_online = false;
-                    else check_online = true;
-                    let connectedRoom = {};
-                    if (result1.connected_room == "") {
-                      connectedRoom = {
-                        roomid: -1,
-                        sb: 0,
-                        bb: 0,
-                        minBuyin: 0,
-                        maxBuyin: 0,
-                        maxSeats: 0,
-                      };
-                    } else {
-                      let table = tables.find(
-                        (t) => t.id == result1.connected_room
-                      );
-                      if (table) {
-                        let sb = table.smallBlind;
-                        let bb = table.bigBlind;
-                        let min_buyin = table.minBuyin;
-                        let max_buyin = table.maxBuyin;
-                        let max_seats = table.maxPlayers;
-                        connectedRoom = {
-                          roomid: result1.connected_room,
-                          sb: sb,
-                          bb: bb,
-                          minBuyin: min_buyin,
-                          maxBuyin: max_buyin,
-                          maxSeats: max_seats,
-                        };
-                      }
-                    }
-                    setTimeout(() => {
-                      let f = {
-                        friend_id: id,
-                        friend_name: result1.username,
-                        friend_photoIndex: result1.photo_index,
-                        friend_photo: result1.photo,
-                        friend_photoType: result1.photo_type,
-                        friend_connected_room: connectedRoom,
-                        friend_online: check_online,
-                        accepted: accepted,
-                      };
-                      myfriends.push(f);
-                    }, 100);
-                  }
-                }
-              });
+				let id = Friends[i].id;
+				let accepted = Friends[i].accepted;
+				let query1 = {
+					userid: id,
+				};
+				collection.findOne(query1, function (err, result1) {
+					if (err) {
+						console.log("error29", err);
+					//counter--;
+					} else {
+						//counter--;
+						if (result1 != null) {
+							let check_online = false;
+							if (result1.connect == "") check_online = false;
+							else check_online = true;
+							let connectedRoom = {};
+							if (result1.connected_room == "") {
+								connectedRoom = {
+									roomid: -1,
+									sb: 0,
+									bb: 0,
+									minBuyin: 0,
+									maxBuyin: 0,
+									maxSeats: 0,
+								};
+							} else {
+								let table = tables.find(
+									(t) => t.id == result1.connected_room
+								);
+								if (table) {
+									let sb = table.smallBlind;
+									let bb = table.bigBlind;
+									let min_buyin = table.minBuyin;
+									let max_buyin = table.maxBuyin;
+									let max_seats = table.maxPlayers;
+									connectedRoom = {
+									roomid: result1.connected_room,
+									sb: sb,
+									bb: bb,
+									minBuyin: min_buyin,
+									maxBuyin: max_buyin,
+									maxSeats: max_seats,
+									};
+								}
+							}
+							setTimeout(() => {
+								let f = {
+									friend_id: id,
+									friend_name: result1.username,
+									friend_photoIndex: result1.photo_index,
+									friend_photo: result1.photo,
+									friend_photoType: result1.photo_type,
+									friend_connected_room: connectedRoom,
+									friend_online: check_online,
+									accepted: accepted,
+								};
+								myfriends.push(f);
+							}, 100);
+						}
+					}
+				});
             } else {
               let emitdata = {
                 result: "success",

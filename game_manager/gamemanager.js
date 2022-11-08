@@ -2830,10 +2830,10 @@ exports.GetPublicChats = function (socket, data) {
       if (docs.length > 0) {
         let counter = 0;
         for (let i = docs.length - 1; i >= 0; i--) {
-          counter++;
+          //counter++;
           const element = docs[i];
           chats.push(element);
-          if (counter == 100) break;
+          //if (counter == 100) break;
         }
       }
       let emitdata = {
