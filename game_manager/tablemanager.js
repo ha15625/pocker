@@ -1853,7 +1853,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         //console.log("StandUp:Status1");
         this.getStatus();
         try {
-            socket.leave("r" + this.id);
+			if(socket) {
+            	socket.leave("r" + this.id);
+			}
         } catch (e) {
             console.log(e);
         }
