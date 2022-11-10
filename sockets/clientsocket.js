@@ -29,7 +29,7 @@ exports.initdatabase = function () {
     });
 };
 
-exports.initsocket = function (socket, io) {
+exports.initsocket = async function (socket, io) {
     loginmanager.setsocketio(io);
     roommanager.setsocketio(io);
     gamemanager.setsocketio(io);

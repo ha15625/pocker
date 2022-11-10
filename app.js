@@ -48,7 +48,7 @@ var server = require('http').createServer(app);
 
 var io = require('socket.io')(server, {
   'pingInterval': 1000, 'pingTimeout': 25000, 'rememberTransport': false,
-  'reconnect': false,
+  'reconnect': true,
   'secure': true
 });
 //var io = require('socket.io')(server);
@@ -98,9 +98,9 @@ app.use(function (err, req, res, next) {
 });
 
 clientsocket.initdatabase();
-io.on('connection', function (socket) {
+io.on('connection', async function (socket) {
   console.log("- One socket connected");
-  clientsocket.initsocket(socket, io);
+  await clientsocket.initsocket(socket, io);
 });
 
 module.exports = { app: app, server: server };

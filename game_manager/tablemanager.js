@@ -1852,7 +1852,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
 
         //console.log("StandUp:Status1");
         this.getStatus();
-        socket.leave("r" + this.id);
+        try {
+            socket.leave("r" + this.id);
+        } catch (e) {
+            console.log(e);
+        }
         let roomSockets = [];
         let roomID = this.id;
         if (this.io.nsps["/"].adapter.rooms["r" + roomID] != undefined) {
