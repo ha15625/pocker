@@ -1845,9 +1845,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                     }
                 );
             }
-            setTimeout(() => {
-                socket.leave("r" + this.id);
-            }, 1000);
+            // setTimeout(() => {
+            //     socket.leave("r" + this.id);
+            // }, 1000);
         }
 
         //console.log("StandUp:Status1");
