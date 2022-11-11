@@ -114,7 +114,7 @@ TableManager.prototype.setInstance = function (tablemanager) {
     this.instance = tablemanager;
 };
 TableManager.prototype.onRoundDeal = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("onRoundDeal" + " roomID:" + this.id);
@@ -131,7 +131,7 @@ TableManager.prototype.onRoundDeal = function () {
     this.io.in("r" + this.id).emit("TABLE_ROUND", emitdata);
 };
 TableManager.prototype.onSmallBlind = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("onSmallBlind" + " roomID:" + this.id);
@@ -181,7 +181,7 @@ TableManager.prototype.onSmallBlind = function (player) {
     }
 };
 TableManager.prototype.onBigBlind = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("bigblind" + " roomID:" + this.id);
@@ -210,7 +210,7 @@ TableManager.prototype.onBigBlind = function (player) {
     }
 };
 TableManager.prototype.onTurn = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("onTurn" + " roomID:" + this.id);
@@ -265,7 +265,7 @@ TableManager.prototype.onTurn = function (player) {
 };
 
 TableManager.prototype.actionBot = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("actionBot" + " roomID:" + this.id);
@@ -578,7 +578,7 @@ TableManager.prototype.actionBot = function (player) {
     }
 };
 TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("onDealCards" + " roomID:" + this.id);
@@ -718,7 +718,7 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
     }
 };
 TableManager.prototype.onRoundShowdown = function (currnt_bets) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -741,7 +741,7 @@ TableManager.prototype.onRoundShowdown = function (currnt_bets) {
     }
 };
 TableManager.prototype.onWin = function (winner, prize) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("onWin" + " roomID:" + this.id);
@@ -826,37 +826,12 @@ TableManager.prototype.onWin = function (winner, prize) {
         console.log(error + " roomID:" + this.id);
     }
 };
-TableManager.prototype.onCheckRoomEmpty = function() {
-    let roomSockets = [];
-    let roomID = this.id;
-    if (this.io.nsps["/"].adapter.rooms["r" + roomID] != undefined) {
-        for (let socketID in this.io.nsps["/"].adapter.rooms["r" + roomID]
-            .sockets) {
-            let nickname = this.io.nsps["/"].connected[socketID].username;
-            let clientSocket = this.io.sockets.connected[socketID];
-            roomSockets.push({
-                nickname: nickname,
-                clientSocket: clientSocket,
-            });
-        }
-    }
-
-    if (roomSockets.length == 0) {
-        this.removeBots(this.table.getIngamePlayersLength());
-        this.status = 0;
-        this.table.started = false;
-        console.log("Remove Table1" + " roomID:" + this.id);
-        roommanager.removeTable(this.instance);
-        return 1;
-    }
-    return 0;
-}
 TableManager.prototype.onGameOver = async function () {
     console.log("onGameOver" + " roomID:" + this.id);
     try {
         this.played++;
         this.totalPot = 0;
-        if(this.onCheckRoomEmpty() == 1) {
+        if(this.onlyBotsLive()) {
             return;
         }
         //await this.addPlayers();
@@ -944,10 +919,10 @@ TableManager.prototype.onGameOver = async function () {
 };
 
 TableManager.prototype.waitforSec = function (time) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     return new Promise((resolve) => {
@@ -958,9 +933,7 @@ TableManager.prototype.waitforSec = function (time) {
 };
 
 TableManager.prototype.onlyBotsLive = function () {
-    if(this.onCheckRoomEmpty() == 1) {
-        return;
-    }
+    
     try {
         let roomSockets = [];
         let roomID = this.id;
@@ -976,7 +949,7 @@ TableManager.prototype.onlyBotsLive = function () {
             }
         }
 
-        if (roomSockets.length == 0 && this.table.getIngamePlayersLength() == 6)
+        if (roomSockets.length == 0)
             return true;
         else return false;
     } catch (error) {
@@ -985,7 +958,7 @@ TableManager.prototype.onlyBotsLive = function () {
     }
 };
 TableManager.prototype.onUpdatePlayer = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     this.io.in("r" + this.id).emit("UPDATE_PLAYER", {
@@ -1000,7 +973,7 @@ TableManager.prototype.onReturnChips = function (position, returnChips) {
     this.io.in("r" + this.id).emit("RETURN_CHIPS", emitdata);
 };
 TableManager.prototype.onBankrupt = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -1025,7 +998,7 @@ TableManager.prototype.checkIndex = function (player, position) {
     else return false;
 };
 TableManager.prototype.action = function (info) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -1100,7 +1073,7 @@ TableManager.prototype.action = function (info) {
     }
 };
 TableManager.prototype.fold = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -1137,7 +1110,7 @@ TableManager.prototype.fold = function (player) {
     }
 };
 TableManager.prototype.check = function (player) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -1172,7 +1145,7 @@ TableManager.prototype.check = function (player) {
     }
 };
 TableManager.prototype.removetimeout = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     this.turn = false;
@@ -1182,7 +1155,7 @@ TableManager.prototype.removetimeout = function () {
     }
 };
 TableManager.prototype.roundMainPots = function (bets) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     try {
@@ -1225,7 +1198,7 @@ TableManager.prototype.checkbets = function (bets) {
     return sum;
 };
 TableManager.prototype.getMainPots = function (tPots, mainPots) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("getMainPots" + " roomID:" + this.id);
@@ -1252,7 +1225,7 @@ TableManager.prototype.getMainPots = function (tPots, mainPots) {
     }
 };
 TableManager.prototype.compareArray = function (arr1, arr2) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("comepareArray" + " roomID:" + this.id);
@@ -1274,7 +1247,7 @@ TableManager.prototype.compareArray = function (arr1, arr2) {
     }
 };
 TableManager.prototype.Update_recent_players = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -1344,7 +1317,7 @@ TableManager.prototype.Update_recent_players = function () {
     }
 };
 TableManager.prototype.Update_level_handplayed = function (userid) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -1398,7 +1371,7 @@ TableManager.prototype.Record_Won_History = function (
     wining_cards,
     handrankVal
 ) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id;
@@ -1519,7 +1492,7 @@ TableManager.prototype.Record_Won_History = function (
     }
 };
 TableManager.prototype.addPlayers = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("addPlayers" + " roomID:" + this.id);
@@ -1555,7 +1528,7 @@ TableManager.prototype.addPlayers = function () {
     }
 };
 TableManager.prototype.tableReposition = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("tableReposition" + " roomID:" + this.id);
@@ -1588,7 +1561,7 @@ TableManager.prototype.tableReposition = function () {
 };
 
 TableManager.prototype.enterTable = function (socket, username, userid) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("enterTable" + " roomID:" + this.id);
@@ -1684,7 +1657,7 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
     }
 };
 TableManager.prototype.checkBotStatus = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("checkBotStatus" + " roomID:" + this.id);
@@ -1699,7 +1672,7 @@ TableManager.prototype.checkBotStatus = function () {
     }
 };
 TableManager.prototype.AddChipsUser = function (userid, points) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("AddChipsuser" + " roomID:" + this.id);
@@ -1713,7 +1686,7 @@ TableManager.prototype.AddChipsUser = function (userid, points) {
     }
 };
 TableManager.prototype.MinusChipsUser = function (userid, points) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("MinusChipsUser" + " roomID:" + this.id);
@@ -1726,7 +1699,7 @@ TableManager.prototype.MinusChipsUser = function (userid, points) {
     }
 };
 TableManager.prototype.createBots = function (createCount) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("createBots" + " roomID:" + this.id);
@@ -1775,7 +1748,7 @@ TableManager.prototype.createBots = function (createCount) {
     }
 };
 TableManager.prototype.removeBots = function (removeCount) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("removeBots" + " roomID:" + this.id);
@@ -1810,7 +1783,7 @@ TableManager.prototype.removeBots = function (removeCount) {
     }
 };
 TableManager.prototype.getBotID = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("getBotId" + " roomID:" + this.id);
@@ -1829,7 +1802,7 @@ TableManager.prototype.getBotID = function () {
 };
 
 TableManager.prototype.getStatus = function (isStandUp = 0) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("getStatus" + " roomID:" + this.id);
@@ -1871,21 +1844,21 @@ TableManager.prototype.getStatus = function (isStandUp = 0) {
 };
 
 TableManager.prototype.sitDown = function (info, socket) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("sitDown" + " roomID:" + this.id);
     this.addPlayer(info, socket);
 };
 TableManager.prototype.standUp_forever = function (info, socket) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("standUp_forever" + " roomID:" + this.id);
     this.standUp(info, socket);
 };
 TableManager.prototype.standUp_force = function (player, bankrupt) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("standUp_force" + " roomID:" + this.id);
@@ -1900,7 +1873,7 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
     );
 };
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("standUp" + " roomID:" + this.id);
@@ -2007,7 +1980,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         } catch (e) {
             console.log(e + " roomID:" + this.id);
         }
-        if(this.onCheckRoomEmpty() == 1) {
+        if(this.onlyBotsLive()) {
             return;
         }
         this.getStatus();
@@ -2017,7 +1990,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
 };
 
 TableManager.prototype.addPlayer = function (info, socket) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("addPlayer" + " roomID:" + this.id);
@@ -2078,7 +2051,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
     }
 };
 TableManager.prototype.WaitingPlayers = async function (info, socket) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("WaitingPlayers" + " roomID:" + this.id);
@@ -2094,7 +2067,7 @@ TableManager.prototype.WaitingPlayers = async function (info, socket) {
     }
 };
 TableManager.prototype.buyIn = function (info, socket) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("buyIn" + " roomID:" + this.id);
@@ -2172,7 +2145,7 @@ TableManager.prototype.removeItem = function (arr, value) {
     }
 };
 TableManager.prototype.in_points = function (username, userid, in_points) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -2205,7 +2178,7 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
     }
 };
 TableManager.prototype.out_points = function (username, userid, out_points) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("out_points" + " roomID:" + this.id);
@@ -2234,7 +2207,7 @@ TableManager.prototype.out_points = function (username, userid, out_points) {
     }
 };
 TableManager.prototype.getWaitingData = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -2271,7 +2244,7 @@ TableManager.prototype.getWaitingData = function () {
     }
 };
 TableManager.prototype.check_points = function (player, out_points) {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("check_points" + " roomID:" + this.id);
@@ -2351,7 +2324,7 @@ var ChangeUnit = function (count) {
     }
 };
 TableManager.prototype.getPlayerRander = function () {
-    if(this.onCheckRoomEmpty() == 1) {
+    if(this.onlyBotsLive()) {
         return;
     }
     console.log("getPlayerRander" + " roomID:" + this.id);
