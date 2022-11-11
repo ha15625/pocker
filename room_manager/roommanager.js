@@ -50,6 +50,7 @@ exports.get_Entrance_Amount = function (socket) {
     }
 };
 exports.removeTable = function (table) {
+    console.log("Remove Table ID:", table.id);
     removeItem(tables, table);
     console.log("*** tables.length ", tables.length);
 };
