@@ -2012,9 +2012,8 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                     }
                 );
             }
-            if (socket) {
-                socket.leave("r" + this.id);
-            }
+            socket.leave("r" + this.id);
+            
         }
         console.log("StandUp:Status1" + " roomID:" + this.id);
         
