@@ -1917,7 +1917,7 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
     
     console.log("standUp" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
+    if (info.mode != "bot" && this.onlyBotsLive()) {
         return;
     }
     try {
@@ -2015,7 +2015,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         }
         console.log("StandUp:Status1" + " roomID:" + this.id);
         
-        if (this.onlyBotsLive()) {
+        if (info.mode != "bot" && this.onlyBotsLive()) {
             return;
         }
         this.getStatus();
