@@ -183,6 +183,7 @@ let getPhotos = function () {
 };
 let checkTables = function () {
     try {
+        console.log("checktables");
         for (let index = 0; index < tables.length; index++) {
             const table = tables[index];
             if (table.onlyBotsLive()) exports.removeTable(table);

@@ -1788,9 +1788,7 @@ TableManager.prototype.createBots = function (createCount) {
 TableManager.prototype.removeBots = function (removeCount) {
     
     console.log("removeBots" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    
     try {
         return new Promise((resolve) => {
             let count = 0;
