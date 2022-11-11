@@ -1978,14 +1978,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                     }
                 );
             }
-            // setTimeout(() => {
-            //     socket.leave("r" + this.id);
-            // }, 1000);
             if (socket) {
                 socket.leave("r" + this.id);
             }
         }
-        //console.log("StandUp:Status1" + " roomID:" + this.id);
+        console.log("StandUp:Status1" + " roomID:" + this.id);
         
         if (this.onlyBotsLive()) {
             return;
