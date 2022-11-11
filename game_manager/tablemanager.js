@@ -1842,9 +1842,7 @@ TableManager.prototype.getBotID = function () {
 TableManager.prototype.getStatus = function (isStandUp = 0) {
     
     console.log("getStatus" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    
     try {
         return new Promise((resolve) => {
             if (isStandUp == 0) {
