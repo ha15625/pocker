@@ -1901,7 +1901,7 @@ TableManager.prototype.standUp_forever = function (info, socket) {
 TableManager.prototype.standUp_force = function (player, bankrupt) {
    
     console.log("standUp_force" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
+    if (player.mode != "bot" && this.onlyBotsLive()) {
         return;
     }
     this.standUp(
