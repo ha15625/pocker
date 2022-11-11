@@ -253,6 +253,7 @@ TableManager.prototype.onTurn = function (player) {
 };
 
 TableManager.prototype.actionBot = function (player) {
+    
     console.log("actionBot" + " roomID:" + this.id);
     try {
         let goodcards = false;
@@ -1208,6 +1209,7 @@ TableManager.prototype.compareArray = function (arr1, arr2) {
     }
 };
 TableManager.prototype.Update_recent_players = function () {
+    let roomid = this.id
     console.log("Update_recent_players" + " roomID:" + this.id);
     try {
         let realPlayers = this.table.players.filter(
@@ -1231,7 +1233,7 @@ TableManager.prototype.Update_recent_players = function () {
                     };
 
                     this.collection_UserData.findOne(query, (err, result) => {
-                        if (err) console.log("error12", err + " roomID:" + this.id);
+                        if (err) console.log("error12", err + " roomID:" + roomid);
                         else {
                             if (result != null) {
                                 let newPlayerIds = playerIds.filter(
@@ -1274,13 +1276,14 @@ TableManager.prototype.Update_recent_players = function () {
     }
 };
 TableManager.prototype.Update_level_handplayed = function (userid) {
+    let roomid = this.id
     console.log("Update_level_handplayed" + "roomID:" + this.id);
     try {
         let query = {
             userid: userid,
         };
         this.collection_UserData.findOne(query, (err, result) => {
-            if (err) console.log("error12", err + " roomID:" + this.id);
+            if (err) console.log("error12", err + " roomID:" + roomid);
             else {
                 if (result != null) {
                     let hands_played = result.hands_played;
@@ -1324,6 +1327,7 @@ TableManager.prototype.Record_Won_History = function (
     wining_cards,
     handrankVal
 ) {
+    let roomid = this.id;
     console.log("Record_Won_History" + " roomID:" + this.id);
     try {
         let query = {
@@ -1335,7 +1339,7 @@ TableManager.prototype.Record_Won_History = function (
             handval: handrankVal,
         };
         this.collection_UserData.findOne(query, (err, result) => {
-            if (err) console.log("error2", err + " roomID:" + this.id);
+            if (err) console.log("error2", err + " roomID:" + roomid);
             else {
                 if (result != null) {
                     let hands_won = result.hands_won;
@@ -2062,6 +2066,7 @@ TableManager.prototype.removeItem = function (arr, value) {
     }
 };
 TableManager.prototype.in_points = function (username, userid, in_points) {
+    let roomid = this.id
     console.log("in_points" + " roomID:" + this.id);
     try {
         //let collection = this.database.collection('User_Data');
@@ -2071,11 +2076,11 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
             else if (result) {
                 let mypoints = result.points;
                 mypoints = mypoints.toString().replace(/\,/g, "");
-                console.log(mypoints + " roomID:" + this.id);
+                console.log(mypoints + " roomID:" + roomid);
                 in_points = in_points.toString().replace(/\,/g, "");
-                console.log(in_points + " roomID:" + this.id);
+                console.log(in_points + " roomID:" + roomid);
                 mypoints = fixNumber(mypoints) + fixNumber(in_points);
-                console.log(mypoints + " roomID:" + this.id);
+                console.log(mypoints + " roomID:" + roomid);
                 if (fixNumber(mypoints) < 0) mypoints = 0;
                 this.collection_UserData.updateOne(
                     query,
@@ -2117,6 +2122,7 @@ TableManager.prototype.out_points = function (username, userid, out_points) {
     }
 };
 TableManager.prototype.getWaitingData = function () {
+    let roomid = this.id
     console.log("getWaitingData" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
@@ -2131,7 +2137,7 @@ TableManager.prototype.getWaitingData = function () {
                 };
                 this.collection_UserData.findOne(query, (err, result) => {
                     if (err) {
-                        console.log(err + " roomID:" + this.id);
+                        console.log(err + " roomID:" + roomid);
                     } else if (result) {
                         waitingPlayer.chips = result.points;
                         waitingPlayer.avatarUrl = result.photo;
@@ -2154,16 +2160,16 @@ TableManager.prototype.check_points = function (player, out_points) {
     try {
         let roomid = this.id;
         let roomTable = this;
-        console.log("bankrupt3" + " roomID:" + this.id);
-        //console.log(player + " roomID:" + this.id);
+        console.log("bankrupt3" + " roomID:" + roomid);
+        //console.log(player + " roomID:" + roomid);
         let query = { username: player.playerName, userid: player.playerID };
-        console.log(query + " roomID:" + this.id);
+        console.log(query + " roomID:" + roomid);
         this.collection_UserData.findOne(query, (err, result) => {
             if (err) {
-                console.log(err + " roomID:" + this.id);
+                console.log(err + " roomID:" + roomid);
                 roomTable.standUp_force(player, "Bankrupt");
             } else if (result) {
-                console.log("bankrupt1" + " roomID:" + this.id);
+                console.log("bankrupt1" + " roomID:" + roomid);
                 let mypoints = result.points;
                 mypoints = mypoints.toString().replace(/\,/g, "");
                 out_points = out_points.toString().replace(/\,/g, "");
@@ -2175,13 +2181,13 @@ TableManager.prototype.check_points = function (player, out_points) {
                         { $set: { points: fixNumber(mypoints) } },
                         function (err) {
                             if (err) {
-                                console.log(err + " roomID:" + this.id);
+                                console.log(err + " roomID:" + roomid);
                                 roomTable.standUp_force(player, "Bankrupt");
                             } else {
                                 player.chips = out_points;
                                 player.isSeated = true;
                                 player.isEmptySeat = false;
-                                console.log("roomId:" + roomid + " roomID:" + this.id);
+                                console.log("roomId:" + roomid + " roomID:" + roomid);
                                 roomTable.io.sockets
                                     .in("r" + roomid)
                                     .emit("ADD_BALANCE", {
@@ -2194,7 +2200,7 @@ TableManager.prototype.check_points = function (player, out_points) {
                         }
                     );
                 } else {
-                    console.log("bankrupt2" + " roomID:" + this.id);
+                    console.log("bankrupt2" + " roomID:" + roomid);
                     roomTable.standUp_force(player, "Bankrupt");
                 }
             }
