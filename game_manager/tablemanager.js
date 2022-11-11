@@ -114,10 +114,11 @@ TableManager.prototype.setInstance = function (tablemanager) {
     this.instance = tablemanager;
 };
 TableManager.prototype.onRoundDeal = function () {
+    
+    console.log("onRoundDeal" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("onRoundDeal" + " roomID:" + this.id);
     this.legalBet = 0;
     this.mainPots = [];
     this.showWinDelay = 1000;
@@ -131,10 +132,11 @@ TableManager.prototype.onRoundDeal = function () {
     this.io.in("r" + this.id).emit("TABLE_ROUND", emitdata);
 };
 TableManager.prototype.onSmallBlind = function (player) {
+    
+    console.log("onSmallBlind" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("onSmallBlind" + " roomID:" + this.id);
     try {
         this.totalPot += this.smallBlind;
         let message =
@@ -181,10 +183,11 @@ TableManager.prototype.onSmallBlind = function (player) {
     }
 };
 TableManager.prototype.onBigBlind = function (player) {
+    
+    console.log("bigblind" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("bigblind" + " roomID:" + this.id);
     try {
         this.totalPot += this.bigBlind;
         let message =
@@ -210,10 +213,11 @@ TableManager.prototype.onBigBlind = function (player) {
     }
 };
 TableManager.prototype.onTurn = function (player) {
+    
+    console.log("onTurn" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("onTurn" + " roomID:" + this.id);
     try {
         setTimeout(() => {
             let emitdata = {
@@ -265,10 +269,11 @@ TableManager.prototype.onTurn = function (player) {
 };
 
 TableManager.prototype.actionBot = function (player) {
+    
+    console.log("actionBot" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("actionBot" + " roomID:" + this.id);
     try {
         let goodcards = false;
         let botgoodcards = false;
@@ -578,10 +583,11 @@ TableManager.prototype.actionBot = function (player) {
     }
 };
 TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
+    
+    console.log("onDealCards" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("onDealCards" + " roomID:" + this.id);
     try {
         let mainpots = this.roundMainPots(currnt_bets);
         this.mainPots = this.getMainPots(this.mainPots, mainpots);
@@ -718,6 +724,7 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
     }
 };
 TableManager.prototype.onRoundShowdown = function (currnt_bets) {
+    console.log("onRoundShowdown" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -741,10 +748,11 @@ TableManager.prototype.onRoundShowdown = function (currnt_bets) {
     }
 };
 TableManager.prototype.onWin = function (winner, prize) {
+    
+    console.log("onWin" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("onWin" + " roomID:" + this.id);
     try {
         setTimeout(() => {
             let handrankVal = 0;
@@ -919,9 +927,7 @@ TableManager.prototype.onGameOver = async function () {
 };
 
 TableManager.prototype.waitforSec = function (time) {
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    console.log("waitforSec" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -957,7 +963,10 @@ TableManager.prototype.onlyBotsLive = function () {
             roommanager.removeTable(this.instance);
             return true;
         }
-        else return false;
+        else { 
+            console.log("onlybotslive: false" + this.id);
+            return false;
+        }
     } catch (error) {
         console.log(error + " roomID:" + this.id);
         this.removeBots(this.table.getIngamePlayersLength());
@@ -969,6 +978,7 @@ TableManager.prototype.onlyBotsLive = function () {
     }
 };
 TableManager.prototype.onUpdatePlayer = function (player) {
+    console.log("onUpdatePlayer" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -984,6 +994,7 @@ TableManager.prototype.onReturnChips = function (position, returnChips) {
     this.io.in("r" + this.id).emit("RETURN_CHIPS", emitdata);
 };
 TableManager.prototype.onBankrupt = function (player) {
+    console.log("onbankrupt");
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1009,6 +1020,7 @@ TableManager.prototype.checkIndex = function (player, position) {
     else return false;
 };
 TableManager.prototype.action = function (info) {
+    console.log("action" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1084,6 +1096,7 @@ TableManager.prototype.action = function (info) {
     }
 };
 TableManager.prototype.fold = function (player) {
+    console.log("fold" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1121,6 +1134,7 @@ TableManager.prototype.fold = function (player) {
     }
 };
 TableManager.prototype.check = function (player) {
+    console.log("check" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1156,6 +1170,7 @@ TableManager.prototype.check = function (player) {
     }
 };
 TableManager.prototype.removetimeout = function () {
+    console.log("removetimeout" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1166,6 +1181,7 @@ TableManager.prototype.removetimeout = function () {
     }
 };
 TableManager.prototype.roundMainPots = function (bets) {
+    console.log("roundMainPots" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1209,6 +1225,7 @@ TableManager.prototype.checkbets = function (bets) {
     return sum;
 };
 TableManager.prototype.getMainPots = function (tPots, mainPots) {
+    console.log("getMainPots" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
@@ -1236,10 +1253,11 @@ TableManager.prototype.getMainPots = function (tPots, mainPots) {
     }
 };
 TableManager.prototype.compareArray = function (arr1, arr2) {
+    
+    console.log("comepareArray" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("comepareArray" + " roomID:" + this.id);
     try {
         let rst = false;
         if (arr1.length != arr2.length) {
@@ -1258,11 +1276,12 @@ TableManager.prototype.compareArray = function (arr1, arr2) {
     }
 };
 TableManager.prototype.Update_recent_players = function () {
+    
+    let roomid = this.id
+    console.log("Update_recent_players" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    let roomid = this.id
-    console.log("Update_recent_players" + " roomID:" + this.id);
     try {
         let realPlayers = this.table.players.filter(
             (player) =>
@@ -1328,11 +1347,12 @@ TableManager.prototype.Update_recent_players = function () {
     }
 };
 TableManager.prototype.Update_level_handplayed = function (userid) {
+    
+    let roomid = this.id
+    console.log("Update_level_handplayed" + "roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    let roomid = this.id
-    console.log("Update_level_handplayed" + "roomID:" + this.id);
     try {
         let query = {
             userid: userid,
@@ -1382,11 +1402,12 @@ TableManager.prototype.Record_Won_History = function (
     wining_cards,
     handrankVal
 ) {
+    
+    let roomid = this.id;
+    console.log("Record_Won_History" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    let roomid = this.id;
-    console.log("Record_Won_History" + " roomID:" + this.id);
     try {
         let query = {
             userid: winner,
@@ -1503,10 +1524,11 @@ TableManager.prototype.Record_Won_History = function (
     }
 };
 TableManager.prototype.addPlayers = function () {
+    
+    console.log("addPlayers" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("addPlayers" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
             let bookingPlayers = this.players.filter((p) => p.booking == true);
@@ -1539,10 +1561,11 @@ TableManager.prototype.addPlayers = function () {
     }
 };
 TableManager.prototype.tableReposition = function () {
+    
+    console.log("tableReposition" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("tableReposition" + " roomID:" + this.id);
     try {
         for (let i = 0; i < this.table.players.length; i++) {
             if (
@@ -1668,10 +1691,11 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
     }
 };
 TableManager.prototype.checkBotStatus = function () {
+    
+    console.log("checkBotStatus" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("checkBotStatus" + " roomID:" + this.id);
     try {
         if (this.botCount > 0 && this.minBuyin <= 400000000000) {
             if (this.status == 0) {
@@ -1683,10 +1707,11 @@ TableManager.prototype.checkBotStatus = function () {
     }
 };
 TableManager.prototype.AddChipsUser = function (userid, points) {
+    
+    console.log("AddChipsuser" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("AddChipsuser" + " roomID:" + this.id);
     try {
         let player = this.table.players.find((p) => p && p.playerID == userid);
         if (player == null) return;
@@ -1697,10 +1722,11 @@ TableManager.prototype.AddChipsUser = function (userid, points) {
     }
 };
 TableManager.prototype.MinusChipsUser = function (userid, points) {
+    
+    console.log("MinusChipsUser" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("MinusChipsUser" + " roomID:" + this.id);
     try {
         let player = this.table.players.find((p) => p && p.playerID == userid);
         if (player == null) return;
@@ -1710,10 +1736,11 @@ TableManager.prototype.MinusChipsUser = function (userid, points) {
     }
 };
 TableManager.prototype.createBots = function (createCount) {
+    
+    console.log("createBots" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("createBots" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
             // let newnam = [];
@@ -1759,10 +1786,11 @@ TableManager.prototype.createBots = function (createCount) {
     }
 };
 TableManager.prototype.removeBots = function (removeCount) {
+    
+    console.log("removeBots" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("removeBots" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
             let count = 0;
@@ -1794,10 +1822,11 @@ TableManager.prototype.removeBots = function (removeCount) {
     }
 };
 TableManager.prototype.getBotID = function () {
+    
+    console.log("getBotId" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("getBotId" + " roomID:" + this.id);
     try {
         let _id = "";
         while (_id == "" || this.botIDs.indexOf(_id) != -1) {
@@ -1813,10 +1842,11 @@ TableManager.prototype.getBotID = function () {
 };
 
 TableManager.prototype.getStatus = function (isStandUp = 0) {
+    
+    console.log("getStatus" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("getStatus" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
             if (isStandUp == 0) {
@@ -1855,24 +1885,27 @@ TableManager.prototype.getStatus = function (isStandUp = 0) {
 };
 
 TableManager.prototype.sitDown = function (info, socket) {
+    
+    console.log("sitDown" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("sitDown" + " roomID:" + this.id);
     this.addPlayer(info, socket);
 };
 TableManager.prototype.standUp_forever = function (info, socket) {
+    
+    console.log("standUp_forever" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("standUp_forever" + " roomID:" + this.id);
     this.standUp(info, socket);
 };
 TableManager.prototype.standUp_force = function (player, bankrupt) {
+   
+    console.log("standUp_force" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("standUp_force" + " roomID:" + this.id);
     this.standUp(
         {
             userid: player.playerID,
@@ -1884,10 +1917,11 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
     );
 };
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
+    
+    console.log("standUp" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("standUp" + " roomID:" + this.id);
     try {
         if (info.mode != "bot") {
             let wCount = 0;
@@ -1994,10 +2028,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
 };
 
 TableManager.prototype.addPlayer = function (info, socket) {
+    
+    console.log("addPlayer" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("addPlayer" + " roomID:" + this.id);
     try {
         let username = info.player_name;
         let userid = info.player_id;
@@ -2055,10 +2090,11 @@ TableManager.prototype.addPlayer = function (info, socket) {
     }
 };
 TableManager.prototype.WaitingPlayers = async function (info, socket) {
+    
+    console.log("WaitingPlayers" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("WaitingPlayers" + " roomID:" + this.id);
     try {
         await this.getWaitingData();
         let emitData = {
@@ -2071,10 +2107,11 @@ TableManager.prototype.WaitingPlayers = async function (info, socket) {
     }
 };
 TableManager.prototype.buyIn = function (info, socket) {
+    
+    console.log("buyIn" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("buyIn" + " roomID:" + this.id);
     try {
         let player = this.players.find(
             (player) =>
@@ -2149,11 +2186,12 @@ TableManager.prototype.removeItem = function (arr, value) {
     }
 };
 TableManager.prototype.in_points = function (username, userid, in_points) {
+    
+    let roomid = this.id
+    console.log("in_points" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    let roomid = this.id
-    console.log("in_points" + " roomID:" + this.id);
     try {
         //let collection = this.database.collection('User_Data');
         let query = { username: username, userid: userid };
@@ -2182,10 +2220,11 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
     }
 };
 TableManager.prototype.out_points = function (username, userid, out_points) {
+    
+    console.log("out_points" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("out_points" + " roomID:" + this.id);
     try {
         //let collection = this.database.collection('User_Data');
         let query = { username: username, userid: userid };
@@ -2211,11 +2250,12 @@ TableManager.prototype.out_points = function (username, userid, out_points) {
     }
 };
 TableManager.prototype.getWaitingData = function () {
+    
+    let roomid = this.id
+    console.log("getWaitingData" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    let roomid = this.id
-    console.log("getWaitingData" + " roomID:" + this.id);
     try {
         return new Promise((resolve) => {
             let wCount = 0,
@@ -2248,10 +2288,11 @@ TableManager.prototype.getWaitingData = function () {
     }
 };
 TableManager.prototype.check_points = function (player, out_points) {
+    
+    console.log("check_points" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("check_points" + " roomID:" + this.id);
     try {
         let roomid = this.id;
         let roomTable = this;
@@ -2328,10 +2369,11 @@ var ChangeUnit = function (count) {
     }
 };
 TableManager.prototype.getPlayerRander = function () {
+    
+    console.log("getPlayerRander" + " roomID:" + this.id);
     if (this.onlyBotsLive()) {
         return;
     }
-    console.log("getPlayerRander" + " roomID:" + this.id);
     try {
         let players = this.table.players;
         let ranked_players = [];
