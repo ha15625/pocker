@@ -820,6 +820,7 @@ TableManager.prototype.onGameOver = async function () {
             this.status = 0;
             this.table.started = false;
             roommanager.removeTable(this.instance);
+			return;
         } else {
             await this.waitforSec(2000);
             await this.addPlayers();
