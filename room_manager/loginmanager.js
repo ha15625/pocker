@@ -450,7 +450,7 @@ exports.Rankinginfo = function (data, socket) {
         throw err;
       } else {
         //console.log(docs);
-        for (var i = 0; i < (docs.length >= 103 ? 103 : docs.length); i++) {
+        for (var i = 0; i < docs.length; i++) {
           userInfo =
             userInfo +
             "{" +
