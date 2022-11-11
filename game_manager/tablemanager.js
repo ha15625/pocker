@@ -933,7 +933,7 @@ TableManager.prototype.waitforSec = function (time) {
 };
 
 TableManager.prototype.onlyBotsLive = function () {
-
+    console.log("onlyBotslive" + this.id);
     try {
         let roomSockets = [];
         let roomID = this.id;
@@ -1981,16 +1981,12 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             // setTimeout(() => {
             //     socket.leave("r" + this.id);
             // }, 1000);
-        }
-
-        //console.log("StandUp:Status1" + " roomID:" + this.id);
-        try {
             if (socket) {
                 socket.leave("r" + this.id);
             }
-        } catch (e) {
-            console.log(e + " roomID:" + this.id);
         }
+        //console.log("StandUp:Status1" + " roomID:" + this.id);
+        
         if (this.onlyBotsLive()) {
             return;
         }
