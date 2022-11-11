@@ -1853,7 +1853,6 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         }
 
         //console.log("StandUp:Status1");
-        this.getStatus();
         try {
 			if(socket) {
             	socket.leave("r" + this.id);
@@ -1881,7 +1880,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             this.table.started = false;
 			console.log("Remove Table2");
             roommanager.removeTable(this.instance);
+            return;
         }
+        this.getStatus();
     } catch (error) {
         console.log(error);
     }
