@@ -1561,9 +1561,9 @@ TableManager.prototype.tableReposition = function () {
 };
 
 TableManager.prototype.enterTable = function (socket, username, userid) {
-    if(this.onlyBotsLive()) {
-        return;
-    }
+    // if(this.onlyBotsLive()) {
+    //     return;
+    // }
     console.log("enterTable" + " roomID:" + this.id);
     try {
         let positions = [];
