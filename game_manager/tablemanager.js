@@ -819,6 +819,7 @@ TableManager.prototype.onGameOver = async function () {
             this.removeBots(this.table.getIngamePlayersLength());
             this.status = 0;
             this.table.started = false;
+			console.log("Remove Table1");
             roommanager.removeTable(this.instance);
 			return;
         } else {
@@ -1878,6 +1879,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             this.removeBots(this.table.getIngamePlayersLength());
             this.status = 0;
             this.table.started = false;
+			console.log("Remove Table2");
             roommanager.removeTable(this.instance);
         }
     } catch (error) {
