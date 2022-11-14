@@ -2248,14 +2248,13 @@ TableManager.prototype.getWaitingData = function () {
     
     let roomid = this.id
     console.log("getWaitingData" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
     try {
         return new Promise((resolve) => {
             let wCount = 0,
                 wLength = this.waitingPlayers.length;
             if (wLength == 0) resolve();
+            console.log("waitingPlayers:" + this.id);
+            console.log(this.waitingPlayers);
             for (let i = 0; i < this.waitingPlayers.length; i++) {
                 let waitingPlayer = this.waitingPlayers[i];
                 let query = {

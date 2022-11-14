@@ -1121,9 +1121,7 @@ exports.Request_Recents_List = function (socket, data) {
                                                     check_online = false;
                                                 else check_online = true;
                                                 let connectedRoom = {};
-                                                if (
-                                                    result1.connected_room == ""
-                                                ) {
+                                                if (result1.connected_room == "") {
                                                     connectedRoom = {
                                                         roomid: -1,
                                                         sb: 0,
@@ -1139,15 +1137,11 @@ exports.Request_Recents_List = function (socket, data) {
                                                             result1.connected_room
                                                     );
                                                     if (table) {
-                                                        let sb =
-                                                            table.smallBlind;
+                                                        let sb = table.smallBlind;
                                                         let bb = table.bigBlind;
-                                                        let min_buyin =
-                                                            table.minBuyin;
-                                                        let max_buyin =
-                                                            table.maxBuyin;
-                                                        let max_seats =
-                                                            table.maxPlayers;
+                                                        let min_buyin = table.minBuyin;
+                                                        let max_buyin = table.maxBuyin;
+                                                        let max_seats = table.maxPlayers;
                                                         connectedRoom = {
                                                             roomid: result1.connected_room,
                                                             sb: sb,
@@ -1158,15 +1152,8 @@ exports.Request_Recents_List = function (socket, data) {
                                                         };
                                                     }
                                                 }
-                                                for (
-                                                    let j = 0;
-                                                    j < result1.friends.length;
-                                                    j++
-                                                ) {
-                                                    if (
-                                                        result1.friends[j].id ==
-                                                        userid
-                                                    ) {
+                                                for (let j = 0; j < result1.friends.length; j++) {
+                                                    if (result1.friends[j].id == userid ) {
                                                         requested = true;
                                                         break;
                                                     }
