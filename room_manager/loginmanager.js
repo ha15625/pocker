@@ -447,6 +447,13 @@ exports.Rankinginfo = function (data, socket) {
 			} else {
 				//console.log(docs);
 				for (var i = 0; i < docs.length; i++) {
+					let tPoints = docs[i].points;
+					if (tPoints.toString().length > 19) {
+						tPoints = 9000000000000000000;
+						collection.updateOne({ userid: docs[i].userid }, { $set: { points: tPoints }, }, function (err) {
+							if (err) console.log(err);
+						})
+					}
 					userInfo =
 						userInfo +
 						"{" +
@@ -475,7 +482,7 @@ exports.Rankinginfo = function (data, socket) {
 						docs[i].level +
 						'",' +
 						'"points":"' +
-						docs[i].points +
+						tPoints +
 						'"},';
 				}
 				userInfo = userInfo.substring(0, userInfo.length - 1);

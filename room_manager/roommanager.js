@@ -891,7 +891,14 @@ exports.Request_Buddies_List = function (socket, data) {
                                                 if (result1.connect == "")
                                                     check_online = false;
                                                 else check_online = true;
-                                                let connectedRoom = {};
+                                                let connectedRoom = {
+                                                    roomid: -1,
+                                                    sb: 0,
+                                                    bb: 0,
+                                                    minBuyin: 0,
+                                                    maxBuyin: 0,
+                                                    maxSeats: 0,
+                                                };
                                                 if (
                                                     result1.connected_room == ""
                                                 ) {
@@ -944,7 +951,7 @@ exports.Request_Buddies_List = function (socket, data) {
                                                     accepted: accepted,
                                                 };
                                                 myfriends.push(f);
-												resolve(true);
+                                                resolve(true);
                                             }
                                         }
                                     }
@@ -952,14 +959,14 @@ exports.Request_Buddies_List = function (socket, data) {
                             })
                         );
                     }
-					Promise.all(a).then((values) => {
-						let emitdata = {
-							result: "success",
-							userid: userid,
-							friends: myfriends,
-						};
-						socket.emit("REQ_BUDDIES_RESULT", emitdata);
-					})
+                    Promise.all(a).then((values) => {
+                        let emitdata = {
+                            result: "success",
+                            userid: userid,
+                            friends: myfriends,
+                        };
+                        socket.emit("REQ_BUDDIES_RESULT", emitdata);
+                    })
                 }
             }
         });
@@ -1006,7 +1013,14 @@ exports.Request_Buddies_List1 = function (socket, data) {
                                                 if (result1.connect == "")
                                                     check_online = false;
                                                 else check_online = true;
-                                                let connectedRoom = {};
+                                                let connectedRoom = {
+                                                    roomid: -1,
+                                                    sb: 0,
+                                                    bb: 0,
+                                                    minBuyin: 0,
+                                                    maxBuyin: 0,
+                                                    maxSeats: 0,
+                                                };
                                                 if (
                                                     result1.connected_room == ""
                                                 ) {
@@ -1120,7 +1134,14 @@ exports.Request_Recents_List = function (socket, data) {
                                                 if (result1.connect == "")
                                                     check_online = false;
                                                 else check_online = true;
-                                                let connectedRoom = {};
+                                                let connectedRoom = {
+                                                    roomid: -1,
+                                                    sb: 0,
+                                                    bb: 0,
+                                                    minBuyin: 0,
+                                                    maxBuyin: 0,
+                                                    maxSeats: 0,
+                                                };
                                                 if (result1.connected_room == "") {
                                                     connectedRoom = {
                                                         roomid: -1,
@@ -1153,7 +1174,7 @@ exports.Request_Recents_List = function (socket, data) {
                                                     }
                                                 }
                                                 for (let j = 0; j < result1.friends.length; j++) {
-                                                    if (result1.friends[j].id == userid ) {
+                                                    if (result1.friends[j].id == userid) {
                                                         requested = true;
                                                         break;
                                                     }
