@@ -74,7 +74,7 @@ exports.JoinRoom = function (data, socket) {
                     console.log(data.seatlimit + ":" + data.mode + ":" + data.min_buyin + ":" + data.room_id);
                     for (let i = 0; i < tables.length; i++) {
                         console.log("RoomID:", tables[i].id);
-                        console.log(t.table.getIngamePlayersLength() + ":" + t.table.maxPlayers + ":" + t.gameMode + ":" + t.minBuyin + ":" + t.id)
+                        console.log(tables[i].table.getIngamePlayersLength() + ":" + tables[i].table.maxPlayers + ":" + tables[i].gameMode + ":" + tables[i].minBuyin + ":" + tables[i].id)
                     }
                 } catch (error) {
                     console.log(error);
