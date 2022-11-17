@@ -2092,6 +2092,8 @@ TableManager.prototype.WaitingPlayers = async function (info, socket) {
     }
     try {
         await this.getWaitingData();
+        console.log("WaitingPlayersValue");
+        console.log(this.waitingPlayers);
         let emitData = {
             result: "success",
             players: this.waitingPlayers,
@@ -2276,6 +2278,7 @@ TableManager.prototype.getWaitingData = function () {
                     }
                 });
             }
+            resolve();
         });
     } catch (error) {
         console.log(error + " roomID:" + this.id);

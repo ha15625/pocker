@@ -726,62 +726,28 @@ exports.admin_panel_login = function (socket, data) {
 	let totalUsers = 0;
 	let onlineUsers = 0;
 	let clients = io.sockets.clients();
-	collection.find().toArray(function (err, docs) {
-		if (!err) {
-			totalUsers = docs.length;
-			if (docs.length > 0) {
-				let count = 0;
-				for (let i = 0; i < docs.length; i++) {
-					const element = docs[i];
-					if (element.connect != "") {
-						let findCount = 0;
-						console.log(clients.sockets.length);
-						for (let key in clients.sockets) {
-							if (element.connect == key) {
-								findCount++;
-								break;
-							}
-						}
-
-						if (findCount == 0) {
-							collection.updateOne(
-								{ userid: element.userid },
-								{
-									$set: {
-										connect: "",
-									},
-								}
-							);
-						} else {
-							count++;
-						}
-					}
-				}
-				onlineUsers = count;
+	
+	let collection1 = database.collection("Admin_Data");
+	let query = { id: data.id, password: data.password };
+	collection1.findOne(query, function (err, result) {
+		if (err) throw err;
+		else {
+			if (result != null) {
+				setTimeout(() => {
+					let emitdata = {
+						result: "success",
+						id: data.id,
+						password: data.password,
+						total_users: collection.count({}),
+						online_users: Object.keys(io.sockets.sockets).length,
+					};
+					socket.emit("ADMIN_LOGIN_RESULT", emitdata);
+				}, 200);
+			} else {
+				let emitdata = { result: "failed" };
+				socket.emit("ADMIN_LOGIN_RESULT", emitdata);
 			}
 		}
-		let collection1 = database.collection("Admin_Data");
-		let query = { id: data.id, password: data.password };
-		collection1.findOne(query, function (err, result) {
-			if (err) throw err;
-			else {
-				if (result != null) {
-					setTimeout(() => {
-						let emitdata = {
-							result: "success",
-							id: data.id,
-							password: data.password,
-							total_users: totalUsers,
-							online_users: onlineUsers,
-						};
-						socket.emit("ADMIN_LOGIN_RESULT", emitdata);
-					}, 200);
-				} else {
-					let emitdata = { result: "failed" };
-					socket.emit("ADMIN_LOGIN_RESULT", emitdata);
-				}
-			}
-		});
 	});
 };
 exports.send_chips = function (socket, data) {
