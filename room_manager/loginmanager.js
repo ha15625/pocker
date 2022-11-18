@@ -37,7 +37,6 @@ exports.LogIn = function (socket, userInfo) {
 	} else {
 		var collection = database.collection("User_Data");
 		var query = {
-			username: userInfo.username,
 			facebook_id: userInfo.facebook_id,
 		};
 		collection.findOne(query, function (err, result) {
