@@ -67,7 +67,7 @@ let removeItem = function (arr, value) {
 };
 exports.JoinRoom = function (data, socket) {
     try {
-        if (data.roomid == null) {
+        if (data.room_id == null || data.newtable == "True") {
             if (data.newtable == "True") {
                 try {
                     console.log("JoinRoom");
