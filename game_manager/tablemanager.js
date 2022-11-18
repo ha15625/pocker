@@ -1929,7 +1929,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             }
             if (wCount == 0)
                 this.waitingPlayers.push({
-                    username: info.username,
+                    username: info.username?info.username:"",
                     userid: info.userid,
                     avatarUrl: "",
                     chips: 0,
