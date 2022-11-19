@@ -35,8 +35,8 @@ exports.LogIn = function (socket, userInfo) {
 		let emitdata = { result: "failed" };
 		socket.emit("GET_LOGIN_RESULT", emitdata);
 	} else {
-		var collection = database.collection("User_Data");
-		var query = {
+		let collection = database.collection("User_Data");
+		let query = {
 			facebook_id: userInfo.facebook_id,
 		};
 		collection.findOne(query, function (err, result) {
@@ -46,6 +46,11 @@ exports.LogIn = function (socket, userInfo) {
 					let emitdata = { result: "failed" };
 					socket.emit("GET_LOGIN_RESULT", emitdata);
 				} else {
+					if (result.username != userInfo.username) {
+						result.username = userInfo.username;
+						collection.updateOne(query, { $set: { username: userInfo.username } }, function (err, result) {
+						});
+					}
 					if (result.connect != "") {
 						let clients = io.sockets.clients();
 						for (let key in clients.sockets) {
@@ -110,8 +115,8 @@ exports.SignUp = function (socket, data) {
 		socket.emit("GET_REGISTER_RESULT", { result: "failed" });
 	} else {
 		let collection = database.collection("User_Data");
-		collection.findOne({facebook_id: data.facebook_id}, function(err, result){
-			if(err || result == null) {
+		collection.findOne({ facebook_id: data.facebook_id }, function (err, result) {
+			if (err || result == null) {
 				collection.find().toArray(function (err, docs) {
 					if (err) {
 						throw err;
@@ -133,9 +138,9 @@ exports.SignUp = function (socket, data) {
 						if (data.signtype == "facebook") {
 							name = data.username;
 						}
-		
+
 						let best_winning_hand = { cards: [], hand: "", handval: 0.0 };
-		
+
 						let user_data = {
 							username: name,
 							userid: randomnum,
@@ -170,7 +175,7 @@ exports.SignUp = function (socket, data) {
 							connected_room: -1,
 							connect: socket.id,
 						};
-		
+
 						collection.insertOne(user_data);
 						console.log("- New user: " + name + " has Registered.");
 						socket.username = randomnum;
@@ -200,7 +205,7 @@ exports.SignUp = function (socket, data) {
 				lManager.LogIn(socket, data);
 			}
 		});
-		
+
 	}
 };
 exports.Valid_Name = function (socket, data) {
