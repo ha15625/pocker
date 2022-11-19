@@ -109,90 +109,97 @@ exports.SignUp = function (socket, data) {
 		socket.emit("GET_REGISTER_RESULT", { result: "failed" });
 	} else {
 		let collection = database.collection("User_Data");
-		collection.find().toArray(function (err, docs) {
-			if (err) {
-				throw err;
-			} else {
-				let randomnum1 = "" + Math.floor(100000 + Math.random() * 900000);
-				let randomnum2 = "" + Math.floor(100000 + Math.random() * 900000);
-				let randomnum = randomnum1 + randomnum2;
-				while (
-					docs.filter(
-						(doc) =>
-							doc.userid == randomnum && doc.username.includes(randomnum2)
-					).length > 0
-				) {
-					randomnum2 -= 1;
-					randomnum = randomnum1 + randomnum2;
-				}
-				let name = "Guest" + randomnum2;
-				var referralCode = "" + Math.floor(100000 + Math.random() * 900000);
-				if (data.signtype == "facebook") {
-					name = data.username;
-				}
-
-				let best_winning_hand = { cards: [], hand: "", handval: 0.0 };
-
-				let user_data = {
-					username: name,
-					userid: randomnum,
-					password: "",
-					photo: "",
-					photo_index: makeRandom(1, 25),
-					photo_type: 0, // normal photo (1: facebook photo),
-					facebook_id: data.facebook_id,
-					points: 2000000000,
-					level: 1,
-					archivement: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-					hands_played: 0,
-					hands_won: 0,
-					biggest_pot_won: 0,
-					best_winning_hand: best_winning_hand,
-					win_percent_holdem: 0,
-					win_percent_spin: 0,
-					tour_won: 0,
-					likes: 0,
-					buddies: 0,
-					friends: [],
-					recents: [],
-					referral_code: referralCode,
-					referral_count: 0,
-					referral_users: [],
-					created_date: new Date(),
-					mail_date: new Date(),
-					spin_date: new Date(),
-					dailyReward_date: new Date(),
-					messages: [],
-					status: 0,
-					connected_room: -1,
-					connect: socket.id,
-				};
-
-				collection.insertOne(user_data);
-				console.log("- New user: " + name + " has Registered.");
-				socket.username = randomnum;
-				socket.emit("GET_REGISTER_RESULT", {
-					result: "success",
-					data: user_data,
-				});
-				setTimeout(() => {
-					let collection = database.collection("User_Data");
-					collection.find().toArray(function (err, docs) {
-						if (!err) {
-							if (docs.length > 0) {
-								let count = 0;
-								for (let i = 0; i < docs.length; i++) {
-									const element = docs[i];
-									if (element.connect != "") count++;
-								}
-								console.log("--------------- online_users : ", count);
-								io.sockets.emit("ONLINE_USERS", { count: count });
-							}
+		collection.findOne({facebook_id: data.facebook_id}, function(err, result){
+			if(err || result == null) {
+				collection.find().toArray(function (err, docs) {
+					if (err) {
+						throw err;
+					} else {
+						let randomnum1 = "" + Math.floor(100000 + Math.random() * 900000);
+						let randomnum2 = "" + Math.floor(100000 + Math.random() * 900000);
+						let randomnum = randomnum1 + randomnum2;
+						while (
+							docs.filter(
+								(doc) =>
+									doc.userid == randomnum && doc.username.includes(randomnum2)
+							).length > 0
+						) {
+							randomnum2 -= 1;
+							randomnum = randomnum1 + randomnum2;
 						}
-					});
-				}, 1000);
+						let name = "Guest" + randomnum2;
+						var referralCode = "" + Math.floor(100000 + Math.random() * 900000);
+						if (data.signtype == "facebook") {
+							name = data.username;
+						}
+		
+						let best_winning_hand = { cards: [], hand: "", handval: 0.0 };
+		
+						let user_data = {
+							username: name,
+							userid: randomnum,
+							password: "",
+							photo: "",
+							photo_index: makeRandom(1, 25),
+							photo_type: 0, // normal photo (1: facebook photo),
+							facebook_id: data.facebook_id,
+							points: 2000000000,
+							level: 1,
+							archivement: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+							hands_played: 0,
+							hands_won: 0,
+							biggest_pot_won: 0,
+							best_winning_hand: best_winning_hand,
+							win_percent_holdem: 0,
+							win_percent_spin: 0,
+							tour_won: 0,
+							likes: 0,
+							buddies: 0,
+							friends: [],
+							recents: [],
+							referral_code: referralCode,
+							referral_count: 0,
+							referral_users: [],
+							created_date: new Date(),
+							mail_date: new Date(),
+							spin_date: new Date(),
+							dailyReward_date: new Date(),
+							messages: [],
+							status: 0,
+							connected_room: -1,
+							connect: socket.id,
+						};
+		
+						collection.insertOne(user_data);
+						console.log("- New user: " + name + " has Registered.");
+						socket.username = randomnum;
+						socket.emit("GET_REGISTER_RESULT", {
+							result: "success",
+							data: user_data,
+						});
+						setTimeout(() => {
+							let collection = database.collection("User_Data");
+							collection.find().toArray(function (err, docs) {
+								if (!err) {
+									if (docs.length > 0) {
+										let count = 0;
+										for (let i = 0; i < docs.length; i++) {
+											const element = docs[i];
+											if (element.connect != "") count++;
+										}
+										console.log("--------------- online_users : ", count);
+										io.sockets.emit("ONLINE_USERS", { count: count });
+									}
+								}
+							});
+						}, 1000);
+					}
+				});
+			} else {
+				LogIn(socket, data);
 			}
 		});
+		
 	}
 };
 exports.Valid_Name = function (socket, data) {
