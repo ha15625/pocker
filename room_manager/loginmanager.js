@@ -105,6 +105,7 @@ function makeRandom(min, max) {
 	return RandVal;
 }
 exports.SignUp = function (socket, data) {
+	let lManager = this;
 	if (data.version == null || data.version != "7.3") {
 		socket.emit("GET_REGISTER_RESULT", { result: "failed" });
 	} else {
@@ -196,7 +197,7 @@ exports.SignUp = function (socket, data) {
 					}
 				});
 			} else {
-				this.LogIn(socket, data);
+				lManager.LogIn(socket, data);
 			}
 		});
 		
