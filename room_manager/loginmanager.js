@@ -196,7 +196,7 @@ exports.SignUp = function (socket, data) {
 					}
 				});
 			} else {
-				LogIn(socket, data);
+				this.LogIn(socket, data);
 			}
 		});
 		
