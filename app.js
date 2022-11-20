@@ -3,6 +3,7 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var gamelog = require('./game_manager/gamelog');
 var cors = require('cors');
 var logger = require('morgan');
 
