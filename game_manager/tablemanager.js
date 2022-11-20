@@ -3,7 +3,7 @@ var Poker = require("../module/poker-engine");
 var Ranker = require("../module/handranker");
 var colors = require("colors");
 var roommanager = require("../room_manager/roommanager");
-var botlog = require('./gamelog');
+var gamelog = require('./gamelog');
 colors.setTheme({
     info: "bgGreen",
     help: "cyan",
