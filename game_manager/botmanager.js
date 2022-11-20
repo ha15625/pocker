@@ -1,6 +1,7 @@
 'use strict'
 var roommanager = require('../room_manager/roommanager');
 var gamemanager = require('./gamemanager');
+var botlog = require('./gamelog');
 var Bot = require('./bot.js').Bot;
 var Ranker = require('../module/handranker');
 var names = [];
@@ -29,7 +30,7 @@ exports.createBots = function (data) {
         }
         roommanager.JoinRoom_Bot(option);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 exports.getCount = function () {
@@ -42,11 +43,11 @@ exports.addBot = function (option) {
     bots.push(newBot);
 }
 exports.leaveBot = function (username) {
-    console.log("-> splice bot in botManager");
+    gamelog.showlog("-> splice bot in botManager");
     for (let i = 0; i < bots.length; i++) {
         const element = bots[i];
         if (element.playerName == username) {
-            console.log('removed');
+            gamelog.showlog('removed');
             //bots.splice(i, 1);
             break;
         }
@@ -69,7 +70,7 @@ exports.roundstart = function (index) {
                 if (element.playerName == player.playerName) {
                     if (element.roomid == roomlist[index].roomid) {
                         element.turn(index, roomlist[index].bigBlind, roomlist[index].legalbet, player);
-                        //console.log('turn>>', roomlist[index].roomid);
+                        //gamelog.showlog('turn>>', roomlist[index].roomid);
                         break;
                     }
                 }
@@ -77,13 +78,13 @@ exports.roundstart = function (index) {
         });
 
         roomlist[index].table.on("smallBlind", function (player) {
-            //console.log('smallBlind>>', roomlist[index].roomid);
+            //gamelog.showlog('smallBlind>>', roomlist[index].roomid);
             let players = roomlist[index].table.players;
             let ranked_players = [];
             let ranks = [];
             for (let i = 0; i < players.length; i++) {
                 const element = players[i];
-                //console.log(element.playerName, element._GetHand().message,  element._GetHand().rank);
+                //gamelog.showlog(element.playerName, element._GetHand().message,  element._GetHand().rank);
                 ranks.push(element._GetHand().rank);
                 ranked_players.push({ name: element.playerName, rank: element._GetHand().rank });
             }
@@ -98,7 +99,7 @@ exports.roundstart = function (index) {
             }
         });
         roomlist[index].table.on("dealCards", function (boardCardCount, currnt_bets) {
-            //console.log('dealCards>>', roomlist[index].roomid);
+            //gamelog.showlog('dealCards>>', roomlist[index].roomid);
             let mainpots = gamemanager.roundMainPots(currnt_bets);
             roomlist[index].mainPots = gamemanager.getMainPots(roomlist[index].mainPots, mainpots);
             // let roundName = roomlist[index].table.game.roundName;
@@ -114,7 +115,7 @@ exports.roundstart = function (index) {
             // }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 exports.movebots = function (from, to) {

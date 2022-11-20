@@ -4,6 +4,7 @@ var database = null;
 var io;
 var poker = require("../module/poker-engine");
 var Ranker = require("../module/handranker");
+var botlog = require('./gamelog');
 var showWinDelay = 1000;
 var BotManager = require("./botmanager.js");
 const percentIncrease = (partnumber, totalnumber) =>
@@ -37,7 +38,7 @@ exports.initdatabase = function (db) {
 						}
 						let query = { userid: element.userid };
 						collection.findOne(query, function (err, result) {
-							if (err) console.log("error1", err);
+							if (err) gamelog.showlog("error1", err);
 							else {
 								if (result != null) {
 									let Friends = result.friends;
@@ -85,7 +86,7 @@ exports.initdatabase = function (db) {
 										// let results = "";
 										// if(result.photo == "") results = "";
 										// else results = result.photo.split('/')[3];
-										// console.log(results);
+										// gamelog.showlog(results);
 										// collection.updateOne(query, {
 										//     $set: {
 										//         archivement: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
@@ -127,7 +128,7 @@ exports.initdatabase = function (db) {
 		//             for (let i = 0; i < docs.length; i++) {
 		//                 const element = docs[i];
 		//                 let points = 0;
-		//                 let level = Math.floor(element.level); console.log(element.points.toString().length)
+		//                 let level = Math.floor(element.level); gamelog.showlog(element.points.toString().length)
 		//                 if (element.points === null || element.points === undefined ||
 		//                     element.points.toString().length == 0) {
 		//                     points = 100000000;
@@ -135,7 +136,7 @@ exports.initdatabase = function (db) {
 		//                 else {
 		//                     points = roundNum(element.points);
 		//                 }
-		//                 // console.log("i found");
+		//                 // gamelog.showlog("i found");
 		//                 let query = { userid: element.userid };
 		//                 collection.updateOne(query, {
 		//                     $set: {
@@ -164,7 +165,7 @@ exports.initdatabase = function (db) {
 		//                         element.points.toString().length > 18) {
 		//                         points = 0;
 		//                     }
-		//                     // console.log("i found");
+		//                     // gamelog.showlog("i found");
 		//                     let query = { userid: element.userid };
 		//                     collection.updateOne(query, {
 		//                         $set: {
@@ -188,7 +189,7 @@ exports.initdatabase = function (db) {
 	//     var board = ['TH', '9H', 'TC'];
 	//     var hands = [hand1, hand2, hand3];
 	//     var results = Ranker.orderHands(hands, board);
-	//     console.log(results[0][0])
+	//     gamelog.showlog(results[0][0])
 	// }, 1000);
 };
 
@@ -577,12 +578,12 @@ exports.SitDown = function (socket, info) {
 		let roomid = parseInt(info.room_id);
 		let username = info.player_id;
 		let seat = parseInt(info.position);
-		console.log("-> current room users");
+		gamelog.showlog("-> current room users");
 		for (let index = 0; index < roomlist.length; index++) {
 			if (roomlist[index].roomid == roomid) {
 				for (let i = 0; i < roomlist[index].playerlist.length; i++) {
 					const element = roomlist[index].playerlist[i];
-					console.log("sitdown ??? username:", element.username);
+					gamelog.showlog("sitdown ??? username:", element.username);
 					if (element.username == username) {
 						if (
 							element.getCorrectSeatnumber == 1 &&
@@ -590,7 +591,7 @@ exports.SitDown = function (socket, info) {
 						) {
 							return;
 						}
-						console.log("sitdown");
+						gamelog.showlog("sitdown");
 						element.seatnumber = seat;
 						element.getCorrectSeatnumber = 1;
 						element.leaveenterflag = 0;
@@ -627,7 +628,7 @@ exports.SitDown = function (socket, info) {
 								getUsername(useridArray, function (data) {
 									let usernames = [];
 									data.forEach((d) => {
-										//console.log(d.username);
+										//gamelog.showlog(d.username);
 										usernames.push({ userid: d.userid, username: d.username });
 									});
 									io.sockets
@@ -647,7 +648,7 @@ exports.SitDown = function (socket, info) {
 	}, 1000);
 };
 exports.SitUp = function (socket, info) {
-	console.log("sit up");
+	gamelog.showlog("sit up");
 	let roomid = parseInt(info.room_id);
 	let username = info.player_id;
 	let seat = parseInt(info.position);
@@ -677,7 +678,7 @@ exports.SitUp = function (socket, info) {
 	}
 };
 exports.SitOut = function (socket, data) {
-	console.log("sitout", data);
+	gamelog.showlog("sitout", data);
 	let roomid = parseInt(data.room_id);
 	let username = data.player_id;
 	let seat = parseInt(data.position);
@@ -752,7 +753,7 @@ function getCurrentRoomStatus(index, socket) {
 		getUsername(useridArray, function (data) {
 			let usernames = [];
 			data.forEach((d) => {
-				//console.log(d.username);
+				//gamelog.showlog(d.username);
 				usernames.push({ userid: d.userid, username: d.username });
 			});
 			io.sockets
@@ -809,7 +810,7 @@ exports.WaitForBB = function (socket, data) {
 function roundstart(index) {
 	if (roomlist[index].table.started == false) {
 		BotManager.roundstart(index);
-		console.log(
+		gamelog.showlog(
 			"room",
 			index,
 			">>>",
@@ -826,7 +827,7 @@ function roundstart(index) {
 				card: [],
 				pot: "" + roomlist[index].table.getRoundPot(),
 			};
-			console.log("@@@@@@@@@");
+			gamelog.showlog("@@@@@@@@@");
 			io.in("r" + roomlist[index].roomid).emit("TABLE_ROUND", emitdata);
 			// for (let i = 0; i < roomlist[index].table.players.length; i++) {
 			//     const element = roomlist[index].table.players[i];
@@ -834,7 +835,7 @@ function roundstart(index) {
 			//         let collection = database.collection('User_Data');
 			//         let query = { username: element.playerName };
 			//         collection.findOne(query, function (err, result) {
-			//             if (err) console.log("error1", err);
+			//             if (err) gamelog.showlog("error1", err);
 			//             else {
 			//                 if (result != null) {
 			//                     if (result.connect == "") {
@@ -1019,7 +1020,7 @@ function roundstart(index) {
 							);
 							if (b && b == player) {
 								setTimeout(function () {
-									console.log("leave bot****");
+									gamelog.showlog("leave bot****");
 									exports.Leave(null, {
 										room_id: roomlist[index].roomid,
 										player_id: seatBots[x].username,
@@ -1059,7 +1060,7 @@ function roundstart(index) {
 							}
 							// else {
 							//     if (roomlist[index].playerlist[j].mode != 'bot') {
-							//         console.log("CheckSitout > ", player.playerName);
+							//         gamelog.showlog("CheckSitout > ", player.playerName);
 							//         exports.CheckSitout(index, player.playerName);
 							//     }
 							// }
@@ -1178,7 +1179,7 @@ function roundstart(index) {
 									pot: "" + roomlist[index].table.getRoundPot(),
 									mainpots: roomlist[index].mainPots,
 								};
-								console.log("@@@@@@@@@");
+								gamelog.showlog("@@@@@@@@@");
 								io.in("r" + roomlist[index].roomid).emit(
 									"TABLE_ROUND",
 									emitdata
@@ -1191,7 +1192,7 @@ function roundstart(index) {
 					if (emitdata.roundname != "Showdown") {
 						setTimeout(() => {
 							if (!roomlist[index].table.onlyoneplayerremaining()) {
-								console.log("@@@@@@@@@");
+								gamelog.showlog("@@@@@@@@@");
 								io.in("r" + roomlist[index].roomid).emit(
 									"TABLE_ROUND",
 									emitdata
@@ -1219,7 +1220,7 @@ function roundstart(index) {
 				pot: "" + roomlist[index].table.getRoundPot(),
 				mainpots: roomlist[index].mainPots,
 			};
-			console.log("@@@@@@@@@");
+			gamelog.showlog("@@@@@@@@@");
 			io.in("r" + roomlist[index].roomid).emit("TABLE_ROUND", emitdata);
 		});
 		roomlist[index].table.on("win", function (winner, prize) {
@@ -1280,7 +1281,7 @@ function roundstart(index) {
 						handrankVal
 					);
 				}, 100);
-				console.log("gameWin::");
+				gamelog.showlog("gameWin::");
 				io.in("r" + roomlist[index].roomid).emit("TABLE_WIN", emitdata);
 			}, showWinDelay);
 		});
@@ -1336,19 +1337,19 @@ function roundstart(index) {
 									let player = roomlist[index].table.getPlayerByName(
 										element.username
 									);
-									//console.log("abcdefg", element.username);
+									//gamelog.showlog("abcdefg", element.username);
 									if (player) {
 										player.isEmptySeat = false;
 										player.isSeated = true;
 										element.buyinflag = 1;
-										//console.log(player.playerName, "buyinFlog = 1");
+										//gamelog.showlog(player.playerName, "buyinFlog = 1");
 									}
 								}
 								if (element.balance > 0) {
 									if (element.leaveenterflag == 0) {
 										if (element.getCorrectSeatnumber == 1) {
 											if (element.waitforbb == 0) {
-												//console.log("qwewqe");
+												//gamelog.showlog("qwewqe");
 												let player = roomlist[index].table.getPlayerByName(
 													element.username
 												);
@@ -1369,7 +1370,7 @@ function roundstart(index) {
 													element.seatnumber = seatnumber;
 												}
 											} else if (element.waitforbb == 2) {
-												//console.log("qwewqe2222");
+												//gamelog.showlog("qwewqe2222");
 												let seatnumber;
 												if (element.mode == "bot") {
 													if (
@@ -1479,8 +1480,8 @@ function roundstart(index) {
 					let seatBots = roomlist[index].playerlist.filter(
 						(x) => x.mode == "bot"
 					);
-					//console.log("seatedplayer >>>> ", seatedPlayers.length);
-					//console.log("players >>>> ", roomlist[index].playerlist.length);
+					//gamelog.showlog("seatedplayer >>>> ", seatedPlayers.length);
+					//gamelog.showlog("players >>>> ", roomlist[index].playerlist.length);
 					if (seatedPlayers.length > 1 /*&& seatnormals.length > 0*/) {
 						let time = showWinDelay + 1000;
 						setTimeout(() => {
@@ -1494,7 +1495,7 @@ function roundstart(index) {
 						}, time);
 					}
 
-					console.log(seatnormals.length, "||", seatBots.length);
+					gamelog.showlog(seatnormals.length, "||", seatBots.length);
 					if (seatBots.length == 0 && seatnormals.length == 1) {
 						roommanager.BotsCreating(
 							roomlist[index].roomid,
@@ -1503,7 +1504,7 @@ function roundstart(index) {
 						);
 					}
 					// else if (seatBots.length > 0 && seatnormals.length == 0) {
-					//     console.log("&leave bots>>", seatBots.length);
+					//     gamelog.showlog("&leave bots>>", seatBots.length);
 					//     for (i = 0; i < seatBots.length; i++) {
 					//         (function (x) {
 					//             setTimeout(function () {
@@ -1519,7 +1520,7 @@ function roundstart(index) {
 					// }
 					// else if (seatBots.length > 0 && seatnormals.length == 0) {
 					//     if (seatBots.length > 0) {
-					//         console.log("botleave?", seatBots.length);
+					//         gamelog.showlog("botleave?", seatBots.length);
 					//         for (i = 0; i < seatBots.length; i++) {
 					//             (function (x) {
 					//                 setTimeout(function () {
@@ -1738,7 +1739,7 @@ async function checkrooms_tournament(roomIndex) {
 					getUsername(useridArray, function (data) {
 						let usernames = [];
 						data.forEach((d) => {
-							//console.log(d.username);
+							//gamelog.showlog(d.username);
 							usernames.push({ userid: d.userid, username: d.username });
 						});
 						filtered[0].clientSocket.emit("CURRENT_ROOM_NAMES", {
@@ -2155,7 +2156,7 @@ exports.PlayerViewMode = function (socket, data) {
 	let roomid = data.room_id;
 	let username = data.player_id;
 	let position = data.position;
-	//console.log(data);
+	//gamelog.showlog(data);
 	for (let index = 0; index < roomlist.length; index++) {
 		if (roomlist[index].roomid == roomid) {
 			for (let i = 0; i < roomlist[index].playerlist.length; i++) {
@@ -2166,7 +2167,7 @@ exports.PlayerViewMode = function (socket, data) {
 						// sit-down state: sitting in a seat but not playing
 						let player = roomlist[index].table.getPlayerByName(username);
 						if (player != undefined) {
-							//console.log("8");
+							//gamelog.showlog("8");
 							in_points(username, player.chips);
 							player.chips = 0;
 						} else {
@@ -2199,7 +2200,7 @@ exports.PlayerViewMode = function (socket, data) {
 							}, 100);
 							return;
 						} else {
-							console.log("????");
+							gamelog.showlog("????");
 						}
 					} // The status taken a part in game directly
 					else {
@@ -2207,7 +2208,7 @@ exports.PlayerViewMode = function (socket, data) {
 						if (roomlist[index].table.started == true) {
 							if (sitteds > 0) {
 								if (roomlist[index].table.currentPlayer == position) {
-									//console.log("fold~");
+									//gamelog.showlog("fold~");
 									exports.fold(index, username);
 								}
 							}
@@ -2216,7 +2217,7 @@ exports.PlayerViewMode = function (socket, data) {
 						let player = roomlist[index].table.getPlayerByName(
 							element.username
 						);
-						//console.log("5");
+						//gamelog.showlog("5");
 						in_points(username, player.chips);
 						element.balance = 0;
 						player.chips = 0;
@@ -2238,12 +2239,12 @@ exports.PlayerViewMode = function (socket, data) {
 									// if (socket != null) {
 									//     if (seatBots.length == 0 && seatnormals.length == 1) {
 									//         if(seatnormals[0].leaveenterflag == 1){
-									//         console.log('>>');
+									//         gamelog.showlog('>>');
 									//         roommanager.BotsCreating(roomlist[index].roomid, roomlist[index].buyin_min, roomlist[index].seatlimit);
 									//         }
 									//     }
 									//     else if (seatBots.length > 0 && seatnormals.length == 0) {
-									//         console.log("&leave bots>>", seatBots.length);
+									//         gamelog.showlog("&leave bots>>", seatBots.length);
 									//         for (i = 0; i < seatBots.length; i++) {
 									//             (function (x) {
 									//                 setTimeout(function () {
@@ -2331,11 +2332,11 @@ exports.Buyin = function (info, socket) {
 				if (element.username == info.username) {
 					if (player == null) {
 						setTimeout(() => {
-							console.log("player null");
+							gamelog.showlog("player null");
 							if (roomlist[index].gamemode == "tournament")
 								element.balance = parseInt(info.buyin_money);
 							else element.balance += parseInt(info.buyin_money);
-							console.log("out_points:", info.buyin_money);
+							gamelog.showlog("out_points:", info.buyin_money);
 							out_points(info.username, info.buyin_money);
 							io.sockets.in("r" + info.room_id).emit("ADD_BALANCE", info);
 
@@ -2360,7 +2361,7 @@ exports.Buyin = function (info, socket) {
 									seatedPlayers.length == 0 &&
 									seatedPlayers.filter((x) => x.mode == "bot").length == 0
 								) {
-									console.log(">>>");
+									gamelog.showlog(">>>");
 									roommanager.BotsCreating(
 										roomlist[index].roomid,
 										roomlist[index].buyin_min,
@@ -2389,7 +2390,7 @@ exports.Buyin = function (info, socket) {
 										if (roomlist[index].gamemode == "tournament") checknum = 3;
 										else checknum = 1;
 										// if (seatedPlayers.filter(x => x.mode == 'bot').length == seatedPlayers.length) {
-										//     //console.log('there are only bots');
+										//     //gamelog.showlog('there are only bots');
 										//     if (seatedPlayers.length > 0) checknum = seatedPlayers.length;
 										// }
 										if (
@@ -2398,13 +2399,13 @@ exports.Buyin = function (info, socket) {
 										) {
 											setTimeout(() => {
 												if (roomlist[index].status == 0) {
-													console.log("start round");
+													gamelog.showlog("start round");
 													roundstart(index);
 													roomlist[index].status = 1;
 												} else {
 													if (roomlist[index].gamemode == "tournament")
 														levelTimer(index);
-													console.log("new round");
+													gamelog.showlog("new round");
 													roomlist[index].table.initNewRound();
 												}
 											}, 100);
@@ -2414,15 +2415,15 @@ exports.Buyin = function (info, socket) {
 									seatedPlayers.length > checknum ||
 									real_seatedPlayers.length > checknum
 								) {
-									console.log("wait for bb");
+									gamelog.showlog("wait for bb");
 									io.sockets
 										.in("r" + info.room_id)
 										.emit("BUYIN_WAITFORBB", info);
 									// let seatBots = roomlist[index].playerlist.filter(x => x.mode == 'bot');
-									// console.log("seatBots.length???? ", seatBots.length);
+									// gamelog.showlog("seatBots.length???? ", seatBots.length);
 									// setTimeout(() => {
 									//     if (seatBots.length > 0) {
-									//         console.log("seatBots--", seatBots.length);
+									//         gamelog.showlog("seatBots--", seatBots.length);
 									//         for (i = 0; i < seatBots.length; i++) {
 									//             (function (x) {
 									//                 setTimeout(function () {
@@ -2462,13 +2463,13 @@ exports.Buyin = function (info, socket) {
 						if (player.isEmptySeat == false) {
 							element.balance += parseInt(info.buyin_money);
 							player.chips += parseInt(info.buyin_money);
-							//console.log("2");
+							//gamelog.showlog("2");
 							out_points(info.username, info.buyin_money);
 							io.sockets.in("r" + info.room_id).emit("BUYIN_BALANCE", info);
 						} else {
 							element.balance += parseInt(info.buyin_money);
 							player.chips += parseInt(info.buyin_money);
-							//console.log("3");
+							//gamelog.showlog("3");
 							out_points(info.username, info.buyin_money);
 							let seatedPlayers = roomlist[index].table.players.filter(
 								(x) => !x.isEmptySeat
@@ -2483,7 +2484,7 @@ exports.Buyin = function (info, socket) {
 							} else if (seatedPlayers.length > 1) {
 								io.sockets.in("r" + info.room_id).emit("BUYIN_BALANCE", info);
 								element.buyinflag = 0;
-								//console.log("buyinFlog = 0");
+								//gamelog.showlog("buyinFlog = 0");
 							}
 						}
 					}
@@ -2510,7 +2511,7 @@ function Record_Won_History(
 		handval: handrankVal,
 	};
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error2", err);
+		if (err) gamelog.showlog("error2", err);
 		else {
 			if (result != null) {
 				let hands_won = result.hands_won;
@@ -2563,7 +2564,7 @@ exports.ShowCards = function (info) {
 };
 
 exports.PlayerLeave = function (socket, data) {
-	console.log("click player leave ~");
+	gamelog.showlog("click player leave ~");
 	let index = 0;
 	for (let i = 0; i < roomlist.length; i++) {
 		if (roomlist[i].roomid == data.room_id) {
@@ -2583,7 +2584,7 @@ exports.PlayerLeave = function (socket, data) {
 				);
 				if (socket != null) {
 					if (seatBots.length == 0 && seatnormals.length == 1) {
-						console.log(">>>>");
+						gamelog.showlog(">>>>");
 						roommanager.BotsCreating(
 							roomlist[index].roomid,
 							roomlist[index].buyin_min,
@@ -2591,7 +2592,7 @@ exports.PlayerLeave = function (socket, data) {
 						);
 					} else if (seatBots.length > 0 && seatnormals.length == 0) {
 						if (seatBots.length > 0) {
-							console.log("botleave?", seatBots.length);
+							gamelog.showlog("botleave?", seatBots.length);
 							for (i = 0; i < seatBots.length; i++) {
 								(function (x) {
 									setTimeout(function () {
@@ -2623,8 +2624,8 @@ exports.Leave = function (socket, data) {
 		}
 	}
 
-	//console.log(data.room_id);
-	console.log(
+	//gamelog.showlog(data.room_id);
+	gamelog.showlog(
 		"LEAVE roomindex",
 		index,
 		"username",
@@ -2642,7 +2643,7 @@ exports.Leave = function (socket, data) {
 					leftPoints = leftPoints = roomlist[index].playerlist[i].balance;
 					if (roomlist[index].playerlist[i].mode == "bot")
 						BotManager.leaveBot(username);
-					//console.log('splice > player');
+					//gamelog.showlog('splice > player');
 					//roomlist[index].playerlist.splice(i, 1);
 					leavePos = i;
 					isExist = true;
@@ -2657,7 +2658,7 @@ exports.Leave = function (socket, data) {
 				if (roomlist[index].table.started == true) {
 					if (sitteds > 0) {
 						if (roomlist[index].table.currentPlayer == position) {
-							console.log("fold~");
+							gamelog.showlog("fold~");
 							exports.fold(index, username);
 						}
 					}
@@ -2686,26 +2687,26 @@ exports.Leave = function (socket, data) {
 						action: "leave",
 					};
 					let pl = roomlist[index].table.getPlayerByName(username);
-					//console.log("6");
+					//gamelog.showlog("6");
 					if (pl) {
 						in_points(username, pl.chips);
 						roomlist[index].table.RemovePlayer(username);
-						console.log("remote table player ", username);
+						gamelog.showlog("remote table player ", username);
 					} else {
 						in_points(username, leftPoints);
 					}
-					console.log("Player___Leave >> ", username);
+					gamelog.showlog("Player___Leave >> ", username);
 					for (let index = 0; index < roomlist.length; index++) {
 						if (roomlist[index].roomid == data.room_id) {
 							for (let i = 0; i < roomlist[index].playerlist.length; i++) {
 								const element = roomlist[index].playerlist[i];
-								console.log(" element username: ", element.username);
+								gamelog.showlog(" element username: ", element.username);
 							}
 						}
 					}
-					console.log("splice > player:", roomlist[index].playerlist.length);
+					gamelog.showlog("splice > player:", roomlist[index].playerlist.length);
 					roomlist[index].playerlist.splice(leavePos, 1);
-					console.log("so =>", roomlist[index].playerlist.length);
+					gamelog.showlog("so =>", roomlist[index].playerlist.length);
 					io.sockets
 						.in("r" + data.room_id)
 						.emit("PLAYER_LEAVE_RESULT", emitdata);
@@ -2718,7 +2719,7 @@ exports.Leave = function (socket, data) {
 						let collection = database.collection("Room_Data");
 						collection.deleteOne(query, function (err, removed) {
 							if (err) {
-								console.log("error3", err);
+								gamelog.showlog("error3", err);
 							}
 						});
 					}
@@ -2771,9 +2772,9 @@ function LeaveUser(index, player, mode) {
 							  let collection = database.collection('Room_Data');
 							  collection.deleteOne(query, function (err, removed) {
 								  if (err) {
-									  console.log("error4",err);
+									  gamelog.showlog("error4",err);
 								  } else {
-									  console.log('room', room_id, 'has removed successfully!');
+									  gamelog.showlog('room', room_id, 'has removed successfully!');
 								  }
 							  });
 						  }
@@ -2817,7 +2818,7 @@ exports.PublicChatMessage = function (socket, data) {
 	let collection = database.collection("Public_Chat_Data");
 	collection.insertOne(data, function (err) {
 		if (err) {
-			console.log("error30", err);
+			gamelog.showlog("error30", err);
 			throw err;
 		}
 	});
@@ -2850,7 +2851,7 @@ exports.CheckSpin = function (socket, data) {
 		userid: data.userid,
 	};
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error5", err);
+		if (err) gamelog.showlog("error5", err);
 		else {
 			try {
 				if (result.spin_date.getTime() == result.created_date.getTime()) {
@@ -2874,7 +2875,7 @@ exports.CheckSpin = function (socket, data) {
 					}
 				}
 			} catch (e) {
-				console.log(e);
+				gamelog.showlog(e);
 			}
 		}
 	});
@@ -2887,13 +2888,13 @@ exports.SuccessSpin = function (socket, data) {
 	let value = parseInt(data.value);
 	let buff = spinBalances.filter((x) => x == value);
 	if (buff.length > 0) {
-		//console.log(buff[0]);
+		//gamelog.showlog(buff[0]);
 		let collection = database.collection("User_Data");
 		let query = {
 			userid: data.userid,
 		};
 		collection.findOne(query, function (err, result) {
-			if (err) console.log("error6", err);
+			if (err) gamelog.showlog("error6", err);
 			else {
 				let points = result.points + value;
 				collection.updateOne(
@@ -2939,7 +2940,7 @@ function getFormattedDate() {
 
 function setTournaments() {
 	// let time = date.setHours(20, 0, 0) - new Date().getTime();
-	// console.log(msToTime(time));
+	// gamelog.showlog(msToTime(time));
 	let isAdd = false;
 	let collection = database.collection("Tournament");
 	let maxTime = 0;
@@ -2988,7 +2989,7 @@ function setTournaments() {
 				addTournament(index, date);
 				collection.insertOne(query, function (err) {
 					if (err) {
-						console.log("error7", err);
+						gamelog.showlog("error7", err);
 						throw err;
 					}
 				});
@@ -3014,7 +3015,7 @@ function setTournaments() {
 								}
 								collection.deleteOne(qur, function (err, removed) {
 									if (err) {
-										console.log("error8", err);
+										gamelog.showlog("error8", err);
 									} else {
 										startTime = startTime + 14400000; // (2 hours)
 										let date1 = new Date(startTime);
@@ -3031,7 +3032,7 @@ function setTournaments() {
 										addTournament(element.index, date1);
 										collection.insertOne(query1, function (err) {
 											if (err) {
-												console.log("error9", err);
+												gamelog.showlog("error9", err);
 												throw err;
 											}
 										});
@@ -3082,7 +3083,7 @@ function addTournament(index, date) {
 					index: tourlist[j].index,
 				};
 				collection.findOne(query, function (err, result) {
-					if (err) console.log("error35", err);
+					if (err) gamelog.showlog("error35", err);
 					else {
 						if (result != null) {
 							let players = result.players;
@@ -3167,7 +3168,7 @@ exports.regTournaments = function (socket, data) {
 		index: parseInt(data.tourIndex),
 	};
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error10", err);
+		if (err) gamelog.showlog("error10", err);
 		else {
 			if (result != null) {
 				let players = result.players;
@@ -3199,7 +3200,7 @@ exports.regTournaments = function (socket, data) {
 	});
 };
 exports.OnDisconnect = function (socket) {
-	console.log("-Disconnect", socket.room, socket.username, socket.id);
+	gamelog.showlog("-Disconnect", socket.room, socket.username, socket.id);
 	let username = socket.username;
 	let collection = database.collection("User_Data");
 	let query;
@@ -3274,7 +3275,7 @@ exports.OnDisconnect = function (socket) {
 					if (sitteds == 0) {
 						exports.removetimeout(index);
 						io.sockets.in("r" + roomid).emit("REMOVE_TABLE");
-						//console.log('@ remove room');
+						//gamelog.showlog('@ remove room');
 						roomlist.splice(index, 1);
 						let query = {
 							roomid: parseInt(roomid),
@@ -3282,9 +3283,9 @@ exports.OnDisconnect = function (socket) {
 						let collection = database.collection("Room_Data");
 						collection.deleteOne(query, function (err, removed) {
 							if (err) {
-								console.log("error11", err);
+								gamelog.showlog("error11", err);
 							} else {
-								console.log(roomid, "room has removed successfully!");
+								gamelog.showlog(roomid, "room has removed successfully!");
 							}
 						});
 					}
@@ -3305,7 +3306,7 @@ exports.OnDisconnect = function (socket) {
 								roomlist[index].seatlimit
 							);
 						} else if (seatBots.length > 0 && seatnormals.length == 0) {
-							console.log("leave bots>>", seatBots.length);
+							gamelog.showlog("leave bots>>", seatBots.length);
 							for (i = 0; i < seatBots.length; i++) {
 								(function (x) {
 									setTimeout(function () {
@@ -3332,7 +3333,7 @@ exports.OnDisconnect = function (socket) {
 						const element = docs[i];
 						if (element.connect != "") count++;
 					}
-					console.log("--------------- online_users : ", count);
+					gamelog.showlog("--------------- online_users : ", count);
 					io.sockets.emit("ONLINE_USERS", { count: count });
 				}
 			}
@@ -3345,11 +3346,11 @@ function GetRealName(userid) {
 		userid: userid,
 	};
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error13", err);
+		if (err) gamelog.showlog("error13", err);
 		else {
 			if (result != null) {
 				let hisName = result.username;
-				//console.log(hisName);
+				//gamelog.showlog(hisName);
 				return hisName;
 			}
 		}
@@ -3362,7 +3363,7 @@ function getUsername(array_ids, callback) {
 	// };
 	// collection.findMany(query, function (err, result) {
 	//     if (err)
-	//         console.log("error13", err);
+	//         gamelog.showlog("error13", err);
 	//     else {
 	//         if (result != null) {
 	//             callback(result.username);
@@ -3373,7 +3374,7 @@ function getUsername(array_ids, callback) {
 		if (err) {
 			logger.winston.error(err);
 		} else {
-			//console.log("data", data);
+			//gamelog.showlog("data", data);
 			callback(data);
 		}
 	});
@@ -3384,7 +3385,7 @@ function Update_level_handplayed(username) {
 		userid: username,
 	};
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error12", err);
+		if (err) gamelog.showlog("error12", err);
 		else {
 			if (result != null) {
 				let hands_played = result.hands_played;
@@ -3443,7 +3444,7 @@ function in_points(username, in_points) {
 			let mypoints = result.points;
 			mypoints = mypoints.toString().replace(/\,/g, "");
 			in_points = in_points.toString().replace(/\,/g, "");
-			mypoints = parseInt(mypoints) + parseInt(in_points); //console.log("+", in_points);
+			mypoints = parseInt(mypoints) + parseInt(in_points); //gamelog.showlog("+", in_points);
 			if (parseInt(mypoints) < 0) mypoints = 0;
 			collection.updateOne(
 				query,
@@ -3464,7 +3465,7 @@ function out_points(username, out_points) {
 			let mypoints = result.points;
 			mypoints = mypoints.toString().replace(/\,/g, "");
 			out_points = out_points.toString().replace(/\,/g, "");
-			mypoints = parseInt(mypoints) - parseInt(out_points); //console.log("-", out_points);
+			mypoints = parseInt(mypoints) - parseInt(out_points); //gamelog.showlog("-", out_points);
 			if (parseInt(mypoints) < 0) mypoints = 0;
 			collection.updateOne(
 				query,

@@ -131,7 +131,7 @@ Table.prototype.shuffle = function (deck) {
     deck[i] = tempj;
     deck[j] = tempi;
   }
-  //console.log(deck);
+  
   return deck;
 };
 
@@ -226,14 +226,14 @@ Table.prototype.GetWinnersIndexes = function (isOnePlayer) {
         !this.players[i].isEmptySeat &&
         !this.players[i].folded
       ) {
-        //console.log(this.players[i].hand.rank)
+        
         if (maxRank < this.players[i].hand.rank)
           maxRank = this.players[i].hand.rank;
       }
     }
   }
   this.forEachPlayers(function (player, $index) {
-    //console.log(player.hand);
+    
     let playerRank = player.hand.rank;
 
     if (!player.folded) {
@@ -292,11 +292,11 @@ Table.prototype.GivePrize = function (winners, prize) {
     let winner = this.players[winners[i]];
     winner.prize = winner.prize + won;
     winner.chips = winner.chips + won;
-    // console.log('adding ' + won + ' chips to ' + winner.playerName + ' , ' + winner.playerID);
+    
     if (this.game.roundBets[winners[i]] === 0) {
       winner.folded = true;
     }
-    //console.log('player ' + winner.playerName + '(' + winner.playerID + ')' + ' wins with ' + winner.hand.message + '(cards: ' + winner.hand.cards + ', value ' + winner.hand.rank + ')');
+    
     if (this.decideWinner == false) this.emit("win", winner, won);
   }
   if (this.decideWinner == false) this.decideWinner = true;
@@ -328,10 +328,10 @@ Table.prototype.checkWinners = function () {
     let results = Ranker.orderHands(hands1, board);
     results[0].forEach((item) => {
       wins.push(item.id);
-      console.log("?", item.id);
+      
     });
   }
-  //console.log(wins)
+  
   return wins;
 };
 Table.prototype.roundEnd = function () {
@@ -365,10 +365,10 @@ Table.prototype.checkForWinner = function (isOnePlayer) {
 
     let prize = this.makePrize(part);
 
-    // console.log('winners :', winners.length);
+    
     // let totalbets = 0;
     // for (let i = 0; i < this.bets.length; i++) {
-    //     console.log('^^^^^^^^^ ',this.bets[i]);
+    
     //     totalbets += this.bets[i];
     // }
     // let winnerbets = 0;
@@ -383,27 +383,26 @@ Table.prototype.checkForWinner = function (isOnePlayer) {
     //     if(player && !player.isEmptySeat && !player.folded)
     //     {
     //         if(this.bets[i] > maxWinnerBet){
-    //             console.log('give ?' , player.playerName, (this.bets[i] - maxWinnerBet))
+    
     //             player.chips = player.chips + (this.bets[i] - maxWinnerBet);
     //         }
     //     }
     // }
-    // console.log('0@won',prize);
-    // prize = totalbets - winnerbets;   console.log('1@',prize);
+    
+    
     // let won = Math.ceil(prize / winners.length);
     // won = this.roundNum(Math.ceil(won * 0.9));
 
     // this.GivePrize(winners, won);
     this.GivePrize(winners, prize);
   }
-  //console.log("round end");
+  
   setTimeout(() => {
     this.checkForBankrupt();
   }, 3000);
 };
 
 Table.prototype.checkForBankrupt = function () {
-  //console.log("check Bankrupt");
   for (let i = this.players.length - 1; i >= 0; i--) {
     if (this.players[i] && this.players[i].chips < this.bigBlind) {
       if (this.players[i].chips <= 0) this.players[i].chips = 0;
@@ -414,7 +413,6 @@ Table.prototype.checkForBankrupt = function () {
       ) {
         this.players[i].isEmptySeat = true;
         this.players[i].isSeated = false;
-        // console.log('player ' + this.players[i].playerName + '(' + this.players[i].playerID + ')' + ' is going bankrupt');
         this.emit("Bankrupt", this.getPlayerByID(this.players[i].playerID));
       }
     }
@@ -427,7 +425,6 @@ Table.prototype.checkForBankrupt = function () {
   }
   setImmediate(function () {
     self.emit("gameOver");
-    //console.log("game over");
     this.gameoverd = true;
   });
 };
@@ -632,7 +629,7 @@ Table.prototype.getSimulationNextPlayerIndex = function (current_Index) {
 };
 
 Table.prototype.initNewRound = function () {
-  //console.log("--------------------initNewRound");
+  
   if (this.players.length == 1) {
     this.started = false;
     return;
@@ -776,7 +773,7 @@ Table.prototype.addPlayer = function (options) {
     return;
   }
 
-  //console.log('adding player ' + options.playerName + '('+ options.playerID + ')' + ' at position ' + options.position);
+  
   options.table = this;
 
   // remove previous position if player already seated on table
@@ -799,7 +796,7 @@ Table.prototype.addPlayer = function (options) {
   if (options.photoType === null || options.photoType === undefined)
     options.photoType = 0;
   playerSeated.photoType = options.photoType;
-  //console.log('>>>> position: ', position)
+  
   return position;
 };
 
@@ -835,7 +832,7 @@ Table.prototype.DealCardsResetBets = function () {
 };
 
 Table.prototype.NewRound = function () {
-  //console.log('new round')
+  
   this.gameoverd = false;
   this.game.deck = this.fillDeck();
   let smallBlind, bigBlind;
@@ -862,7 +859,7 @@ Table.prototype.NewRound = function () {
   if (!this.players[bigBlind].isAllIn) {
     this.players[bigBlind].talked = false;
   }
-  //console.log('>>>> dealer ', this.dealer)
+  
   this.emit("smallBlind", this.players[smallBlind]);
   this.emit("bigBlind", this.players[bigBlind]);
 

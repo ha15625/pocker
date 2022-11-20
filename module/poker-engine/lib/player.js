@@ -59,7 +59,7 @@ Player.prototype.hasRaised = function() {
     });
 
     if(hasRaised) {
-        //console.log(this.table.getCurrentPlayerLabel()  + ' has raised ',currentBet);
+        
     }
 
     return hasRaised;
@@ -67,7 +67,7 @@ Player.prototype.hasRaised = function() {
 
 Player.prototype.checkTurn = function() {
     if (this.table.currentPlayer !== this.getIndex()) {
-        //console.log("WRONG TURN, should be",this.table.currentPlayer, " you are",this.getIndex() );
+        
         //this.table.currentPlayer = this.getIndex();
         this.emit("wrongTurn");
         var self = this;
@@ -96,7 +96,7 @@ Player.prototype.SimpleBet = function(bet) {
 
     if(this.table.players[index].chips <= 0) {
         this.isAllIn = true;
-        //console.log(this.table.getCurrentPlayerLabel() + ' is all in !');
+        
     }
 
     if(this.hasRaised()) {
@@ -120,7 +120,7 @@ Player.prototype.Check = function() {
     if (!this.checkTurn()) {
         return false;
     }
-    //console.log(this.table.getCurrentPlayerLabel() + ' checked');
+    
     this.talked = true;
     this.table.progress();
 };
@@ -130,7 +130,7 @@ Player.prototype.fold = function() {
         return false;
     }
     
-    //console.log(this.table.getCurrentPlayerLabel() + ' folded');
+    
     this.folded = true;
     this.talked = true;
     this.table.progress();
@@ -140,7 +140,7 @@ Player.prototype.bet = function(bet) {
     if (!this.SimpleBet(bet)) {
         return false;
     };
-    //console.log(this.table.getCurrentPlayerLabel() + ' bets ' + bet);
+    
 
     this.talked = true;
     this.table.progress();
@@ -153,7 +153,7 @@ Player.prototype.call = function() {
     if (!this.SimpleBet(maxBet - currentBet)) {
         return false;
     }
-    //console.log(this.table.getCurrentPlayerLabel() + ' called');
+    
 
     this.talked = true;
     this.table.progress();
@@ -163,14 +163,14 @@ Player.prototype.allIn = function() {
     if (!this.SimpleBet(this.chips)) {
         return false;
     }
-    //console.log(this.table.getCurrentPlayerLabel() + ' All in');
+    
     
     this.talked = true;
     this.table.progress();
 };
 Player.prototype.updateTimebank = function(timer) {
     this.timebank = timer;
-    ////console.log("TIMEBANK: ", this.timebank);
+    
 };
 Player.prototype.GetHand = function() {
     var cards = this.cards.concat(this.table.game.board);

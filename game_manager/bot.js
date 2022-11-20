@@ -2,6 +2,7 @@
 'use strict';
 var EventEmitter = require('events').EventEmitter;
 var gamemanager = require('./gamemanager.js');
+var botlog = require('./gamelog');
 var raiseRandom = [1, 2, 4];
 var pocketCards = ['AA', 'AK', 'AQ', 'AJ', 'AT', 'A9', 'A8', 'A7', 'A6', 'A5', 'A4', 'A3', 'KA', 'KK', 'KQ', 'KJ', 'KT', 'K9', 'K8', 'QA'
     , 'QK', 'QQ', 'QJ', 'QT', 'JA', 'JK', 'JQ', 'TA', 'TK', '9A', '8A', '7A', '6A', '5A', '4A', '3A', '9K', '8K', 'TQ', 'JJ', 'TT', '99', '88', '77', '66', '55',
@@ -60,17 +61,17 @@ Bot.prototype.tableRound = function (roundName) {
 }
 
 Bot.prototype.turn = function (index, bigBlind, legalbet, player) {
-    console.log("bot's turn>>", index, bigBlind, legalbet, player.playerName);
-    //console.log(player.cards);
+    gamelog.showlog("bot's turn>>", index, bigBlind, legalbet, player.playerName);
+    //gamelog.showlog(player.cards);
     let goodcards = false;
     let card = '';
     for (let ind = 0; ind < player.cards.length; ind++) {
         card += player.cards[ind].charAt(0);
     }
     let reverseCard = card.split('').reverse().join('');
-    //console.log(card, reverseCard);
+    //gamelog.showlog(card, reverseCard);
     if (pocketCards.filter(x => x == card).length > 0) {
-        goodcards = true; //console.log("yeah");
+        goodcards = true; //gamelog.showlog("yeah");
     }
     else if (pocketCards.filter(x => x == reverseCard).length > 0) {
         goodcards = true;
@@ -116,14 +117,14 @@ Bot.prototype.turn = function (index, bigBlind, legalbet, player) {
                     let num1 = Math.floor(Math.random() * 2) + 1;
                     if (num1 == 1) {
                         if (canCall) gamemanager.Call(index, player.playerName, call);
-                        else console.log(">>> error1");
+                        else gamelog.showlog(">>> error1");
                     }
                     else {
                         let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
                         if (canRaise) gamemanager.Raise(index, player.playerName, randomNumber * minRaise, max_Bet, current_Bet, call);
                         else {
                             if (canCall) gamemanager.Call(index, player.playerName, call);
-                            else console.log(">>> error2");
+                            else gamelog.showlog(">>> error2");
                         }
                     }
                 }
@@ -151,14 +152,14 @@ Bot.prototype.turn = function (index, bigBlind, legalbet, player) {
                     let num1 = Math.floor(Math.random() * 2) + 1;
                     if (num1 == 1) {
                         if (canCall) gamemanager.Call(index, player.playerName, call);
-                        else console.log(">>> error1");
+                        else gamelog.showlog(">>> error1");
                     }
                     else {
                         let randomNumber = raiseRandom[Math.floor(Math.random() * raiseRandom.length)];
                         if (canRaise) gamemanager.Raise(index, player.playerName, randomNumber * minRaise, max_Bet, current_Bet, call);
                         else {
                             if (canCall) gamemanager.Call(index, player.playerName, call);
-                            else console.log(">>> error2");
+                            else gamelog.showlog(">>> error2");
                         }
                     }
                 }

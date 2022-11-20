@@ -8,6 +8,7 @@ colors.setTheme({
 });
 var gamemanager = require("../game_manager/gamemanager");
 var TableManager = require("../game_manager/tablemanager").TableManager;
+var gamelog = require('../game_manager/gamelog');
 var database = null;
 var io;
 var usedBotNames = [];
@@ -22,14 +23,14 @@ exports.initdatabase = function (db) {
         let collection = database.collection("Tournament");
         collection.deleteMany(function (err, removed) {
             if (err) {
-                console.log("error21", err);
+                gamelog.showlog("error21", err);
             } else {
-                console.log("all rooms has removed successfully!");
+                gamelog.showlog("all rooms has removed successfully!");
             }
         });
         getPhotos();
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -46,13 +47,13 @@ exports.get_Entrance_Amount = function (socket) {
         };
         socket.emit("REQ_ENTRANCE_AMOUNT_RESULT", mydata);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.removeTable = function (table) {
-    console.log("Remove Table ID:", table.id);
+    gamelog.showlog("Remove Table ID:", table.id);
     removeItem(tables, table);
-    console.log("*** tables.length ", tables.length);
+    gamelog.showlog("*** tables.length ", tables.length);
 };
 let removeItem = function (arr, value) {
     try {
@@ -62,23 +63,31 @@ let removeItem = function (arr, value) {
         }
         return arr;
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.JoinRoom = function (data, socket) {
+    let logData = [];
+    logData['data'] = data;
+    let tableData = [];
+    for (let i = 0; i < tables.length; i++) {
+        tableData.push({"playerLength": tables[i].table.getIngamePlayersLength(), "maxPlayer": tables[i].table.maxPlayers, "gameMode": tables[i].gameMode, "minByin": tables[i].minBuyin, "tableId": tables[i].id});
+    }
+    logData["tableData"] = tableData;
+    gamelog.showlog(logData, 1);
     try {
         if (data.room_id == null || data.room_id == "" || data.newtable == "True") {
             if (data.newtable == "True") {
-                try {
-                    console.log("JoinRoom");
-                    console.log(data.seatlimit + ":" + data.mode + ":" + data.min_buyin + ":" + data.room_id);
-                    for (let i = 0; i < tables.length; i++) {
-                        console.log("RoomID:", tables[i].id);
-                        console.log(tables[i].table.getIngamePlayersLength() + ":" + tables[i].table.maxPlayers + ":" + tables[i].gameMode + ":" + tables[i].minBuyin + ":" + tables[i].id)
-                    }
-                } catch (error) {
-                    console.log(error);
-                }
+                // try {
+                //     gamelog.showlog("JoinRoom");
+                //     gamelog.showlog(data.seatlimit + ":" + data.mode + ":" + data.min_buyin + ":" + data.room_id);
+                //     for (let i = 0; i < tables.length; i++) {
+                //         gamelog.showlog("RoomID:", tables[i].id);
+                //         gamelog.showlog(tables[i].table.getIngamePlayersLength() + ":" + tables[i].table.maxPlayers + ":" + tables[i].gameMode + ":" + tables[i].minBuyin + ":" + tables[i].id)
+                //     }
+                // } catch (error) {
+                //     gamelog.showlog(error);
+                // }
 
                 let table = tables.find(
                     (t) =>
@@ -130,7 +139,7 @@ exports.JoinRoom = function (data, socket) {
             table && table.enterTable(socket, data.username, data.userid);
         }
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -183,7 +192,7 @@ function createTable(
             tables.push(table);
         }, 1000);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 let getPhotos = function () {
@@ -194,13 +203,13 @@ let getPhotos = function () {
 };
 let checkTables = function () {
     try {
-        console.log("checktables");
+        gamelog.showlog("checktables");
         for (let index = 0; index < tables.length; index++) {
             const table = tables[index];
             if (table.onlyBotsLive()) exports.removeTable(table);
         }
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -215,7 +224,7 @@ let getPhotoLinks = function () {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.addChipsTouserInTable = function (tableid, userid, points) {
@@ -243,7 +252,7 @@ exports.getBotUrl = function (table) {
         usedBotNames.push(realNames[newIndex]);
         return { url: realPhotos[newIndex], name: realNames[newIndex] };
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.getBotName = function (table) {
@@ -277,7 +286,7 @@ exports.getBotName = function (table) {
         table.botNames.push(_username);
         return _username;
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 function shuffle(array) {
@@ -294,10 +303,10 @@ function createID_table(idArray) {
             if (idArray.find((id) => id == tableID)) found = false;
             else found = true;
         }
-        console.log(tableID, " Table ID");
+        gamelog.showlog(tableID, " Table ID");
         return tableID;
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 function makeRandomID() {
@@ -321,7 +330,7 @@ exports.StandUp = function (info, socket) {
 };
 exports.Leave = function (info, socket) {
     let table = tables.find((t) => t.id == info.room_id);
-    console.log("table count:", tables.length);
+    gamelog.showlog("table count:", tables.length);
     table && table.standUp_forever(info, socket);
 };
 exports.Buyin = function (info, socket) {
@@ -338,7 +347,7 @@ exports.Action = function (info) {
 };
 exports.OnDisconnect = function (socket) {
     try {
-        console.log(
+        gamelog.showlog(
             "-Disconnect",
             socket.room,
             socket.username,
@@ -397,7 +406,7 @@ exports.OnDisconnect = function (socket) {
         };
         table && table.standUp_forever(info, socket);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 function creating(socket, data, botCounts) {
@@ -476,7 +485,7 @@ exports.JoinRoom_Bot = function (data) {
                 });
         }
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -510,7 +519,7 @@ function createBots_first(seatlimit) {
         };
         exports.JoinRoom_Bot(data);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 var botnames = [];
@@ -534,7 +543,7 @@ exports.enterroom_bot = function (roomid, buyin) {
         let avatar = Math.floor(Math.random() * 12) + 1;
         gamemanager.playerenterroom_bot(roomid, username, balance, avatar);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -605,7 +614,7 @@ exports.CheckRefferal = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -616,7 +625,7 @@ exports.SHARE_REFFERAL_SUCCESS_RESULT = function (socket, data) {
             userid: data.userid,
         };
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error22", err);
+            if (err) gamelog.showlog("error22", err);
             else {
                 let referral_count = result.referral_count;
                 if (referral_count > 0) referral_count--;
@@ -634,7 +643,7 @@ exports.SHARE_REFFERAL_SUCCESS_RESULT = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -647,7 +656,7 @@ exports.Request_Friend = function (socket, data) {
             userid: friend_id,
         };
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error23", err);
+            if (err) gamelog.showlog("error23", err);
             else {
                 if (result != null) {
                     let Friends = [];
@@ -683,7 +692,7 @@ exports.Request_Friend = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -697,7 +706,7 @@ exports.Accept_Friend = function (socket, data) {
             userid: userid,
         };
         collection.findOne(query1, function (err, result) {
-            if (err) console.log("error24", err);
+            if (err) gamelog.showlog("error24", err);
             else {
                 if (result != null) {
                     let Friends = result.friends;
@@ -711,7 +720,7 @@ exports.Accept_Friend = function (socket, data) {
                         }
                     }
                     if (count > 1) {
-                        console.log("SO BAD");
+                        gamelog.showlog("SO BAD");
                         let jsonData = {
                             userid: userid,
                         };
@@ -741,7 +750,7 @@ exports.Accept_Friend = function (socket, data) {
         };
 
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error25", err);
+            if (err) gamelog.showlog("error25", err);
             else {
                 let _Friends = [];
                 _Friends = result.friends;
@@ -782,7 +791,7 @@ exports.Accept_Friend = function (socket, data) {
         };
         exports.Request_Buddies_List(socket, jsonData);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -795,7 +804,7 @@ exports.Request_Cancel_Friend = function (socket, data) {
             userid: userid,
         };
         collection.findOne(query1, function (err, result) {
-            if (err) console.log("error26", err);
+            if (err) gamelog.showlog("error26", err);
             else {
                 if (result != null) {
                     let Friends = [];
@@ -827,7 +836,7 @@ exports.Request_Cancel_Friend = function (socket, data) {
             userid: friend_id,
         };
         collection.findOne(query2, function (err, result) {
-            if (err) console.log("error27", err);
+            if (err) gamelog.showlog("error27", err);
             else {
                 if (result != null) {
                     let Friends = [];
@@ -861,7 +870,7 @@ exports.Request_Cancel_Friend = function (socket, data) {
         };
         socket.emit("CANCEL_FRIEND_RESULT", emitdata);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.Request_Buddies_List = function (socket, data) {
@@ -873,7 +882,7 @@ exports.Request_Buddies_List = function (socket, data) {
         };
         let myfriends = [];
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error28", err);
+            if (err) gamelog.showlog("error28", err);
             else {
                 if (result != null) {
                     let Friends = result.friends;
@@ -893,7 +902,7 @@ exports.Request_Buddies_List = function (socket, data) {
                                     query1,
                                     function (err, result1) {
                                         if (err) {
-                                            console.log("error29", err);
+                                            gamelog.showlog("error29", err);
                                             //counter--;
                                         } else {
                                             //counter--;
@@ -982,7 +991,7 @@ exports.Request_Buddies_List = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.Request_Buddies_List1 = function (socket, data) {
@@ -994,7 +1003,7 @@ exports.Request_Buddies_List1 = function (socket, data) {
         };
         let myfriends = [];
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error28", err);
+            if (err) gamelog.showlog("error28", err);
             else {
                 if (result != null) {
                     let Friends = result.friends;
@@ -1015,7 +1024,7 @@ exports.Request_Buddies_List1 = function (socket, data) {
                                     query1,
                                     function (err, result1) {
                                         if (err) {
-                                            console.log("error29", err);
+                                            gamelog.showlog("error29", err);
                                             //counter--;
                                         } else {
                                             //counter--;
@@ -1104,7 +1113,7 @@ exports.Request_Buddies_List1 = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.Request_Recents_List = function (socket, data) {
@@ -1116,7 +1125,7 @@ exports.Request_Recents_List = function (socket, data) {
         };
         let myfriends = [];
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error21", err);
+            if (err) gamelog.showlog("error21", err);
             else {
                 if (result != null) {
                     let Friends = result.recents;
@@ -1136,7 +1145,7 @@ exports.Request_Recents_List = function (socket, data) {
                                     query1,
                                     function (err, result1) {
                                         if (err) {
-                                            console.log("error29", err);
+                                            gamelog.showlog("error29", err);
                                             //counter--;
                                         } else {
                                             //counter--;
@@ -1243,7 +1252,7 @@ exports.Request_Recents_List = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 // send a chat-message
@@ -1253,14 +1262,14 @@ exports.SendMessage = function (socket, data) {
         let collection1 = database.collection("User_Data");
         collection.insertOne(data, function (err) {
             if (err) {
-                console.log("error30", err);
+                gamelog.showlog("error30", err);
                 throw err;
             } else {
                 let query_send = {
                     userid: data.sender_id,
                 };
                 collection1.findOne(query_send, function (err, result) {
-                    if (err) console.log("error31", err);
+                    if (err) gamelog.showlog("error31", err);
                     else {
                         if (result != null) {
                             let jsonData = {
@@ -1279,7 +1288,7 @@ exports.SendMessage = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.InviteRoom = function (data) {
@@ -1290,7 +1299,7 @@ exports.CheckUserMessage = function (socket, data) {
         let collection = database.collection("User_Data");
         let query = { userid: data.userid };
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error41", err);
+            if (err) gamelog.showlog("error41", err);
             else {
                 if (result != null) {
                     if (result.messages != undefined) {
@@ -1313,7 +1322,7 @@ exports.CheckUserMessage = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.GetUserMessages = function (socket, data) {
@@ -1321,7 +1330,7 @@ exports.GetUserMessages = function (socket, data) {
         let collection = database.collection("User_Data");
         let query = { userid: data.userid };
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error41", err);
+            if (err) gamelog.showlog("error41", err);
             else {
                 if (result != null) {
                     if (result.messages != undefined) {
@@ -1331,7 +1340,7 @@ exports.GetUserMessages = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.Request_User_Balance = function (socket, data) {
@@ -1339,7 +1348,7 @@ exports.Request_User_Balance = function (socket, data) {
         let collection = database.collection("User_Data");
         let query = { userid: data.userid };
         collection.findOne(query, function (err, result) {
-            if (err) console.log("error32", err);
+            if (err) gamelog.showlog("error32", err);
             else {
                 let num = 0;
                 if (!result && result === null) {
@@ -1358,7 +1367,7 @@ exports.Request_User_Balance = function (socket, data) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 
@@ -1395,7 +1404,7 @@ exports.Request_Chat_List = function (socket, data) {
             }
         }, 200);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.Request_Chat_List1 = function (socket, data) {
@@ -1431,14 +1440,14 @@ exports.Request_Chat_List1 = function (socket, data) {
             }
         }, 200);
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.GetTotalUsers = function () {
     try {
         var collection = database.collection("User_Data");
         collection.find().toArray(function (err, docs) {
-            if (err) console.log("error33", err);
+            if (err) gamelog.showlog("error33", err);
             else {
                 var message = {
                     message: docs.length,
@@ -1448,7 +1457,7 @@ exports.GetTotalUsers = function () {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.GetOnlineUsers = function () {
@@ -1466,14 +1475,14 @@ exports.GetOnlineUsers = function () {
             io.sockets.emit("GET_ONLINE_USERS_RESULT", message);
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.GetUserList = function () {
     try {
         let collection = database.collection("User_Data");
         collection.find().toArray(function (err, docs) {
-            if (err) console.log("error34", err);
+            if (err) gamelog.showlog("error34", err);
             else {
                 var mydata = "";
                 for (let i = 0; i < docs.length; i++) {
@@ -1510,16 +1519,16 @@ exports.GetUserList = function () {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 };
 exports.GetVerify = function (socket) {
     let collection = database.collection("User_Data");
     collection.deleteMany(function (err, removed) {
         if (err) {
-            console.log("error21", err);
+            gamelog.showlog("error21", err);
         } else {
-            console.log("Deleted");
+            gamelog.showlog("Deleted");
             socket.emit("GET_VERIFY_RESULT", { result: "success" });
         }
     });
@@ -1543,7 +1552,7 @@ function in_points(userid, in_points) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 function out_points(userid, out_points) {
@@ -1565,7 +1574,7 @@ function out_points(userid, out_points) {
             }
         });
     } catch (error) {
-        console.log(error);
+        gamelog.showlog(error);
     }
 }
 

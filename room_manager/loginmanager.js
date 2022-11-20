@@ -6,6 +6,7 @@ var roommanager = require("../room_manager/roommanager");
 const { config } = require("process");
 const { Double } = require("bson");
 const tablemanager = require("../game_manager/tablemanager");
+var gamelog = require('../game_manager/gamelog');
 var serverip = "3.22.51.209";
 var io;
 var port = "10015";
@@ -13,11 +14,11 @@ var port = "10015";
 exports.initdatabase = function (db) {
 	database = db;
 	(async () => {
-		// console.log(await publicIp.v4());
+		// gamelog.showlog(await publicIp.v4());
 		serverip = await publicIp.v4();
-		console.log("serverip: ", serverip);
+		gamelog.showlog("serverip: ", serverip);
 		//=> '46.5.41.123'
-		//console.log(await publicIp.v6());
+		//gamelog.showlog(await publicIp.v6());
 		//=> 'fe80::200:f8ff:fe21:67cf'
 	})();
 	var collection = database.collection("User_Data");
@@ -40,7 +41,7 @@ exports.LogIn = function (socket, userInfo) {
 			facebook_id: userInfo.facebook_id,
 		};
 		collection.findOne(query, function (err, result) {
-			if (err) console.log("error13", err);
+			if (err) gamelog.showlog("error13", err);
 			else {
 				if (result == null) {
 					let emitdata = { result: "failed" };
@@ -76,7 +77,7 @@ exports.LogIn = function (socket, userInfo) {
 								if (err) throw err;
 							}
 						);
-						console.log("- User: ", result.username, " has logged in");
+						gamelog.showlog("- User: ", result.username, " has logged in");
 						socket.username = result.userid;
 						socket.emit("GET_LOGIN_RESULT", {
 							result: "success",
@@ -93,7 +94,7 @@ exports.LogIn = function (socket, userInfo) {
 											const element = docs[i];
 											if (element.connect != "") count++;
 										}
-										console.log("--------------- online_users : ", count);
+										gamelog.showlog("--------------- online_users : ", count);
 										io.sockets.emit("ONLINE_USERS", { count: count });
 									}
 								}
@@ -177,7 +178,7 @@ exports.SignUp = function (socket, data) {
 						};
 
 						collection.insertOne(user_data);
-						console.log("- New user: " + name + " has Registered.");
+						gamelog.showlog("- New user: " + name + " has Registered.");
 						socket.username = randomnum;
 						socket.emit("GET_REGISTER_RESULT", {
 							result: "success",
@@ -193,7 +194,7 @@ exports.SignUp = function (socket, data) {
 											const element = docs[i];
 											if (element.connect != "") count++;
 										}
-										console.log("--------------- online_users : ", count);
+										gamelog.showlog("--------------- online_users : ", count);
 										io.sockets.emit("ONLINE_USERS", { count: count });
 									}
 								}
@@ -230,7 +231,7 @@ exports.INIT_CONNECT = function (socket, data) {
 	var collection = database.collection("User_Data");
 	var query = { userid: data.userid };
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error14", err);
+		if (err) gamelog.showlog("error14", err);
 		else {
 			if (result != null) {
 				collection.updateOne(query, { $set: { connect: "" } }, function (err) {
@@ -241,12 +242,12 @@ exports.INIT_CONNECT = function (socket, data) {
 	});
 };
 exports.GetUserInfo = function (socket, userInfo) {
-	//console.log("Get User Info ", userInfo);
+	//gamelog.showlog("Get User Info ", userInfo);
 	var collection = database.collection("User_Data");
 	let query = { userid: userInfo.userid };
 	collection.findOne(query, function (err, result) {
 		if (err) {
-			console.log("error15", err);
+			gamelog.showlog("error15", err);
 		} else {
 			var mydata;
 			if (result == null) {
@@ -259,7 +260,7 @@ exports.GetUserInfo = function (socket, userInfo) {
 					info: result,
 				};
 			}
-			//console.log(mydata);
+			//gamelog.showlog(mydata);
 			socket.emit("GET_USERINFO_RESULT", mydata);
 		}
 	});
@@ -268,7 +269,7 @@ exports.UpdateUserSlotValue = function (socket, userInfo) {
 	const collection = database.collection("Slot_Data");
 	const query = { userid: userInfo.userid };
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error17", err);
+		if (err) gamelog.showlog("error17", err);
 		else {
 			if (result == null) {
 				const slotData = {
@@ -291,7 +292,7 @@ exports.UpdateUserSlotValue = function (socket, userInfo) {
 						},
 					},
 					function (err) {
-						if (err) console.log("error18", err);
+						if (err) gamelog.showlog("error18", err);
 					}
 				);
 			}
@@ -299,8 +300,8 @@ exports.UpdateUserSlotValue = function (socket, userInfo) {
 	});
 };
 exports.UpdateUserInfo_Balance = function (socket, userInfo) {
-	console.log("chipupdate");
-	console.log(userInfo);
+	gamelog.showlog("chipupdate");
+	gamelog.showlog(userInfo);
 	var collection = database.collection("User_Data");
 	var query = { userid: userInfo.userid };
 	if (userInfo.type == "1") {
@@ -315,7 +316,7 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 		//if (bets > 2000000000000) isSafe = false;
 		if (isSafe) {
 			collection.findOne(query, function (err, result) {
-				if (err) console.log("error16", err);
+				if (err) gamelog.showlog("error16", err);
 				else {
 					let points = fixNumber(result.points) + fixNumber(gets);
 					collection.updateOne(
@@ -334,7 +335,7 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 		}
 	} else if (userInfo.type == "2") {
 		collection.findOne(query, function (err, result) {
-			if (err) console.log("error17", err);
+			if (err) gamelog.showlog("error17", err);
 			else {
 				let buyData = {
 					id: userInfo.userid,
@@ -344,8 +345,8 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 					type: userInfo.type,
 				};
 				database.collection("Buy_Data").insertOne(buyData);
-				console.log("buyChips");
-				console.log(buyData);
+				gamelog.showlog("buyChips");
+				gamelog.showlog(buyData);
 
 				let points = fixNumber(userInfo.points);
 				collection.updateOne(
@@ -361,7 +362,7 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 		});
 	} else if (userInfo.type == "3") {
 		collection.findOne(query, function (err, result) {
-			if (err) console.log("error19", err);
+			if (err) gamelog.showlog("error19", err);
 			else {
 				let points = result.points;
 				socket.emit("REQ_UPDATE_USERINFO_BALANCE_RESULT", { result: points });
@@ -379,7 +380,7 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 		roommanager.minusChipsTouserInTable(tableId, userid, points);
 	} else if (userInfo.type == "6") {
 		collection.findOne(query, function (err, result) {
-			if (err) console.log("error17", err);
+			if (err) gamelog.showlog("error17", err);
 			else {
 				let buyData = {
 					id: userInfo.userid,
@@ -389,8 +390,8 @@ exports.UpdateUserInfo_Balance = function (socket, userInfo) {
 					type: userInfo.type,
 				};
 				database.collection("Slot_Data").insertOne(buyData);
-				console.log("slot");
-				console.log(buyData);
+				gamelog.showlog("slot");
+				gamelog.showlog(buyData);
 
 				let points = fixNumber(userInfo.points);
 				collection.updateOne(
@@ -454,16 +455,16 @@ exports.Rankinginfo = function (data, socket) {
 		.sort({ points: -1 })
 		.toArray(function (err, docs) {
 			if (err) {
-				console.log("error18", err);
+				gamelog.showlog("error18", err);
 				throw err;
 			} else {
-				//console.log(docs);
+				//gamelog.showlog(docs);
 				for (var i = 0; i < docs.length; i++) {
 					let tPoints = docs[i].points;
 					if (tPoints.toString().length > 19) {
 						tPoints = 9000000000000000000;
 						collection.updateOne({ userid: docs[i].userid }, { $set: { points: tPoints }, }, function (err) {
-							if (err) console.log(err);
+							if (err) gamelog.showlog(err);
 						})
 					}
 					userInfo =
@@ -500,7 +501,7 @@ exports.Rankinginfo = function (data, socket) {
 				userInfo = userInfo.substring(0, userInfo.length - 1);
 				userInfo = "{" + '"users"  : [' + userInfo;
 				userInfo = userInfo + "]}";
-				// console.log(JSON.parse(userInfo));
+				// gamelog.showlog(JSON.parse(userInfo));
 				socket.emit(
 					"REQUEST_ALL_PLAYER_RANKINGINFO_RESULT",
 					JSON.parse(userInfo)
@@ -516,7 +517,7 @@ exports.updateProfile = function (socket, userInfo) {
 
 	collection.findOne(query, function (err, result) {
 		if (err) {
-			console.log("error20", err);
+			gamelog.showlog("error20", err);
 		} else {
 			collection.updateOne(
 				query,
@@ -544,7 +545,7 @@ exports.updateProfile = function (socket, userInfo) {
 
 	collection.findOne(query, function (err, result) {
 		if (err) {
-			console.log("error20", err);
+			gamelog.showlog("error20", err);
 		} else {
 			collection.updateOne(
 				query,
@@ -674,7 +675,7 @@ exports.admin_remove_chat = function (socket, data) {
 	};
 	collection.deleteOne(query, function (err, removed) {
 		if (err) {
-			console.log("removeerr", err);
+			gamelog.showlog("removeerr", err);
 		} else {
 			let chats = [];
 			collection.find().toArray(function (err, docs) {
@@ -707,7 +708,7 @@ exports.admin_remove_all_chat = function (socket, data) {
 	};
 	collection.deleteMany(function (err, removed) {
 		if (err) {
-			console.log("removeallerr", err);
+			gamelog.showlog("removeallerr", err);
 		} else {
 			let chats = [];
 			collection.find().toArray(function (err, docs) {
@@ -832,7 +833,7 @@ exports.set_block = function (socket, data) {
 		{ $set: { status: parseInt(data.status) } },
 		function (err) {
 			if (err) {
-				console.log("abcd");
+				gamelog.showlog("abcd");
 			} else {
 				socket.emit("SET_BLOCK_RESULT", {
 					userid: data.userid,
@@ -857,7 +858,7 @@ exports.send_Mail = function (socket, data) {
 	if (data.userid == "") {
 		var collection = database.collection("User_Data");
 		collection.find().toArray(function (err, result) {
-			if (err) console.log(err);
+			if (err) gamelog.showlog(err);
 			else {
 				for (let i = 0; i < result.length; i++) {
 					let insertData = {
@@ -867,7 +868,7 @@ exports.send_Mail = function (socket, data) {
 					};
 					var collection1 = database.collection("Mail_Data");
 					collection1.insertOne(insertData, function (err) {
-						if (err) console.log(err);
+						if (err) gamelog.showlog(err);
 					});
 				}
 			}
@@ -880,7 +881,7 @@ exports.send_Mail = function (socket, data) {
 		};
 		var collection1 = database.collection("Mail_Data");
 		collection1.insertOne(insertData, function (err) {
-			if (err) console.log(err);
+			if (err) gamelog.showlog(err);
 		});
 	}
 };
@@ -893,7 +894,7 @@ exports.update_MailDate = function (socket, data) {
 		query,
 		{ $set: { mail_date: new Date() } },
 		function (err) {
-			if (err) console.log(err);
+			if (err) gamelog.showlog(err);
 		}
 	);
 };
@@ -903,7 +904,7 @@ exports.remove_AllMail = function (socket, data) {
 		userid: data.userid,
 	};
 	collection.deleteMany(query, function (err) {
-		if (err) console.log(err);
+		if (err) gamelog.showlog(err);
 	});
 };
 exports.remove_Mail = function (socket, data) {
@@ -913,7 +914,7 @@ exports.remove_Mail = function (socket, data) {
 		_id: new mongodb.ObjectId(data.id),
 	};
 	collection.deleteOne(query, function (err) {
-		if (err) console.log(err);
+		if (err) gamelog.showlog(err);
 	});
 };
 exports.req_Mail = function (socket, data) {
@@ -923,11 +924,11 @@ exports.req_Mail = function (socket, data) {
 		userid: data.userid,
 	};
 	collection.find(query).toArray(function (err, result) {
-		if (err) console.log(err);
+		if (err) gamelog.showlog(err);
 		else {
 			let count = 0;
 			user_collection.findOne(query, function (err, result1) {
-				if (err) console.log(err);
+				if (err) gamelog.showlog(err);
 				else if (result1) {
 					if (!result1.mail_date) {
 						count = result.length;
@@ -1047,7 +1048,7 @@ exports.Update_Archivement = function (socket, userInfo) {
 	let archMoney = fixNumber(userInfo.archivement_money);
 	let archIndex = fixNumber(userInfo.archivement_index);
 	collection.findOne(query, function (err, result) {
-		if (err) console.log("error16", err);
+		if (err) gamelog.showlog("error16", err);
 		else {
 			result.archivement[archIndex] = 1;
 			let points = fixNumber(result.points) + fixNumber(archMoney);

@@ -11,7 +11,7 @@ Result.sortNumber = function (a, b) {
 };
 
 Result.rankKickers = function (ranks, noOfCards) {
-    //console.log(ranks);
+    
     var i, kickerRank, myRanks, rank;
 
     kickerRank = 0.0000;
@@ -298,7 +298,7 @@ Result.rankHandInt = function (hand) {
         if (cards.indexOf('AH') > -1 && cards.indexOf('2H') > -1 && cards.indexOf('3H') > -1 && cards.indexOf('4H') > -1 && cards.indexOf('5H') > -1 && rank === 123) { rank = 293; message = 'Straight Flush'; }
         if (cards.indexOf('AD') > -1 && cards.indexOf('2D') > -1 && cards.indexOf('3D') > -1 && cards.indexOf('4D') > -1 && cards.indexOf('5D') > -1 && rank === 123) { rank = 293; message = 'Straight Flush'; }
         if (rank === 123) { 
-            //rank = rank + Result.rankKickers(ranks, 5); console.log(ranks) 
+            
             let flushRank = "";
             for(let i = 0; i < hand.cards.length; i ++) {
                 if(hand.cards[i].charAt(1) == flushSuit) {
@@ -458,8 +458,7 @@ Result.rankHandInt = function (hand) {
     }
 
     result = { rank: rank, message: message };
-    //console.log(hand);
-    //console.log(result);
+    
     return result;
 };
 

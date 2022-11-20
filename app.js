@@ -78,7 +78,7 @@ app.use(function (err, req, res, next) {
 
 clientsocket.initdatabase();
 io.on('connection', async function (socket) {
-  console.log("- One socket connected");
+  gamelog.showlog("- One socket connected");
   await clientsocket.initsocket(socket, io);
 });
 

@@ -7,16 +7,17 @@ var gamemanager = require('../game_manager/gamemanager');
 var loginmanager = require('../room_manager/loginmanager');
 var botmanager = require('../game_manager/botmanager');
 var userdatabase = require('../database/userdatabase');
+var gamelog = require('../game_manager/gamelog');
 var database = null;
 
 exports.initdatabase = function () {
     db.connect(function (err) {
         if (err) {
-            console.log(err);
-            console.log('Unable to connect to Mongo.');
+            gamelog.showlog(err);
+            gamelog.showlog('Unable to connect to Mongo.');
             process.exit(1);
         }
-        console.log('Connected to the DB.');
+        gamelog.showlog('Connected to the DB.');
         database = db.get();
         loginmanager.initdatabase(database);
         roommanager.initdatabase(database);
@@ -232,7 +233,7 @@ exports.initsocket = async function (socket, io) {
     });
 
     socket.on('UPDATE_ARCHIVEMENT', async function (data) {
-        await console.log('1323132')
+        await gamelog.showlog('1323132')
         loginmanager.Update_Archivement(socket, data);
     });
     //------------------Vuejs Admin----------------------
