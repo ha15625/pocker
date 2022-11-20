@@ -67,14 +67,18 @@ let removeItem = function (arr, value) {
     }
 };
 exports.JoinRoom = function (data, socket) {
-    let logData = [];
-    logData['data'] = data;
-    let tableData = [];
-    for (let i = 0; i < tables.length; i++) {
-        tableData.push({"playerLength": tables[i].table.getIngamePlayersLength(), "maxPlayer": tables[i].table.maxPlayers, "gameMode": tables[i].gameMode, "minByin": tables[i].minBuyin, "tableId": tables[i].id});
+    try {
+        let logData = [];
+        logData['data'] = data;
+        let tableData = [];
+        for (let i = 0; i < tables.length; i++) {
+            tableData.push({ "playerLength": tables[i].table.getIngamePlayersLength(), "maxPlayer": tables[i].table.maxPlayers, "gameMode": tables[i].gameMode, "minByin": tables[i].minBuyin, "tableId": tables[i].id });
+        }
+        logData["tableData"] = tableData;
+        gamelog.showlog(logData, 1);
+    } catch (e) {
+        gamelog.showlog(e, 1);
     }
-    logData["tableData"] = tableData;
-    gamelog.showlog(logData, 1);
     try {
         if (data.room_id == null || data.room_id == "" || data.newtable == "True") {
             if (data.newtable == "True") {
