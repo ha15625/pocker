@@ -40,6 +40,11 @@ exports.LogIn = function (socket, userInfo) {
 		let query = {
 			facebook_id: userInfo.facebook_id,
 		};
+		if(userInfo.facebook_id == "" || userInfo.facebook_id == undefined || userInfo.facebook_id == null) {
+			query = {
+				username: userInfo.username
+			}
+		}
 		collection.findOne(query, function (err, result) {
 			if (err) gamelog.showlog("error13", err);
 			else {
