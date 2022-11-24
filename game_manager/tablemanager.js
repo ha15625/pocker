@@ -116,9 +116,9 @@ TableManager.prototype.setInstance = function (tablemanager) {
 TableManager.prototype.onRoundDeal = function () {
     
     gamelog.showlog("onRoundDeal" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     this.legalBet = 0;
     this.mainPots = [];
     this.showWinDelay = 1000;
@@ -750,9 +750,9 @@ TableManager.prototype.onRoundShowdown = function (currnt_bets) {
 TableManager.prototype.onWin = function (winner, prize) {
     
     gamelog.showlog("onWin" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         setTimeout(() => {
             let handrankVal = 0;
@@ -2013,9 +2013,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
         }
         gamelog.showlog("StandUp:Status1" + " roomID:" + this.id);
         
-        if (info.mode != "bot" && this.onlyBotsLive()) {
-            return;
-        }
+        // if (info.mode != "bot" && this.onlyBotsLive()) {
+        //     return;
+        // }
         this.getStatus();
     } catch (error) {
         gamelog.showlog(error + " roomID:" + this.id);
