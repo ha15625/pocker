@@ -1899,7 +1899,7 @@ TableManager.prototype.standUp_forever = function (info, socket) {
 TableManager.prototype.standUp_force = function (player, bankrupt) {
    
     gamelog.showlog("standUp_force" + " roomID:" + this.id);
-    if (player.mode != "bot" ) {
+    if (player.mode == "bot" ) {
         return;
     }
     this.standUp(
@@ -1915,7 +1915,7 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
     
     gamelog.showlog("standUp" + " roomID:" + this.id);
-    if (info.mode != "bot" ) {
+    if (info.mode == "bot" ) {
         return;
     }
     try {
