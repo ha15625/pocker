@@ -134,9 +134,9 @@ TableManager.prototype.onRoundDeal = function () {
 TableManager.prototype.onSmallBlind = function (player) {
     
     gamelog.showlog("onSmallBlind" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         this.totalPot += this.smallBlind;
         let message =
@@ -185,9 +185,9 @@ TableManager.prototype.onSmallBlind = function (player) {
 TableManager.prototype.onBigBlind = function (player) {
     
     gamelog.showlog("bigblind" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         this.totalPot += this.bigBlind;
         let message =
@@ -215,9 +215,9 @@ TableManager.prototype.onBigBlind = function (player) {
 TableManager.prototype.onTurn = function (player) {
     
     gamelog.showlog("onTurn" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         setTimeout(() => {
             let emitdata = {
@@ -271,9 +271,9 @@ TableManager.prototype.onTurn = function (player) {
 TableManager.prototype.actionBot = function (player) {
     
     gamelog.showlog("actionBot" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let goodcards = false;
         let botgoodcards = false;
@@ -585,9 +585,9 @@ TableManager.prototype.actionBot = function (player) {
 TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
     
     gamelog.showlog("onDealCards" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let mainpots = this.roundMainPots(currnt_bets);
         this.mainPots = this.getMainPots(this.mainPots, mainpots);
@@ -725,9 +725,9 @@ TableManager.prototype.onDealCards = function (boardCardCount, currnt_bets) {
 };
 TableManager.prototype.onRoundShowdown = function (currnt_bets) {
     gamelog.showlog("onRoundShowdown" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let _mainpots = this.roundMainPots(currnt_bets);
         this.mainPots = this.getMainPots(this.mainPots, _mainpots);
@@ -928,11 +928,12 @@ TableManager.prototype.onGameOver = async function () {
 
 TableManager.prototype.waitforSec = function (time) {
     gamelog.showlog("waitforSec" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    
     return new Promise((resolve) => {
         setTimeout(() => {
+            if (this.onlyBotsLive()) {
+                return;
+            }
             resolve();
         }, time);
     });
@@ -944,13 +945,12 @@ TableManager.prototype.onlyBotsLive = function () {
         let roomSockets = [];
         let roomID = this.id;
         if (this.io.nsps["/"].adapter.rooms["r" + roomID] != undefined) {
-            for (let socketID in this.io.nsps["/"].adapter.rooms["r" + roomID]
-                .sockets) {
+            for (let socketID in this.io.nsps["/"].adapter.rooms["r" + roomID].sockets) {
                 let nickname = this.io.nsps["/"].connected[socketID].username;
-                let clientSocket = this.io.sockets.connected[socketID];
+                // let clientSocket = this.io.sockets.connected[socketID];
                 roomSockets.push({
                     nickname: nickname,
-                    clientSocket: clientSocket,
+                    // clientSocket: clientSocket,
                 });
             }
         }
@@ -969,19 +969,19 @@ TableManager.prototype.onlyBotsLive = function () {
         }
     } catch (error) {
         gamelog.showlog(error + " roomID:" + this.id);
-        this.removeBots(this.table.getIngamePlayersLength());
-        this.status = 0;
-        this.table.started = false;
-        gamelog.showlog("Remove Table1" + " roomID:" + this.id);
-        roommanager.removeTable(this.instance);
-        return true;
+        // this.removeBots(this.table.getIngamePlayersLength());
+        // this.status = 0;
+        // this.table.started = false;
+        // gamelog.showlog("Remove Table1" + " roomID:" + this.id);
+        // roommanager.removeTable(this.instance);
+        // return true;
     }
 };
 TableManager.prototype.onUpdatePlayer = function (player) {
     gamelog.showlog("onUpdatePlayer" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     this.io.in("r" + this.id).emit("UPDATE_PLAYER", {
         player: player,
     });
@@ -995,9 +995,9 @@ TableManager.prototype.onReturnChips = function (position, returnChips) {
 };
 TableManager.prototype.onBankrupt = function (player) {
     gamelog.showlog("onbankrupt");
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         this.io.in("r" + this.id).emit("Bankrupt", {
             player: player,
@@ -1021,9 +1021,9 @@ TableManager.prototype.checkIndex = function (player, position) {
 };
 TableManager.prototype.action = function (info) {
     gamelog.showlog("action" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let player = this.table.getPlayerByID(info.player_id);
         if (!player || player == undefined) return;
@@ -1097,9 +1097,9 @@ TableManager.prototype.action = function (info) {
 };
 TableManager.prototype.fold = function (player) {
     gamelog.showlog("fold" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let message = player.playerName + " folded";
         if (!player || player === undefined) return;
@@ -1135,9 +1135,9 @@ TableManager.prototype.fold = function (player) {
 };
 TableManager.prototype.check = function (player) {
     gamelog.showlog("check" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         if (!player || player === undefined) return;
         if (player.table.currentPlayer != player.getIndex()) return;
@@ -1171,9 +1171,9 @@ TableManager.prototype.check = function (player) {
 };
 TableManager.prototype.removetimeout = function () {
     gamelog.showlog("removetimeout" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     this.turn = false;
     if (this.currentTimeout !== null) {
         clearTimeout(this.currentTimeout);
@@ -1182,9 +1182,9 @@ TableManager.prototype.removetimeout = function () {
 };
 TableManager.prototype.roundMainPots = function (bets) {
     gamelog.showlog("roundMainPots" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let mainPots = [];
         while (this.checkbets(bets) > 0) {
@@ -1226,9 +1226,9 @@ TableManager.prototype.checkbets = function (bets) {
 };
 TableManager.prototype.getMainPots = function (tPots, mainPots) {
     gamelog.showlog("getMainPots" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     gamelog.showlog("getMainPots" + " roomID:" + this.id);
     try {
         for (let i = 0; i < tPots.length; i++) {
@@ -1255,9 +1255,9 @@ TableManager.prototype.getMainPots = function (tPots, mainPots) {
 TableManager.prototype.compareArray = function (arr1, arr2) {
     
     gamelog.showlog("comepareArray" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let rst = false;
         if (arr1.length != arr2.length) {
@@ -1279,9 +1279,9 @@ TableManager.prototype.Update_recent_players = function () {
     
     let roomid = this.id
     gamelog.showlog("Update_recent_players" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let realPlayers = this.table.players.filter(
             (player) =>
@@ -1350,9 +1350,9 @@ TableManager.prototype.Update_level_handplayed = function (userid) {
     
     let roomid = this.id
     gamelog.showlog("Update_level_handplayed" + "roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let query = {
             userid: userid,
@@ -1405,9 +1405,9 @@ TableManager.prototype.Record_Won_History = function (
     
     let roomid = this.id;
     gamelog.showlog("Record_Won_History" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let query = {
             userid: winner,
@@ -1526,9 +1526,9 @@ TableManager.prototype.Record_Won_History = function (
 TableManager.prototype.addPlayers = function () {
     
     gamelog.showlog("addPlayers" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         return new Promise((resolve) => {
             let bookingPlayers = this.players.filter((p) => p.booking == true);
@@ -1563,9 +1563,9 @@ TableManager.prototype.addPlayers = function () {
 TableManager.prototype.tableReposition = function () {
     
     gamelog.showlog("tableReposition" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         for (let i = 0; i < this.table.players.length; i++) {
             if (
@@ -1693,9 +1693,9 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
 TableManager.prototype.checkBotStatus = function () {
     
     gamelog.showlog("checkBotStatus" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         if (this.botCount > 0 && this.minBuyin <= 400000000000) {
             if (this.status == 0) {
@@ -1709,9 +1709,9 @@ TableManager.prototype.checkBotStatus = function () {
 TableManager.prototype.AddChipsUser = function (userid, points) {
     
     gamelog.showlog("AddChipsuser" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let player = this.table.players.find((p) => p && p.playerID == userid);
         if (player == null) return;
@@ -1724,9 +1724,9 @@ TableManager.prototype.AddChipsUser = function (userid, points) {
 TableManager.prototype.MinusChipsUser = function (userid, points) {
     
     gamelog.showlog("MinusChipsUser" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let player = this.table.players.find((p) => p && p.playerID == userid);
         if (player == null) return;
@@ -1738,9 +1738,9 @@ TableManager.prototype.MinusChipsUser = function (userid, points) {
 TableManager.prototype.createBots = function (createCount) {
     
     gamelog.showlog("createBots" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         return new Promise((resolve) => {
             // let newnam = [];
@@ -1822,9 +1822,9 @@ TableManager.prototype.removeBots = function (removeCount) {
 TableManager.prototype.getBotID = function () {
     
     gamelog.showlog("getBotId" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let _id = "";
         while (_id == "" || this.botIDs.indexOf(_id) != -1) {
@@ -1883,23 +1883,23 @@ TableManager.prototype.getStatus = function (isStandUp = 0) {
 TableManager.prototype.sitDown = function (info, socket) {
     
     gamelog.showlog("sitDown" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     this.addPlayer(info, socket);
 };
 TableManager.prototype.standUp_forever = function (info, socket) {
     
     gamelog.showlog("standUp_forever" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     this.standUp(info, socket);
 };
 TableManager.prototype.standUp_force = function (player, bankrupt) {
    
     gamelog.showlog("standUp_force" + " roomID:" + this.id);
-    if (player.mode != "bot" && this.onlyBotsLive()) {
+    if (player.mode != "bot" ) {
         return;
     }
     this.standUp(
@@ -1915,7 +1915,7 @@ TableManager.prototype.standUp_force = function (player, bankrupt) {
 TableManager.prototype.standUp = function (info, socket, bankrupt) {
     
     gamelog.showlog("standUp" + " roomID:" + this.id);
-    if (info.mode != "bot" && this.onlyBotsLive()) {
+    if (info.mode != "bot" ) {
         return;
     }
     try {
@@ -2025,9 +2025,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
 TableManager.prototype.addPlayer = function (info, socket) {
     
     gamelog.showlog("addPlayer" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let username = info.player_name;
         let userid = info.player_id;
@@ -2087,9 +2087,9 @@ TableManager.prototype.addPlayer = function (info, socket) {
 TableManager.prototype.WaitingPlayers = async function (info, socket) {
     
     gamelog.showlog("WaitingPlayers" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         await this.getWaitingData();
         gamelog.showlog("WaitingPlayersValue");
@@ -2106,9 +2106,9 @@ TableManager.prototype.WaitingPlayers = async function (info, socket) {
 TableManager.prototype.buyIn = function (info, socket) {
     
     gamelog.showlog("buyIn" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let player = this.players.find(
             (player) =>
@@ -2186,9 +2186,9 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
     
     let roomid = this.id
     gamelog.showlog("in_points" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         //let collection = this.database.collection('User_Data');
         let query = { username: username, userid: userid };
@@ -2219,9 +2219,9 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
 TableManager.prototype.out_points = function (username, userid, out_points) {
     
     gamelog.showlog("out_points" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         //let collection = this.database.collection('User_Data');
         let query = { username: username, userid: userid };
@@ -2287,9 +2287,9 @@ TableManager.prototype.getWaitingData = function () {
 TableManager.prototype.check_points = function (player, out_points) {
     
     gamelog.showlog("check_points" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let roomid = this.id;
         let roomTable = this;
@@ -2368,9 +2368,9 @@ var ChangeUnit = function (count) {
 TableManager.prototype.getPlayerRander = function () {
     
     gamelog.showlog("getPlayerRander" + " roomID:" + this.id);
-    if (this.onlyBotsLive()) {
-        return;
-    }
+    // if (this.onlyBotsLive()) {
+    //     return;
+    // }
     try {
         let players = this.table.players;
         let ranked_players = [];
