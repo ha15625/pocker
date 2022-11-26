@@ -1598,7 +1598,7 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
     // if(this.onlyBotsLive()) {
     //     return;
     // }
-    gamelog.showlog("enterTable" + " roomID:" + this.id);
+    gamelog.showlog("enterTable" + " roomID:" + this.id, 1);
     try {
         let positions = [];
         let pos = 0;

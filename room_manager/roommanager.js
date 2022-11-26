@@ -80,11 +80,11 @@ exports.JoinRoom = function (data, socket) {
         gamelog.showlog(e, 1);
     }
     try {
-        if (data.room_id == null || data.room_id == "" || data.newtable == "True") {
+        if (data.roomid == null || data.roomid == "" || data.newtable == "True") {
             if (data.newtable == "True") {
                 // try {
                 //     gamelog.showlog("JoinRoom");
-                //     gamelog.showlog(data.seatlimit + ":" + data.mode + ":" + data.min_buyin + ":" + data.room_id);
+                //     gamelog.showlog(data.seatlimit + ":" + data.mode + ":" + data.min_buyin + ":" + data.roomid);
                 //     for (let i = 0; i < tables.length; i++) {
                 //         gamelog.showlog("RoomID:", tables[i].id);
                 //         gamelog.showlog(tables[i].table.getIngamePlayersLength() + ":" + tables[i].table.maxPlayers + ":" + tables[i].gameMode + ":" + tables[i].minBuyin + ":" + tables[i].id)
@@ -99,7 +99,7 @@ exports.JoinRoom = function (data, socket) {
                         t.table.maxPlayers === fixNumber(data.seatlimit) &&
                         t.gameMode === data.mode &&
                         t.minBuyin === fixNumber(data.min_buyin) &&
-                        t.id !== data.room_id
+                        t.id !== data.roomid
                 );
                 if (table) {
                     table.enterTable(socket, data.username, data.userid);
@@ -976,6 +976,8 @@ exports.Request_Buddies_List = function (socket, data) {
                                                 };
                                                 myfriends.push(f);
                                                 resolve(true);
+                                            } else {
+                                                resolve(true);
                                             }
                                         }
                                     }
@@ -1028,7 +1030,7 @@ exports.Request_Buddies_List1 = function (socket, data) {
                                     query1,
                                     function (err, result1) {
                                         if (err) {
-                                            gamelog.showlog("error29", err);
+                                            gamelog.showlog("error29" + err, 1);
                                             //counter--;
                                         } else {
                                             //counter--;
@@ -1097,6 +1099,8 @@ exports.Request_Buddies_List1 = function (socket, data) {
                                                     accepted: accepted,
                                                 };
                                                 myfriends.push(f);
+                                                resolve(true);
+                                            } else {
                                                 resolve(true);
                                             }
                                         }
@@ -1225,6 +1229,8 @@ exports.Request_Recents_List = function (socket, data) {
                                                     requested: requested,
                                                 };
                                                 myfriends.push(f);
+                                                resolve(true);
+                                            } else {
                                                 resolve(true);
                                             }
                                         }

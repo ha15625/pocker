@@ -40,7 +40,7 @@ exports.LogIn = function (socket, userInfo) {
 		let query = {
 			facebook_id: userInfo.facebook_id,
 		};
-		if(userInfo.facebook_id == "" || userInfo.facebook_id == undefined || userInfo.facebook_id == null) {
+		if (userInfo.facebook_id == "" || userInfo.facebook_id == undefined || userInfo.facebook_id == null) {
 			query = {
 				username: userInfo.username
 			}
@@ -60,17 +60,25 @@ exports.LogIn = function (socket, userInfo) {
 					if (result.connect != "") {
 						let clients = io.sockets.clients();
 						for (let key in clients.sockets) {
-							if (clients.sockets[key].id == socket.id && (clients.sockets[key].username == undefined || clients.sockets[key].username == null)) {
-								socket.username = result.userid;
-								socket.emit("GET_LOGIN_RESULT", {
-									result: "success",
-									data: result,
-								});
+							if (result.connect == clients.sockets[key].id) {
+								let emitdata = { result: "failed" };
+								socket.emit("GET_LOGIN_RESULT", emitdata);
 								break;
 							}
+							// if (clients.sockets[key].id == socket.id && (clients.sockets[key].username == undefined || clients.sockets[key].username == null)) {
+							// 	socket.username = result.userid;
+							// 	socket.emit("GET_LOGIN_RESULT", {
+							// 		result: "success",
+							// 		data: result,
+							// 	});
+							// 	break;
+							// }
 						}
-						let emitdata = { result: "failed" };
-						socket.emit("GET_LOGIN_RESULT", emitdata);
+						socket.username = result.userid;
+						socket.emit("GET_LOGIN_RESULT", {
+							result: "success",
+							data: result,
+						});
 					} else if (result.status == 1) {
 						let emitdata = { result: "failed" };
 						socket.emit("GET_LOGIN_RESULT", emitdata);
@@ -122,7 +130,7 @@ exports.SignUp = function (socket, data) {
 	} else {
 		let collection = database.collection("User_Data");
 		collection.findOne({ facebook_id: data.facebook_id }, function (err, result) {
-			if (err || result == null) {
+			if (err || result == null || data.signtype == 'guest') {
 				collection.find().toArray(function (err, docs) {
 					if (err) {
 						throw err;
@@ -208,6 +216,7 @@ exports.SignUp = function (socket, data) {
 					}
 				});
 			} else {
+				// socket.emit("GET_REGISTER_RESULT", { result: "failed" });
 				lManager.LogIn(socket, data);
 			}
 		});
