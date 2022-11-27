@@ -60,7 +60,7 @@ exports.LogIn = function (socket, userInfo) {
 					if (result.connect != "") {
 						let clients = io.sockets.clients();
 						for (let key in clients.sockets) {
-							if (result.connect == clients.sockets[key].id) {
+							if (result.connect == key) {
 								let emitdata = { result: "failed" };
 								socket.emit("GET_LOGIN_RESULT", emitdata);
 								break;
