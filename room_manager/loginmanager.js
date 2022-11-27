@@ -79,6 +79,13 @@ exports.LogIn = function (socket, userInfo) {
 							result: "success",
 							data: result,
 						});
+						collection.updateOne(
+							query,
+							{ $set: { connect: socket.id } },
+							function (err) {
+								if (err) throw err;
+							}
+						);
 					} else if (result.status == 1) {
 						let emitdata = { result: "failed" };
 						socket.emit("GET_LOGIN_RESULT", emitdata);
