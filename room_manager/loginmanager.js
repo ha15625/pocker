@@ -63,7 +63,7 @@ exports.LogIn = function (socket, userInfo) {
 							if (result.connect == key) {
 								let emitdata = { result: "failed" };
 								socket.emit("GET_LOGIN_RESULT", emitdata);
-								break;
+								return;
 							}
 							// if (clients.sockets[key].id == socket.id && (clients.sockets[key].username == undefined || clients.sockets[key].username == null)) {
 							// 	socket.username = result.userid;
