@@ -34,7 +34,7 @@ exports.initdatabase = function (db) {
     }
 };
 
-exports.getRooms = function (db) {
+exports.getRooms = function (socket, data) {
     try {
         socket.emit('GET_ROOMS', this.tables);
     } catch (e) {
