@@ -36,7 +36,11 @@ exports.initdatabase = function (db) {
 
 exports.getRooms = function (socket, data) {
     try {
-        socket.emit('GET_ROOMS', tables);
+        let asdf = "";
+        for(let i=0;i<tables.length;i++){
+            asdf += tables[i].id + ",";
+        }
+        socket.emit('GET_ROOMS', asdf);
     } catch (e) {
 
     }
