@@ -36,7 +36,7 @@ exports.initdatabase = function (db) {
 
 exports.getRooms = function (socket, data) {
     try {
-        socket.emit('GET_ROOMS', this.tables);
+        socket.emit('GET_ROOMS', tables);
     } catch (e) {
 
     }
