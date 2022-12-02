@@ -185,7 +185,7 @@ function createTable(
         let tableID = createID_table(tableIDs);
 
         let table_data = {
-            tableID: tableID,
+            tableID: socket.id,
             title: "poker table",
             socketio: io,
             database: database,
