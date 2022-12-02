@@ -34,6 +34,14 @@ exports.initdatabase = function (db) {
     }
 };
 
+exports.getRooms = function (db) {
+    try {
+        socket.emit('GET_ROOMS', this.tables);
+    } catch (e) {
+
+    }
+}
+
 exports.setsocketio = function (socketio) {
     io = socketio;
 };

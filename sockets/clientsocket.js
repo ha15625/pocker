@@ -37,6 +37,9 @@ exports.initsocket = async function (socket, io) {
     socket.on('CHECK_VERSION_CODE', async function () {
         await loginmanager.CheckVersionCode(socket);
     });
+    socket.on('GET_ROOMS', async function(data) {
+        await roommanager.getRooms(socket, data);
+    });
     // LOGIN
     socket.on('REQ_LOGIN', async function (data) {
         await loginmanager.LogIn(socket, data);
