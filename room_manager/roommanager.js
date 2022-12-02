@@ -64,7 +64,7 @@ exports.get_Entrance_Amount = function (socket) {
 };
 exports.removeTable = function (table) {
     gamelog.showlog("Remove Table ID:", table.id);
-    removeItem(tables, table);
+    //removeItem(tables, table);
     gamelog.showlog("*** tables.length ", tables.length);
 };
 let removeItem = function (arr, value) {
@@ -200,12 +200,12 @@ function createTable(
             possibleBots: possibleBots,
         };
         const table = new TableManager(table_data);
-
+        tables.push(table);
         
             table.initialize(table);
             table.setInstance(table);
             table.enterTable(socket, username, userid);
-            tables.push(table);
+            
         
     } catch (error) {
         gamelog.showlog(error);
