@@ -201,12 +201,12 @@ function createTable(
         };
         const table = new TableManager(table_data);
 
-        setTimeout(() => {
+        
             table.initialize(table);
             table.setInstance(table);
             table.enterTable(socket, username, userid);
             tables.push(table);
-        }, 1000);
+        
     } catch (error) {
         gamelog.showlog(error);
     }
