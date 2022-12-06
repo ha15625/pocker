@@ -37,7 +37,7 @@ exports.initdatabase = function (db) {
 exports.getRooms = function (socket, data) {
     try {
         let asdf = "";
-        for(let i=0;i<tables.length;i++){
+        for (let i = 0; i < tables.length; i++) {
             asdf += tables[i].id + ",";
         }
         socket.emit('GET_ROOMS', asdf);
@@ -64,6 +64,11 @@ exports.get_Entrance_Amount = function (socket) {
 };
 exports.removeTable = function (table) {
     gamelog.showlog("Remove Table ID:", table.id);
+    let tableCollection = database.collection("Table_Data");
+    tableCollection.insertOne({
+        type: "Remove",
+        id: table.id
+    })
     removeItem(tables, table);
     gamelog.showlog("*** tables.length ", tables.length);
 };
@@ -185,7 +190,7 @@ function createTable(
         let tableID = createID_table(tableIDs);
 
         let table_data = {
-            tableID: socket.id,
+            tableID: tableID,
             title: "poker table",
             socketio: io,
             database: database,
@@ -201,12 +206,16 @@ function createTable(
         };
         const table = new TableManager(table_data);
         tables.push(table);
-        
-            table.initialize(table);
-            table.setInstance(table);
-            table.enterTable(socket, username, userid);
-            
-        
+        let tableCollection = database.collection("Table_Data");
+        tableCollection.insertOne({
+            type: "Create",
+            id: tableID
+        })
+        table.initialize(table);
+        table.setInstance(table);
+        table.enterTable(socket, username, userid);
+
+
     } catch (error) {
         gamelog.showlog(error);
     }
