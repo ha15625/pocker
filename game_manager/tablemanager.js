@@ -2121,7 +2121,7 @@ TableManager.prototype.buyIn = function (info, socket) {
                     this.waitingPlayers.splice(i, 1);
                 }
             }
-            this.checkTable();
+            // this.checkTable();
             //gamelog.showlog('player.userid ?', player.useri + " roomID:" + this.idd)
             if (this.status == 0) {
                 this.table.addPlayer({

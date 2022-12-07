@@ -92,9 +92,9 @@ exports.JoinRoom = function (data, socket) {
             tableData.push({ "playerLength": tables[i].table.getIngamePlayersLength(), "maxPlayer": tables[i].table.maxPlayers, "gameMode": tables[i].gameMode, "minByin": tables[i].minBuyin, "tableId": tables[i].id });
         }
         logData["tableData"] = tableData;
-        gamelog.showlog(logData, 1);
+        // gamelog.showlog(logData, 1);
     } catch (e) {
-        gamelog.showlog(e, 1);
+        // gamelog.showlog(e, 1);
     }
     try {
         if (data.roomid == null || data.roomid == "" || data.newtable == "True") {
@@ -1051,7 +1051,7 @@ exports.Request_Buddies_List1 = function (socket, data) {
                                     query1,
                                     function (err, result1) {
                                         if (err) {
-                                            gamelog.showlog("error29" + err, 1);
+                                            // gamelog.showlog("error29" + err, 1);
                                             //counter--;
                                         } else {
                                             //counter--;
