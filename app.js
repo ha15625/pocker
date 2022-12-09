@@ -82,5 +82,7 @@ io.on('connection', async function (socket) {
   gamelog.showlog("- One socket connected");
   await clientsocket.initsocket(socket, io);
 });
-
+setInterval(() => {
+  console.log("Server is Running");
+}, 3000);
 module.exports = { app: app, server: server };
