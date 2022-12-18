@@ -859,7 +859,7 @@ TableManager.prototype.onGameOver = async function () {
                     bookingPlayers.length -
                     this.botCount;
                 if (createCount > 0) {
-                    if (this.minBuyin <= 400000000000) {
+                    if (this.minBuyin <= 2000000000) {
                         await this.createBots(createCount);
                     }
                 } else if (removeCount > 0) await this.removeBots(removeCount);
@@ -1697,7 +1697,7 @@ TableManager.prototype.checkBotStatus = function () {
     //     return;
     // }
     try {
-        if (this.botCount > 0 && this.minBuyin <= 400000000000) {
+        if (this.botCount > 0 && this.minBuyin <= 2000000000) {
             if (this.status == 0) {
                 this.createBots(this.botCount);
             }
@@ -2073,7 +2073,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
             this.io.sockets
                 .in("r" + this.id)
                 .emit("REQ_TAKE_SEAT_RESULT", emitData);
-        if (this.minBuyin > 400000000000 && this.players.length == 2) {
+        if (this.minBuyin > 2000000000 && this.players.length == 2) {
             this.table.startGame();
         }
     } catch (error) {
