@@ -354,11 +354,7 @@ TableManager.prototype.actionBot = function (player) {
                 if (current_Bet < max_Bet) canCall = true;
                 else canCheck = true;
                 if (canCheck) info.action = "check";
-                else if (
-                    canCall &&
-                    ((this.isRaise && (botgoodcards || goodcards)) ||
-                        !this.isRaise)
-                ) {
+                else if (canCall && ((this.isRaise && (botgoodcards || goodcards)) || !this.isRaise)) {
                     if (!this.isRaise && canCall) {
                         info.action = "call";
                         info.bet = call;
@@ -367,10 +363,8 @@ TableManager.prototype.actionBot = function (player) {
                             info.action = "call";
                             info.bet = call;
                         } else if (botgoodcards) {
-                            let random = goodcards
-                                ? 10
-                                : Math.floor(Math.random() * 10);
-                            if (random > 5) {
+                            let random = goodcards ? 10 : Math.floor(Math.random() * 10);
+                            if (random > 6) {
                                 info.action = "call";
                                 info.bet = call;
                             }
@@ -2171,7 +2165,7 @@ TableManager.prototype.removeItem = function (arr, value) {
     }
 };
 TableManager.prototype.in_points = function (username, userid, in_points) {
-    if(this.onlyBotsLive()) {
+    if (this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -2207,7 +2201,7 @@ TableManager.prototype.in_points = function (username, userid, in_points) {
     }
 };
 TableManager.prototype.out_points = function (username, userid, out_points) {
-    if(this.onlyBotsLive()) {
+    if (this.onlyBotsLive()) {
         return;
     }
     console.log("out_points" + " roomID:" + this.id);
@@ -2236,7 +2230,7 @@ TableManager.prototype.out_points = function (username, userid, out_points) {
     }
 };
 TableManager.prototype.getWaitingData = function () {
-    if(this.onlyBotsLive()) {
+    if (this.onlyBotsLive()) {
         return;
     }
     let roomid = this.id
@@ -2276,7 +2270,7 @@ TableManager.prototype.getWaitingData = function () {
     }
 };
 TableManager.prototype.check_points = function (player, out_points) {
-    if(this.onlyBotsLive()) {
+    if (this.onlyBotsLive()) {
         return;
     }
     console.log("check_points" + " roomID:" + this.id);
@@ -2356,7 +2350,7 @@ var ChangeUnit = function (count) {
     }
 };
 TableManager.prototype.getPlayerRander = function () {
-    if(this.onlyBotsLive()) {
+    if (this.onlyBotsLive()) {
         return;
     }
     console.log("getPlayerRander" + " roomID:" + this.id);
