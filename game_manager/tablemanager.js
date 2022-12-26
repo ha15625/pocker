@@ -359,10 +359,10 @@ TableManager.prototype.actionBot = function (player) {
                         info.action = "call";
                         info.bet = call;
                     } else if (this.isRaise) {
-                        if (goodcards) {
+                        if (botgoodcards) {
                             info.action = "call";
                             info.bet = call;
-                        } else if (botgoodcards) {
+                        } else if (goodcards) {
                             let random = goodcards ? 10 : Math.floor(Math.random() * 10);
                             if (random > 6) {
                                 info.action = "call";
