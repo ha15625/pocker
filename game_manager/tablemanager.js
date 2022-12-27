@@ -365,7 +365,7 @@ TableManager.prototype.actionBot = function (player) {
                         }
                     }
                 }
-                if (goodcards == true) {
+                if (goodcards == true && this.hardCount == 0) {
                     if (canCheck) info.action = "check";
                     if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
                         if (goodcards == true || player.win == true) {
