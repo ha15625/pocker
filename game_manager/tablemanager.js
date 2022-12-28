@@ -356,6 +356,12 @@ TableManager.prototype.actionBot = function (player) {
                 if (canCheck) info.action = "check";
                 else if (canCall && botgoodcards) {
                     if (canRaise) {
+                        let randomNumber =
+                            raiseRandom[
+                            Math.floor(
+                                Math.random() * raiseRandom.length
+                            )
+                            ];
                         info.legal_bet = this.legalBet;
                         info.bet = randomNumber * minRaise;
                         let maxBet = max_Bet;
@@ -898,7 +904,7 @@ TableManager.prototype.onGameOver = async function () {
                     tCount;
                 if (createCount > 0) {
                     // if (this.minBuyin <= 400000000000) {
-                        await this.createBots(createCount);
+                    await this.createBots(createCount);
                     // }
                 } else if (removeCount > 0) await this.removeBots(removeCount);
             }
@@ -1722,9 +1728,9 @@ TableManager.prototype.checkBotStatus = function () {
         if (this.botCount > 0) {
             if (this.status == 0) {
                 // if (this.minBuyin <= 2000000000) {
-                    this.createBots(this.botCount);
+                this.createBots(this.botCount);
                 // } else if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
-                    // this.createBots(2);
+                // this.createBots(2);
                 // }
             }
         }
@@ -2108,7 +2114,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
                 .in("r" + this.id)
                 .emit("REQ_TAKE_SEAT_RESULT", emitData);
         // if (this.minBuyin > 400000000000 && this.players.length == 2) {
-            this.table.startGame();
+        this.table.startGame();
         // }
     } catch (error) {
         gamelog.showlog(error + " roomID:" + this.id);
