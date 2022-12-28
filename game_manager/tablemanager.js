@@ -354,10 +354,62 @@ TableManager.prototype.actionBot = function (player) {
                 if (current_Bet < max_Bet) canCall = true;
                 else canCheck = true;
                 if (canCheck) info.action = "check";
-                else if (canCall && ((this.isRaise && (botgoodcards)) || !this.isRaise)) {
-                    if (!this.isRaise && canCall) {
-                        info.action = "call";
-                        info.bet = call;
+                else if (canCall && botgoodcards) {
+                    if (canRaise) {
+                        info.legal_bet = this.legalBet;
+                        info.bet = randomNumber * minRaise;
+                        let maxBet = max_Bet;
+                        let currentBet = current_Bet;
+                        if (info.bet < player.chips) {
+                            if (maxBet - currentBet == info.bet) {
+                                info.action = "call";
+                            } else {
+                                info.action = "raise";
+                                this.isRaise = true;
+                            }
+                            info.legal_bet = info.bet - call;
+                        } else {
+                            let buff = 0;
+                            let index = 0;
+                            for (
+                                let i = 0;
+                                i < this.table.players.length;
+                                i++
+                            ) {
+                                gamelog.showlog(this.table.players[i] + " roomID:" + this.id);
+                                if (
+                                    this.table.players[i] !=
+                                    undefined &&
+                                    this.table.players[i].chips !=
+                                    undefined &&
+                                    buff <=
+                                    this.table.players[i].chips
+                                ) {
+                                    buff =
+                                        this.table.players[i].chips;
+                                    index = i;
+                                }
+                            }
+                            if (buff < player.chips) {
+                                if (
+                                    this.table.game.bets.length > 0
+                                ) {
+                                    info.bet =
+                                        buff +
+                                        this.table.game.bets[
+                                        index
+                                        ] -
+                                        player.GetBet();
+                                } else {
+                                    info.bet =
+                                        buff - player.GetBet();
+                                }
+                            } else {
+                                info.bet = player.chips;
+                            }
+
+                            info.action = "allin";
+                        }
                     } else if (this.isRaise) {
                         if (botgoodcards) {
                             info.action = "call";
