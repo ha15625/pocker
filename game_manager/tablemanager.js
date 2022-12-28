@@ -354,7 +354,7 @@ TableManager.prototype.actionBot = function (player) {
                 if (current_Bet < max_Bet) canCall = true;
                 else canCheck = true;
                 if (canCheck) info.action = "check";
-                else if (canCall && ((this.isRaise && (botgoodcards || goodcards)) || !this.isRaise)) {
+                else if (canCall && ((this.isRaise && (botgoodcards)) || !this.isRaise)) {
                     if (!this.isRaise && canCall) {
                         info.action = "call";
                         info.bet = call;
