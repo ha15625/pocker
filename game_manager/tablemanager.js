@@ -385,7 +385,7 @@ TableManager.prototype.actionBot = function (player) {
                 if (this.hardCount == 0) {
                     if (canCheck) info.action = "check";
                     if (this.bigBlinds.indexOf(this.bigBlind) == -1) {
-                        if (goodcards == true || player.win == true) {
+                        // if (goodcards == true || player.win == true) {
                             let num1 = Math.floor(Math.random() * 10) + 1;
                             if (num1 > 4) {
                                 if (canCall) {
@@ -461,7 +461,7 @@ TableManager.prototype.actionBot = function (player) {
                                     } else gamelog.showlog(">>> ERROR2".err + " roomID:" + this.id);
                                 }
                             }
-                        }
+                        // }
                     }
                     // else {
                     //     if (goodcards == true) {
@@ -875,9 +875,9 @@ TableManager.prototype.onGameOver = async function () {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
                         this.hardCount = 6;
-                        let randomC = Math.floor(Math.random() * 3);
-                        if (randomC != 0) this.hardCount = 6;
-                        else this.hardCount = 0;
+                        // let randomC = Math.floor(Math.random() * 3);
+                        // if (randomC != 0) this.hardCount = 6;
+                        // else this.hardCount = 0;
                     }
                     this.isRaise = false;
 
