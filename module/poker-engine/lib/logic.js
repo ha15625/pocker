@@ -114,7 +114,9 @@ var newTable = function(params, players) {
     table = new Table(params.minBlind,
         params.maxBlind,
         minPlayers,
-        params.maxPlayers);
+        params.maxPlayers,
+        params.royalFlash,
+        params.royal4kinds);
 
     // add players
     if (players !== undefined) {

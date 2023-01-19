@@ -3,10 +3,11 @@ var mongodb = require("mongodb");
 
 var database = null;
 var roommanager = require("../room_manager/roommanager");
-const { config } = require("process");
+const { config, emit } = require("process");
 const { Double } = require("bson");
 const tablemanager = require("../game_manager/tablemanager");
 var gamelog = require('../game_manager/gamelog');
+const utils = require('../utils/utils')
 var serverip = "3.22.51.209";
 var io;
 var port = "10015";
@@ -29,6 +30,7 @@ exports.setsocketio = function (socketio) {
 };
 exports.CheckVersionCode = function (socket) {
 	let emitdata = { result: "7.4" };
+	console.log(utils.toBinary(emitdata))
 	socket.emit("CHECK_VERSION_CODE_RESULT", emitdata);
 };
 exports.LogIn = function (socket, userInfo) {

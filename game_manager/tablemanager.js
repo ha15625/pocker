@@ -60,12 +60,34 @@ function TableManager(param) {
         //config.Tour_SB_W.array
     }, 300000);
     this.hardCount = 0;
+    this.royalFlash = 0;
+    this.royal4kinds = 0;
+
+    let ind = null;
+    for (let i = 0; i < config.STAKES_SB.array.length; i++) {
+        const element = config.STAKES_SB.array[i];
+        if (this.smallBlind == element) {
+            ind = i;
+            break;
+        }
+    }
+
+    if (ind != null) {
+        this.royalFlash = parseInt(
+            config.JACKPOT_WINS_ROYALFLASH
+                .array[ind]
+        )
+        this.royal4kinds = parseInt(config.JACKPOT_WINS_4KINDS.array[ind])
+    }
+
     this.table = Poker.newTable(
         {
             minBlind: param.smallBlind,
             maxBlind: param.bigBlind,
             minPlayers: param.minPlayers,
             maxPlayers: param.maxPlayers,
+            royalFlash: this.royalFlash,
+            royal4kinds: this.royal4kinds
         },
         []
     );
@@ -813,6 +835,10 @@ TableManager.prototype.onGameOver = async function () {
         }
         //await this.addPlayers();
         else {
+            this.io.in("r" + this.id).emit("JACKPOT_UPDATE", {
+                royalFlash: this.table.royalFlash,
+                royal4kinds: this.table.royal4kinds
+            })
             await this.waitforSec(2000);
             await this.addPlayers();
             if (this.botCount > 0) {
@@ -1444,8 +1470,7 @@ TableManager.prototype.Record_Won_History = function (
                                         points:
                                             result.points +
                                             parseInt(
-                                                config.JACKPOT_WINS_ROYALFLASH
-                                                    .array[ind]
+                                                this.table.royalFlash
                                             ),
                                     },
                                 },
@@ -1453,6 +1478,11 @@ TableManager.prototype.Record_Won_History = function (
                                     if (err) throw err;
                                 }
                             );
+                            this.table.royalFlash = this.table.royalFlash / 3;
+                            this.io.in("r" + this.id).emit("JACKPOT_UPDATE", {
+                                royalFlash: this.table.royalFlash,
+                                royal4kinds: this.table.royal4kinds
+                            })
                         }
                     }
                     if (
@@ -1467,8 +1497,7 @@ TableManager.prototype.Record_Won_History = function (
                                         points:
                                             result.points +
                                             parseInt(
-                                                config.JACKPOT_WINS_4KINDS
-                                                    .array[ind]
+                                                this.table.royal4kinds
                                             ),
                                     },
                                 },
@@ -1476,6 +1505,11 @@ TableManager.prototype.Record_Won_History = function (
                                     if (err) throw err;
                                 }
                             );
+                            this.table.royal4kinds = this.table.royal4kinds / 3;
+                            this.io.in("r" + this.id).emit("JACKPOT_UPDATE", {
+                                royalFlash: this.table.royalFlash,
+                                royal4kinds: this.table.royal4kinds
+                            })
                         }
                     }
                 }
