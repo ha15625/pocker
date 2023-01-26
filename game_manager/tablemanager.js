@@ -393,14 +393,19 @@ TableManager.prototype.actionBot = function (player) {
                                 if (maxBet - currentBet == info.bet) {
 
                                 } else {
-                                    info.action = "raise";
-                                    this.isRaise = true;
+                                    let raiseNonce = Math.floor(Math.random() * 10) + 1;
+                                    if (raiseNonce > 6) {
+                                        info.action = "raise";
+                                        this.isRaise = true;
+                                    } else {
+                                        info.action = "fold";
+                                    }
                                 }
                                 info.legal_bet = info.bet - call;
                             }
                         } else if (this.isRaise) {
                             if (botgoodcards) {
-                                if (player.chips / 5 < call && !goodcards) {
+                                if (player.chips / 3 < call && !goodcards) {
                                     info.action = "fold";
                                 } else {
                                     info.action = "call";
