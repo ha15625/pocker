@@ -1,6 +1,6 @@
 var MongoClient = require('mongodb').MongoClient;
 var URL = 'mongodb+srv://nightpoker:gGRTkjrP534RhoRr@cluster0.igc5p.mongodb.net/MJDatabase';
-// var URL = 'mongodb://localhost:27017/MJDatabase';
+// var URL = 'mongodb://127.0.0.1:27017/MJDatabase';
 var state = {
     db: null,
 };
@@ -12,6 +12,7 @@ exports.connect = function(done) {
     MongoClient.connect(URL,{ useNewUrlParser: true, useUnifiedTopology: true }, function(err, client) {
         if (err)
             return done(err);
+        console.log("Mongodb connected");
         var db = client.db('MJDatabase');
         state.db = db;
         done();

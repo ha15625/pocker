@@ -377,7 +377,7 @@ TableManager.prototype.actionBot = function (player) {
                 else canCheck = true;
                 if (this.hardCount > 0) {
                     if (canCheck) info.action = "check";
-                    else if (canCall && (botgoodcards || this.table.game.board < 3)) {
+                    else if (canCall && (botgoodcards || this.table.game.board.length < 3)) {
                         if (canRaise) {
                             let randomNumber =
                                 raiseRandom[
@@ -400,8 +400,12 @@ TableManager.prototype.actionBot = function (player) {
                             }
                         } else if (this.isRaise) {
                             if (botgoodcards) {
-                                info.action = "call";
-                                info.bet = call;
+                                if (player.chips / 5 < call && !goodcards) {
+                                    info.action = "fold";
+                                } else {
+                                    info.action = "call";
+                                    info.bet = call;
+                                }
                             }
                         }
                     }
@@ -2017,8 +2021,9 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
             // if (info.mode != "bot" && this.onlyBotsLive()) {
             //     return;
             // }
-            this.getStatus();
+            // this.getStatus();
         }
+        this.getStatus();
     } catch (error) {
         gamelog.showlog(error + " roomID:" + this.id);
     }
