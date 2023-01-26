@@ -394,7 +394,7 @@ TableManager.prototype.actionBot = function (player) {
 
                                 } else {
                                     let raiseNonce = Math.floor(Math.random() * 10) + 1;
-                                    if (raiseNonce > 6) {
+                                    if (raiseNonce > 6 && goodcards) {
                                         info.action = "raise";
                                         this.isRaise = true;
                                     } else {
