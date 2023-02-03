@@ -404,14 +404,13 @@ TableManager.prototype.actionBot = function (player) {
                                 info.legal_bet = info.bet - call;
                             }
                         } else if (this.isRaise) {
-                            if (botgoodcards) {
-                                if (player.chips / 3 < call && !goodcards) {
-                                    info.action = "fold";
-                                } else {
-                                    info.action = "call";
-                                    info.bet = call;
-                                }
+                            if ((player.chips / 3 < call || this.table.game.board.length > 3) && !goodcards) {
+                                info.action = "fold";
+                            } else {
+                                info.action = "call";
+                                info.bet = call;
                             }
+
                         }
                     }
                 } else {
