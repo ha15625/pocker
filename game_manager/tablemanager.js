@@ -377,40 +377,44 @@ TableManager.prototype.actionBot = function (player) {
                 else canCheck = true;
                 if (this.hardCount > 0) {
                     if (canCheck) info.action = "check";
-                    else if (canCall && (botgoodcards || this.table.game.board.length < 3)) {
-                        if (canRaise) {
-                            let randomNumber =
-                                raiseRandom[
-                                Math.floor(
-                                    Math.random() * raiseRandom.length
-                                )
-                                ];
-                            info.legal_bet = this.legalBet;
-                            info.bet = randomNumber * minRaise;
-                            let maxBet = max_Bet;
-                            let currentBet = current_Bet;
-                            if (info.bet < player.chips) {
-                                if (maxBet - currentBet == info.bet) {
+                    else if (canCall && (goodcards || this.table.game.board.length < 3)) {
+                        if (!this.isRaise && canCall) {
+                            info.action = "call";
+                            info.bet = call;
+                        }
+                    }
+                    if (canRaise) {
+                        let randomNumber =
+                            raiseRandom[
+                            Math.floor(
+                                Math.random() * raiseRandom.length
+                            )
+                            ];
+                        info.legal_bet = this.legalBet;
+                        info.bet = randomNumber * minRaise;
+                        let maxBet = max_Bet;
+                        let currentBet = current_Bet;
+                        if (info.bet < player.chips) {
+                            if (maxBet - currentBet == info.bet) {
 
-                                } else {
-                                    let raiseNonce = Math.floor(Math.random() * 10) + 1;
-                                    if (raiseNonce > 6 && goodcards) {
-                                        info.action = "raise";
-                                        this.isRaise = true;
-                                    } else {
-                                        info.action = "fold";
-                                    }
-                                }
-                                info.legal_bet = info.bet - call;
-                            }
-                        } else if (this.isRaise) {
-                            if ((player.chips / 3 < call || this.table.game.board.length > 3) && !goodcards) {
-                                info.action = "fold";
                             } else {
-                                info.action = "call";
-                                info.bet = call;
+                                let raiseNonce = Math.floor(Math.random() * 10) + 1;
+                                if (raiseNonce > 6 && goodcards) {
+                                    info.action = "raise";
+                                    this.isRaise = true;
+                                } else {
+                                    info.action = "fold";
+                                }
                             }
-
+                            info.legal_bet = info.bet - call;
+                        }
+                    }
+                    if (this.isRaise) {
+                        if (!goodcards) {
+                            info.action = "fold";
+                        } else {
+                            info.action = "call";
+                            info.bet = call;
                         }
                     }
                 } else {
