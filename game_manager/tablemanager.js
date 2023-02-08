@@ -377,11 +377,9 @@ TableManager.prototype.actionBot = function (player) {
                 else canCheck = true;
                 if (this.hardCount > 0) {
                     if (canCheck) info.action = "check";
-                    else if (canCall && (goodcards || this.table.game.board.length < 3)) {
-                        if (!this.isRaise && canCall) {
-                            info.action = "call";
-                            info.bet = call;
-                        }
+                    else if (canCall && (goodcards || this.table.game.board.length < 3) || canRaise && !goodcards) {
+                        info.action = "call";
+                        info.bet = call;
                     }
                     if (canRaise) {
                         let randomNumber =
