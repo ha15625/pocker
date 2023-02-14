@@ -377,7 +377,7 @@ TableManager.prototype.actionBot = function (player) {
                 else canCheck = true;
                 if (this.hardCount > 0) {
                     if (canCheck) info.action = "check";
-                    else if (canCall && (goodcards || this.table.game.board.length < 3) || canRaise && !goodcards) {
+                    else if (canCall && goodcards) {
                         info.action = "call";
                         info.bet = call;
                     }
