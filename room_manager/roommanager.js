@@ -163,7 +163,21 @@ exports.JoinRoom = function (data, socket) {
         gamelog.showlog(error);
     }
 };
+exports.OnCheckReconnectGame = function (socket, data) {
+    try {
+        gamelog.showlog(
+            "-CheckReconnect",
+            // socket.room,
+            // socket.username,
+            // socket.userid,
+            // socket.id
+        )
+        let table = tables.find((t) => t.id == data.roomid);
+        table && table.reJoinTable(socket, data.username, data.userid);
+    } catch (e) {
 
+    }
+};
 function createTable(
     username,
     userid,
@@ -405,18 +419,18 @@ exports.OnDisconnect = function (socket) {
             query = {
                 userid: userid,
             };
-        collection.updateOne(
-            query,
-            {
-                $set: {
-                    connect: "",
-                    connected_room: "",
-                },
-            },
-            function (err) {
-                if (err) throw err;
-            }
-        );
+        // collection.updateOne(
+        //     query,
+        //     {
+        //         $set: {
+        //             connect: "",
+        //             connected_room: "",
+        //         },
+        //     },
+        //     function (err) {
+        //         if (err) throw err;
+        //     }
+        // );
         if (socket.room == undefined || userid == undefined) return;
         let roomid_arr = socket.room.split("");
         roomid_arr.splice(0, 1);
@@ -429,7 +443,7 @@ exports.OnDisconnect = function (socket) {
             username: username,
             userid: userid,
         };
-        table && table.standUp_forever(info, socket);
+        table && table.networkOffline(info, socket);
     } catch (error) {
         gamelog.showlog(error);
     }

@@ -27,6 +27,7 @@ function Player(options)
     this.gift = "";
     this.foldCount = 0;
     this.win = false;
+    this.isOffline = false;
 }
 
 // inherit from Event emitter
@@ -61,7 +62,6 @@ Player.prototype.hasRaised = function() {
     if(hasRaised) {
         
     }
-
     return hasRaised;
 };
 

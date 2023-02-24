@@ -4,6 +4,7 @@ var Ranker = require("../module/handranker");
 var colors = require("colors");
 var roommanager = require("../room_manager/roommanager");
 var gamelog = require('./gamelog');
+const player = require("../module/poker-engine/lib/player");
 colors.setTheme({
     info: "bgGreen",
     help: "cyan",
@@ -279,6 +280,7 @@ TableManager.prototype.onTurn = function (player) {
                 this.standUp({
                     username: player.playerName,
                     userid: player.playerID,
+                    isOffline: player.isOffline
                 });
         }, timeout);
     } catch (error) {
@@ -970,8 +972,19 @@ TableManager.prototype.onlyBotsLive = function () {
             }
         }
 
-        if (roomSockets.length == 0)
+        if (roomSockets.length == 0) {
+            for (let i = 0; i < this.table.players.length; i++) {
+                if (this.table.players[i].isOffline) {
+                    return false;
+                }
+            }
+            for (let i = 0; i < this.waitingPlayers.length; i++) {
+                if (this.waitingPlayers[i].isOffline) {
+                    return false;
+                }
+            }
             return true;
+        }
         else return false;
     } catch (error) {
         console.log(error + " roomID:" + this.id);
@@ -1597,7 +1610,20 @@ TableManager.prototype.tableReposition = function () {
         gamelog.showlog(error + " roomID:" + this.id);
     }
 };
-
+TableManager.prototype.reJoinTable = function (socket, username, userid) {
+    socket.room = "r" + this.id;
+    socket.username = username;
+    socket.userid = userid;
+    socket.emit("CheckReconnectGame");
+    socket.join("r" + this.id);
+    this.getStatus();
+    for (let i = 0; i < this.waitingPlayers.length; i++) {
+        if(this.waitingPlayers[i].username == username && this.waitingPlayers[i].userid == userid) {
+            this.waitingPlayers.splice(i, 1);
+            break;
+        }
+    }
+}
 TableManager.prototype.enterTable = function (socket, username, userid) {
     // if(this.onlyBotsLive()) {
     //     return;
@@ -1629,7 +1655,6 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
             let emData = {
                 result: "failed",
                 roomid: this.id,
-
                 bigBlind: this.bigBlind,
                 seated: false,
                 seatnumber: pos,
@@ -1892,6 +1917,15 @@ TableManager.prototype.sitDown = function (info, socket) {
     console.log("sitDown" + " roomID:" + this.id);
     this.addPlayer(info, socket);
 };
+TableManager.prototype.networkOffline = function (info, socket) {
+    let player = this.table.players.find(
+        (p) =>
+            p &&
+            p.playerID == info.userid &&
+            p.playerName == info.username
+    );
+    player.isOffline = true;
+}
 TableManager.prototype.standUp_forever = function (info, socket) {
     if (this.onlyBotsLive()) {
         return;
@@ -1936,6 +1970,7 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                     chips: 0,
                     photo_index: 0,
                     photo_type: 0,
+                    isOffline: info.isOffline
                 });
         }
         let position = -1;
@@ -1971,11 +2006,11 @@ TableManager.prototype.standUp = function (info, socket, bankrupt) {
                 }
                 this.in_points(info.username, info.userid, player.chips);
                 this.table.RemovePlayer(info.userid);
-                for (let i = 0; i < this.waitingPlayers.length; i++) {
-                    if (this.waitingPlayers[i].userid == info.userid) {
-                        this.waitingPlayers.splice(i, 1);
-                    }
-                }
+                // for (let i = 0; i < this.waitingPlayers.length; i++) {
+                //     if (this.waitingPlayers[i].userid == info.userid) {
+                //         this.waitingPlayers.splice(i, 1);
+                //     }
+                // }
             } else {
                 gamelog.showlog("wrong standup > nothing user on the table".err + " roomID:" + this.id);
             }

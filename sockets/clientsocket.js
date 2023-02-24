@@ -161,6 +161,10 @@ exports.initsocket = async function (socket, io) {
     socket.on('disconnect', async function () {
         await roommanager.OnDisconnect(socket);
     });
+    // check Reconnect
+    socket.on('CheckReconnectGame', async function (data) {
+        await roommanager.OnCheckReconnectGame(socket, data);
+    });
     // create bot
     socket.on('CREATE_BOT', async function (data) {
         await botmanager.createBots(data);
