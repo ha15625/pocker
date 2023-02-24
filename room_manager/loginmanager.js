@@ -29,12 +29,12 @@ exports.setsocketio = function (socketio) {
 	io = socketio;
 };
 exports.CheckVersionCode = function (socket) {
-	let emitdata = { result: "7.6" };
+	let emitdata = { result: "7.7" };
 	console.log(utils.toBinary(emitdata))
 	socket.emit("CHECK_VERSION_CODE_RESULT", emitdata);
 };
 exports.LogIn = function (socket, userInfo) {
-	if (userInfo.version == null || userInfo.version != "7.6") {
+	if (userInfo.version == null || userInfo.version != "7.7") {
 		let emitdata = { result: "failed" };
 		socket.emit("GET_LOGIN_RESULT", emitdata);
 	} else {
@@ -134,7 +134,7 @@ function makeRandom(min, max) {
 }
 exports.SignUp = function (socket, data) {
 	let lManager = this;
-	if (data.version == null || data.version != "7.6") {
+	if (data.version == null || data.version != "7.7") {
 		socket.emit("GET_REGISTER_RESULT", { result: "failed" });
 	} else {
 		let collection = database.collection("User_Data");
