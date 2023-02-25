@@ -921,6 +921,7 @@ TableManager.prototype.onGameOver = async function () {
                             showcards: 0,
                             mode: "normal",
                             moveroom: 0,
+                            isOffline: false
                         };
                         // for (let j = 0; j < this.players.length; j++) {
                         //   if (this.players[j].userid == player.userid) {
@@ -983,6 +984,7 @@ TableManager.prototype.onlyBotsLive = function () {
                     return false;
                 }
             }
+            if (this.players.length > 0) return false;
             return true;
         }
         else return false;
@@ -1565,6 +1567,7 @@ TableManager.prototype.addPlayers = function () {
                             photoType: player.photoType,
                             mode: "normal",
                             position: player.seatnumber,
+                            isOffline: player.isOffline
                         });
                         this.removeItem(this.players, player);
                     } else {
@@ -1618,7 +1621,7 @@ TableManager.prototype.reJoinTable = function (socket, username, userid) {
     socket.join("r" + this.id);
     this.getStatus();
     for (let i = 0; i < this.waitingPlayers.length; i++) {
-        if(this.waitingPlayers[i].username == username && this.waitingPlayers[i].userid == userid) {
+        if (this.waitingPlayers[i].username == username && this.waitingPlayers[i].userid == userid) {
             this.waitingPlayers.splice(i, 1);
             break;
         }
@@ -1797,6 +1800,7 @@ TableManager.prototype.createBots = function (createCount) {
                         photoUrl: userphoto,
                         photoType: 0,
                         mode: "bot",
+                        isOffline: false
                     });
                 } else {
                     clearInterval(interval);
@@ -1924,6 +1928,14 @@ TableManager.prototype.networkOffline = function (info, socket) {
             p.playerID == info.userid &&
             p.playerName == info.username
     );
+    if (!player) {
+        player = this.players.find(
+            (p) =>
+                p &&
+                p.userid == info.userid &&
+                p.username == info.username
+        );
+    }
     player.isOffline = true;
 }
 TableManager.prototype.standUp_forever = function (info, socket) {
@@ -2102,6 +2114,7 @@ TableManager.prototype.addPlayer = function (info, socket) {
             showcards: 0,
             mode: "normal",
             moveroom: 0,
+            isOffline: false
         };
         for (let i = 0; i < this.players.length; i++) {
             if (this.players[i].userid == player.userid) {
@@ -2182,6 +2195,7 @@ TableManager.prototype.buyIn = function (info, socket) {
                     photoType: player.photoType,
                     mode: "normal",
                     position: player.seatnumber,
+                    isOffline: player.isOffline
                 });
                 this.removeItem(this.players, player);
                 //let bookingPlayers = this.players.filter(p => p.booking);

@@ -794,6 +794,7 @@ Table.prototype.addPlayer = function (options) {
 
 	let playerSeated = new Player(options);
 	playerSeated.isSeated = true;
+	playerSeated.isOffline = options.isOffline
 	this.players[position] = playerSeated;
 	playerSeated.avatar = options.avatar;
 	if (options.photoUrl !== undefined) playerSeated.photoUrl = options.photoUrl;
