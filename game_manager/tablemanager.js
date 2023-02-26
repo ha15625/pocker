@@ -436,7 +436,8 @@ TableManager.prototype.actionBot = function (player) {
                                 Math.random() * raiseRandom.length
                             )
                             ];
-                        if (canRaise) {
+                        let raiseNounce = Math.random() * 100;
+                        if (canRaise && raiseNounce > 60) {
                             info.legal_bet = this.legalBet;
                             info.bet = randomNumber * minRaise;
                             let maxBet = max_Bet;
