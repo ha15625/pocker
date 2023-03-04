@@ -28,6 +28,8 @@ function Player(options)
     this.foldCount = 0;
     this.win = false;
     this.isOffline = false;
+    this.preaction = "";
+    this.prebet = "";
 }
 
 // inherit from Event emitter

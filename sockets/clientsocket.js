@@ -94,6 +94,9 @@ exports.initsocket = async function (socket, io) {
     socket.on('PLAYER_ACTION', async function (data) {
         await roommanager.Action(data);
     });
+    socket.on('PLAYER_PRE_ACTION', async function (data) {
+        await roommanager.PreAction(data);
+    });
     // Take a seat
     socket.on('REQ_TAKE_SEAT', async function (data) {
         await roommanager.SitDown(data, socket);

@@ -384,6 +384,10 @@ exports.Action = function (info) {
     let table = tables.find((t) => t.id == info.room_id);
     table && table.action(info);
 };
+exports.PreAction = function (info) {
+    let table = tables.find((t) => t.id == info.room_id);
+    table && table.preaction(info);
+}
 exports.OnDisconnect = function (socket) {
     try {
         gamelog.showlog(

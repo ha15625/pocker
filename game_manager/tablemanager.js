@@ -1020,6 +1020,12 @@ TableManager.prototype.checkIndex = function (player, position) {
     if (index == position) return true;
     else return false;
 };
+TableManager.prototype.preaction = function (info) {
+    let player = this.table.getPlayerByID(info.player_id);
+    if (!player || player == undefined) return;
+    player.preaction = info.action;
+    player.prebet = info.bet;
+}
 TableManager.prototype.action = function (info) {
     if (this.onlyBotsLive()) {
         return;
