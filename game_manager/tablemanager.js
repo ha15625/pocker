@@ -867,7 +867,7 @@ TableManager.prototype.onGameOver = async function () {
             await this.getStatus();
             await this.tableReposition();
             if (this.table.getIngamePlayersLength() > 1) {
-                let time = 0;
+                let time = 500;
                 setTimeout(() => {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
