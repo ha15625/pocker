@@ -1591,7 +1591,7 @@ TableManager.prototype.tableReposition = function () {
         }
         return new Promise((resolve) => {
             let time = 30 * this.table.getIngamePlayersLength();
-            let Reposition_time = time + 300;
+            let Reposition_time = time + 200;
             setTimeout(() => {
                 let emitdata = {
                     played: this.played,
