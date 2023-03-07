@@ -838,7 +838,7 @@ TableManager.prototype.onGameOver = async function () {
                 royalFlash: this.table.royalFlash,
                 royal4kinds: this.table.royal4kinds
             })
-            await this.waitforSec(2000);
+            await this.waitforSec(500);
             await this.addPlayers();
             if (this.botCount > 0) {
                 let tCount = this.botCount;
