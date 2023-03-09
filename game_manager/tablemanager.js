@@ -1496,7 +1496,8 @@ TableManager.prototype.Record_Won_History = function (
                                     if (err) throw err;
                                 }
                             );
-                            this.table.royalFlash = this.table.royalFlash / 3;
+                            this.table.royalFlash = this.table.royalFlash / 10 * 3;
+                            this.table.royal4kinds = this.table.royal4kinds / 10 * 3;
                             this.io.in("r" + this.id).emit("JACKPOT_UPDATE", {
                                 royalFlash: this.table.royalFlash,
                                 royal4kinds: this.table.royal4kinds
@@ -1523,7 +1524,8 @@ TableManager.prototype.Record_Won_History = function (
                                     if (err) throw err;
                                 }
                             );
-                            this.table.royal4kinds = this.table.royal4kinds / 3;
+                            this.table.royal4kinds = this.table.royal4kinds / 10 * 3;
+                            this.table.royalFlash = this.table.royalFlash / 10 * 3;
                             this.io.in("r" + this.id).emit("JACKPOT_UPDATE", {
                                 royalFlash: this.table.royalFlash,
                                 royal4kinds: this.table.royal4kinds
@@ -1591,7 +1593,7 @@ TableManager.prototype.tableReposition = function () {
         }
         return new Promise((resolve) => {
             let time = 30 * this.table.getIngamePlayersLength();
-            let Reposition_time = time + 200;
+            let Reposition_time = time;
             setTimeout(() => {
                 let emitdata = {
                     played: this.played,
