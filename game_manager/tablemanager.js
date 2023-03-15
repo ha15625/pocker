@@ -871,7 +871,7 @@ TableManager.prototype.onGameOver = async function () {
                 setTimeout(() => {
                     this.hardCount = 0;
                     if (this.smallBlind >= 10000000000) {
-                        this.hardCount = 3;
+                        this.hardCount = 4;
                         // let randomC = Math.floor(Math.random() * 3);
                         // if (randomC != 0) this.hardCount = 6;
                         // else this.hardCount = 0;
