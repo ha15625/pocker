@@ -842,11 +842,11 @@ TableManager.prototype.onGameOver = async function () {
             await this.addPlayers();
             if (this.botCount > 0) {
                 let tCount = this.botCount;
-                // if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
-                //     tCount = 2;
-                // } else if (this.minBuyin > 400000000000) {
-                //     tCount = 0;
-                // }
+                if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
+                    tCount = 2;
+                } else if (this.minBuyin > 400000000000) {
+                    tCount = 0;
+                }
                 let bookingPlayers = this.players.filter(
                     (p) => p.booking == true
                 );
@@ -859,9 +859,9 @@ TableManager.prototype.onGameOver = async function () {
                     bookingPlayers.length -
                     tCount;
                 if (createCount > 0) {
-                    // if (this.minBuyin <= 400000000000) {
-                    await this.createBots(createCount);
-                    // }
+                    if (this.minBuyin <= 400000000000) {
+                        await this.createBots(createCount);
+                    }
                 } else if (removeCount > 0) await this.removeBots(removeCount);
             }
             await this.getStatus();
@@ -871,11 +871,12 @@ TableManager.prototype.onGameOver = async function () {
                 setTimeout(() => {
                     this.hardCount = 0;
                     //if (this.smallBlind >= 10000000000) {
-                        this.hardCount = 4;
-                        // let randomC = Math.floor(Math.random() * 3);
-                        // if (randomC != 0) this.hardCount = 6;
-                        // else this.hardCount = 0;
+                    this.hardCount = 4;
+                    // let randomC = Math.floor(Math.random() * 3);
+                    // if (randomC != 0) this.hardCount = 6;
+                    // else this.hardCount = 0;
                     //}
+
                     this.isRaise = false;
 
                     this.table.initNewRound();
@@ -1725,11 +1726,11 @@ TableManager.prototype.checkBotStatus = function () {
     try {
         if (this.botCount > 0) {
             if (this.status == 0) {
-                // if (this.minBuyin <= 2000000000) {
-                this.createBots(this.botCount);
-                // } else if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
-                // this.createBots(2);
-                // }
+                if (this.minBuyin <= 2000000000) {
+                    this.createBots(this.botCount);
+                } else if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
+                    this.createBots(2);
+                }
             }
         }
     } catch (error) {
