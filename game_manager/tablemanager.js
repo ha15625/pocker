@@ -842,11 +842,9 @@ TableManager.prototype.onGameOver = async function () {
             await this.addPlayers();
             if (this.botCount > 0) {
                 let tCount = this.botCount;
-                if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
+                if (this.minBuyin > 400000000000 ) {
                     tCount = 2;
-                } else if (this.minBuyin > 400000000000) {
-                    tCount = 0;
-                }
+                } 
                 let bookingPlayers = this.players.filter(
                     (p) => p.booking == true
                 );
@@ -1726,9 +1724,9 @@ TableManager.prototype.checkBotStatus = function () {
     try {
         if (this.botCount > 0) {
             if (this.status == 0) {
-                if (this.minBuyin <= 2000000000) {
+                if (this.minBuyin <= 400000000000) {
                     this.createBots(this.botCount);
-                } else if (this.minBuyin > 2000000000 && this.minBuyin <= 400000000000) {
+                } else if (this.minBuyin > 400000000000) {
                     this.createBots(2);
                 }
             }
