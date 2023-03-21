@@ -346,8 +346,9 @@ TableManager.prototype.actionBot = function (player) {
             if (hardLuck >= 75) {
                 goodcards = true;
             }
-            this.hardCount--;
+            
         }
+        
         setTimeout(() => {
             try {
                 let info = {
@@ -500,6 +501,7 @@ TableManager.prototype.actionBot = function (player) {
                         }
                     }
                 }
+                this.hardCount--;
                 let message = player.playerName;
                 this.removetimeout();
                 player.updateTimebank(3);
