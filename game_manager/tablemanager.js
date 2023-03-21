@@ -60,7 +60,7 @@ function TableManager(param) {
     this.timer = setTimeout(() => {
         //config.Tour_SB_W.array
     }, 300000);
-    this.hardCount = 0;
+    this.hardCount = 4;
     this.royalFlash = 0;
     this.royal4kinds = 0;
 
@@ -826,6 +826,7 @@ TableManager.prototype.onWin = function (winner, prize) {
 };
 TableManager.prototype.onGameOver = async function () {
     gamelog.showlog("onGameOver" + " roomID:" + this.id);
+    this.hardCount = 4;
     try {
         this.played++;
         this.totalPot = 0;
@@ -842,9 +843,9 @@ TableManager.prototype.onGameOver = async function () {
             await this.addPlayers();
             if (this.botCount > 0) {
                 let tCount = this.botCount;
-                if (this.minBuyin > 400000000000 ) {
-                    tCount = 2;
-                } 
+                // if (this.minBuyin > 400000000000 ) {
+                //     tCount = 2;
+                // } 
                 let bookingPlayers = this.players.filter(
                     (p) => p.booking == true
                 );
@@ -857,9 +858,9 @@ TableManager.prototype.onGameOver = async function () {
                     bookingPlayers.length -
                     tCount;
                 if (createCount > 0) {
-                    if (this.minBuyin <= 400000000000) {
+                    // if (this.minBuyin <= 400000000000) {
                         await this.createBots(createCount);
-                    }
+                    // }
                 } else if (removeCount > 0) await this.removeBots(removeCount);
             }
             await this.getStatus();
@@ -867,9 +868,6 @@ TableManager.prototype.onGameOver = async function () {
             if (this.table.getIngamePlayersLength() > 1) {
                 let time = 0;
                 setTimeout(() => {
-                    this.hardCount = 0;
-                    //if (this.smallBlind >= 10000000000) {
-                    this.hardCount = 4;
                     // let randomC = Math.floor(Math.random() * 3);
                     // if (randomC != 0) this.hardCount = 6;
                     // else this.hardCount = 0;
@@ -1724,11 +1722,11 @@ TableManager.prototype.checkBotStatus = function () {
     try {
         if (this.botCount > 0) {
             if (this.status == 0) {
-                if (this.minBuyin <= 400000000000) {
+                // if (this.minBuyin <= 400000000000) {
                     this.createBots(this.botCount);
-                } else if (this.minBuyin > 400000000000) {
-                    this.createBots(2);
-                }
+                // } else if (this.minBuyin > 400000000000) {
+                    // this.createBots(2);
+                // }
             }
         }
     } catch (error) {
