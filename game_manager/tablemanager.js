@@ -342,10 +342,6 @@ TableManager.prototype.actionBot = function (player) {
             if (winPlayers.includes(player.getIndex())) {
                 goodcards = true;
             }
-            let hardLuck = Math.random() * 100;
-            if (hardLuck >= 75) {
-                goodcards = true;
-            }
             
         }
         
