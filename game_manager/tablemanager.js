@@ -384,7 +384,7 @@ TableManager.prototype.actionBot = function (player) {
                         info.action = "call";
                         info.bet = call;
                     }
-                    else if (canRaise && goodcards) {
+                    else if (canRaise && goodcards && botgoodcards) {
                         let randomNumber =
                             raiseRandom[
                             Math.floor(
