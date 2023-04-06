@@ -826,7 +826,7 @@ TableManager.prototype.onGameOver = async function () {
     gamelog.showlog("onGameOver" + " roomID:" + this.id);
     this.hardCount = 4;
     if (this.minBuyin <= 400000000000 ) {
-        this.hardCount = 3;
+        this.hardCount = 2;
     } 
     
     try {
