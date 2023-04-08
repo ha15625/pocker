@@ -827,7 +827,9 @@ TableManager.prototype.onGameOver = async function () {
     this.hardCount = 4;
     if (this.minBuyin <= 400000000000 ) {
         this.hardCount = 2;
-    } 
+    } else {
+        this.hardCount = 3;
+    }
     
     try {
         this.played++;
