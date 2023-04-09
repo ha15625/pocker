@@ -169,7 +169,7 @@ exports.SignUp = function (socket, data) {
 							userid: randomnum,
 							password: "",
 							photo: "",
-							photo_index: makeRandom(1, 25),
+							photo_index: makeRandom(1, 321),
 							photo_type: 0, // normal photo (1: facebook photo),
 							facebook_id: data.facebook_id,
 							points: 2000000000,

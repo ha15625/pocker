@@ -1792,7 +1792,7 @@ TableManager.prototype.createBots = function (createCount) {
                         playerName: username,
                         playerID: userid,
                         chips: parseInt(this.minBuyin),
-                        avatar: Math.floor(Math.random() * 119) + 1,
+                        avatar: Math.floor(Math.random() * 321) + 1,
                         photoUrl: userphoto,
                         photoType: 0,
                         mode: "bot",
