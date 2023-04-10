@@ -278,9 +278,10 @@ exports.getBotUrl = function (table) {
     try {
         let newIndex = -1;
         for (let i = 0; i < realNames.length; i++) {
-            const botName = realNames[Math.floor(Math.random() * 9000)];
+            let nameIndex = Math.floor(Math.random() * 9000);
+            const botName = realNames[nameIndex];
             if (!usedBotNames.includes(botName)) {
-                newIndex = i;
+                newIndex = nameIndex;
                 break;
             }
         }
