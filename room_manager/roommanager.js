@@ -731,6 +731,14 @@ exports.Request_Friend = function (socket, data) {
                             friend_id: friend_id,
                         };
                         socket.emit("REQ_FRIEND_RESULT", emitdata);
+                        io.sockets.emit("REQ_FRIEND_GAME", {
+                            userid: userid,
+                            friend_id: friend_id,
+                            username: result.username,
+                            photo: result.photo,
+                            photo_index: result.photo_index,
+                            photo_type: result.photo_type,
+                        });
                     }
                 }
             }

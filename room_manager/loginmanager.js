@@ -76,7 +76,8 @@ exports.LogIn = function (socket, userInfo) {
 							// 	break;
 							// }
 						}
-						socket.username = result.userid;
+						socket.userid = result.userid;
+						socket.username = result.username;
 						socket.emit("GET_LOGIN_RESULT", {
 							result: "success",
 							data: result,
@@ -88,6 +89,32 @@ exports.LogIn = function (socket, userInfo) {
 								if (err) throw err;
 							}
 						);
+						let Friends = result.friends;
+						let nFriends = [...new Set(Friends)];
+						Friends = nFriends;
+						let counter = Friends.length;
+						const a = [];
+						for (let i = 0; i < counter; i++) {
+							let id = Friends[i].id;
+							let accepted = Friends[i].accepted;
+							if (accepted) {
+								let clients = io.sockets.clients();
+								for (let key in clients.sockets) {
+									if (clients.sockets[key].userid == id) {
+										clients.sockets[key].emit("REQ_ONLINE_GAME", {
+											userid: result.userid,
+											friend_id: id,
+											username: result.username,
+											photo: result.photo,
+											photo_index: result.photo_index,
+											photo_type: result.photo_type,
+										})
+										break;
+									}
+								}
+							}
+
+						}
 					} else if (result.status == 1) {
 						let emitdata = { result: "failed" };
 						socket.emit("GET_LOGIN_RESULT", emitdata);
@@ -100,12 +127,38 @@ exports.LogIn = function (socket, userInfo) {
 							}
 						);
 						gamelog.showlog("- User: ", result.username, " has logged in");
-						socket.username = result.userid;
+						socket.userid = result.userid;
+						socket.username = result.username;
 						socket.emit("GET_LOGIN_RESULT", {
 							result: "success",
 							data: result,
 						});
+						let Friends = result.friends;
+						let nFriends = [...new Set(Friends)];
+						Friends = nFriends;
+						let counter = Friends.length;
+						const a = [];
+						for (let i = 0; i < counter; i++) {
+							let id = Friends[i].id;
+							let accepted = Friends[i].accepted;
+							if (accepted) {
+								let clients = io.sockets.clients();
+								for (let key in clients.sockets) {
+									if (clients.sockets[key].userid == id) {
+										clients.sockets[key].emit("REQ_ONLINE_GAME", {
+											userid: result.userid,
+											friend_id: id,
+											username: result.username,
+											photo: result.photo,
+											photo_index: result.photo_index,
+											photo_type: result.photo_type,
+										})
+										break;
+									}
+								}
+							}
 
+						}
 						setTimeout(() => {
 							let collection = database.collection("User_Data");
 							collection.find().toArray(function (err, docs) {
@@ -201,7 +254,8 @@ exports.SignUp = function (socket, data) {
 
 						collection.insertOne(user_data);
 						gamelog.showlog("- New user: " + name + " has Registered.");
-						socket.username = randomnum;
+						socket.userid = randomnum;
+						socket.username = name;
 						socket.emit("GET_REGISTER_RESULT", {
 							result: "success",
 							data: user_data,
