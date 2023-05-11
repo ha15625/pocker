@@ -1350,7 +1350,29 @@ exports.SendMessage = function (socket, data) {
     }
 };
 exports.InviteRoom = function (data) {
-    io.sockets.emit("GET_INVITE_RESULT", data);
+    let collection = database.collection("User_Data");
+    let query = { userid: data.sender_id };
+    collection.findOne(query, function (err, result) {
+        if(err) gamelog.showlog("errorInviteRoom ", err);
+        else {
+            io.sockets.emit("GET_INVITE_RESULT", {
+                receiver_id: data.receiver_id,
+                receiver_name: data.receiver_name,
+                sender_name: data.sender_name,
+                sender_id: data.sender_id,
+                roomid: data.roomid,
+                sb: data.sb,
+                bb: data.bb,
+                minBuyinMoney: data.minBuyinMoney,
+                maxBuyinMoney: data.maxBuyinMoney,
+                maxSeats: data.maxSeats,
+                photo_index: result.photo_index,
+                photo: result.photo,
+                photo_type: result.photo_type
+            });
+        }
+    });
+    
 };
 exports.CheckUserMessage = function (socket, data) {
     try {

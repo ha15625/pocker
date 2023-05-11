@@ -1701,7 +1701,7 @@ TableManager.prototype.enterTable = function (socket, username, userid) {
         }
         if (wCount == 0) {
             this.waitingPlayers.push({
-                username: username,
+                username: username ? username: "",
                 userid: userid,
                 avatarUrl: "",
                 chips: 0,
